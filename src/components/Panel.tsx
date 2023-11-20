@@ -23,7 +23,7 @@ export const Panel: React.FC<PanelProps> = ({ containerProps, children, header, 
       {...containerProps}
     >
       {header && (
-        <Box pt="32px">
+        <Box py="32px">
           <Text background="purple" backgroundClip="text" fontSize="36px" fontWeight="900" lineHeight="normal" letterSpacing="-1.08px" pb="12px">
             {header}
           </Text>

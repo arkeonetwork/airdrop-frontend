@@ -1,26 +1,37 @@
 import React, { useState } from 'react';
-import { Box, Flex, Input, Link, ListItem, Text } from '@chakra-ui/react';
+import { Box, Flex, Image, Link, ListItem, Text } from '@chakra-ui/react';
 import { Link as ReactRouterLink } from 'react-router-dom';
 import { Panel } from '../../components/Panel';
 import { Carousel } from 'react-responsive-carousel';
 import { useToken } from '@chakra-ui/react';
+import Symbol from '../../assets/arkeo-symbol.svg';
 
 export const Claim = () => {
   const [grey200, teal] = useToken('colors', ['grey.200', 'teal']);
 
   return (
     <Panel>
-      <Flex flexDir="row">
-        <Flex flexDir="column" flex="1">
-          <Text>Claim Airdrop</Text>
-          <Box>
-            <Text>Available to Claim</Text>
-            <Text fontSize="24px" fontWeight="900" textAlign="center">
-              0.0 ARKEO
+      <Flex flexDir="row" textAlign="left">
+        <Flex flexDir="column" flex="1" p="32px">
+          <Text pb="24px" fontWeight={900}>
+            Claim Airdrop
+          </Text>
+          <Text fontWeight={500} lineHeight="24px">
+            Learn About Arkeo
+          </Text>
+          <Box position="absolute" pb="32px" bottom="0">
+            <Text fontSize="14px" fontWeight={500} color="grey.50">
+              Available to Claim
             </Text>
+            <Flex flexDir="row" alignItems="center">
+              <Image w="24px" h="24px" src={Symbol} />
+              <Text fontSize="24px" fontWeight="900" pl="5px">
+                0.0 ARKEO
+              </Text>
+            </Flex>
           </Box>
         </Flex>
-        <Flex flexDir="column" flex="2" backgroundColor="grey.300">
+        <Flex flexDir="column" flex="2" backgroundColor="grey.300" p='32px'>
           <Carousel
             showArrows={false}
             showStatus={false}
