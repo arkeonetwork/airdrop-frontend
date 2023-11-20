@@ -10,8 +10,10 @@ export const ValidCheck = () => {
 
   return (
     <Panel header="Congrats!" desc="You are eligible for the Arkeo airdrop!">
-      <Account amount="100" account="0x111fffeeeeaaabbccc" />
-      <Button onClick={() => navigate('/claim')}>Claim Arkeo</Button>
+      <Box p="32px">
+        <Account amount="100" account="0x111fffeeeeaaabbccc" />
+        <Button onClick={() => navigate('/claim')}>Claim Arkeo</Button>
+      </Box>
     </Panel>
   );
 };

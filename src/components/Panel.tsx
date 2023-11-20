@@ -18,12 +18,12 @@ export const Panel: React.FC<PanelProps> = ({ containerProps, children, header, 
       boxShadow="0px 0px 150px 0px rgba(0, 0, 0, 0.25)"
       backgroundColor="grey.300"
       backdropFilter="blur(50px)"
-      p="32px"
       maxW="auto"
+      p="0"
       {...containerProps}
     >
       {header && (
-        <Box pb="32px">
+        <Box pt="32px">
           <Text background="purple" backgroundClip="text" fontSize="36px" fontWeight="900" lineHeight="normal" letterSpacing="-1.08px" pb="12px">
             {header}
           </Text>

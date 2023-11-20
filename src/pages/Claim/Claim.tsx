@@ -20,7 +20,7 @@ export const Claim = () => {
             </Text>
           </Box>
         </Flex>
-        <Flex flexDir="column" flex="2">
+        <Flex flexDir="column" flex="2" backgroundColor="grey.300">
           <Carousel
             showArrows={false}
             showStatus={false}
