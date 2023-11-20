@@ -3,8 +3,8 @@ import type { BoxProps, ContainerProps } from '@chakra-ui/react';
 import { Box, Flex, Container, Text } from '@chakra-ui/react';
 
 type PanelProps = {
-  header: string;
-  desc: string;
+  header?: string;
+  desc?: string;
   containerProps?: ContainerProps;
 } & BoxProps;
 
@@ -12,6 +12,7 @@ export const Panel: React.FC<PanelProps> = ({ containerProps, children, header, 
   <Flex flex="1" flexDir="column" justifyContent="center" width="650px" px={{ base: 4, md: 0 }} {...rest}>
     <Container
       borderRadius="24px"
+      color="white"
       border="1px solid"
       borderColor="grey.200"
       boxShadow="0px 0px 150px 0px rgba(0, 0, 0, 0.25)"
@@ -21,14 +22,18 @@ export const Panel: React.FC<PanelProps> = ({ containerProps, children, header, 
       maxW="auto"
       {...containerProps}
     >
-      <Box pb="32px">
-        <Text background="purple" backgroundClip="text" fontSize="36px" fontWeight="900" lineHeight="normal" letterSpacing="-1.08px" pb="12px">
-          {header}
-        </Text>
-        <Text color="white" fontSize="18px" fontStyle="normal" fontWeight="400" lineHeight="28px">
-          {desc}
-        </Text>
-      </Box>
+      {header && (
+        <Box pb="32px">
+          <Text background="purple" backgroundClip="text" fontSize="36px" fontWeight="900" lineHeight="normal" letterSpacing="-1.08px" pb="12px">
+            {header}
+          </Text>
+          {desc && (
+            <Text color="white" fontSize="18px" fontStyle="normal" fontWeight="400" lineHeight="28px">
+              {desc}
+            </Text>
+          )}
+        </Box>
+      )}
       {children}
     </Container>
   </Flex>

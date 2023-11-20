@@ -5,11 +5,10 @@ import Symbol from '../assets/arkeo-symbol.svg';
 
 type Props = {
   amount: string;
-  symbol: string;
   account: string;
 };
 
-export const Account: React.FC<Props> = ({ amount, symbol, account, ...rest }) => (
+export const Account: React.FC<Props> = ({ amount, account, ...rest }) => (
   <Flex flex="1" flexDir="column" {...rest}>
     <Container
       borderRadius="24px"
@@ -23,11 +22,11 @@ export const Account: React.FC<Props> = ({ amount, symbol, account, ...rest }) =
       p="16px"
       color="white"
     >
-      <MiddleEllipsis text={'0x1234567898123450923840923fBc'} maxLength={14} fontSize="16px" fontWeight={500} lineHeight="24px" pb="16px" />
+      <MiddleEllipsis text={account} maxLength={14} fontSize="16px" fontWeight={500} lineHeight="24px" pb="16px" />
       <Flex flexDir="row" alignItems="center" gap={2}>
         <Image w="40px" h="40px" src={Symbol} />
         <Text fontSize="24px" fontWeight="900" textAlign="center">
-          100 ARKEO
+          {amount} ARKEO
         </Text>
       </Flex>
     </Container>

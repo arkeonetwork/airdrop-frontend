@@ -8,7 +8,7 @@ type Props = {
 
 export const MiddleEllipsis: React.FC<Props> = ({ text, maxLength, ...rest }) => {
   if (text.length <= maxLength) {
-    return <span>{text}</span>;
+    return <Text {...rest}>{text}</Text>;
   }
 
   const firstHalf = text.slice(0, maxLength / 2);

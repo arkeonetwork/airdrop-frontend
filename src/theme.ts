@@ -6,6 +6,11 @@ import { Button } from './components/styles/Button';
 export const theme = extendTheme({
   styles: {
     global: {
+      '.control-dots': {
+        top: 0,
+        margin: '0 !important',
+        height: '50px',
+      },
       body: {
         backgroundColor: '#080B12',
         minWidth: '100vw',
@@ -15,6 +20,7 @@ export const theme = extendTheme({
   colors: {
     teal: '#3BE0FF',
     grey: {
+      50: 'rgba(255, 255, 255, 0.36)',
       100: 'rgba(255, 255, 255, 0.1)',
       200: 'rgba(255, 255, 255, 0.04)',
       300: 'rgba(32, 32, 32, 0.28)',
