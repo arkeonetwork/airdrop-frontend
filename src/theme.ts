@@ -7,7 +7,7 @@ export const theme = extendTheme({
   styles: {
     global: {
       '.control-dots': {
-        top: 0,
+        top: '-8px',
         margin: '0 !important',
         height: '50px',
       },

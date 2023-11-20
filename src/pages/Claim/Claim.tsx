@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Flex, Image, Link, ListItem, Text } from '@chakra-ui/react';
+import { Box, Button, Flex, Image, Link, ListItem, Text } from '@chakra-ui/react';
 import { Link as ReactRouterLink } from 'react-router-dom';
 import { Panel } from '../../components/Panel';
 import { Carousel } from 'react-responsive-carousel';
@@ -10,7 +10,7 @@ export const Claim = () => {
   const [grey200, teal] = useToken('colors', ['grey.200', 'teal']);
 
   return (
-    <Panel>
+    <Panel width='800px'>
       <Flex flexDir="row" textAlign="left">
         <Flex flexDir="column" flex="1" p="32px">
           <Text pb="24px" fontWeight={900}>
@@ -31,7 +31,7 @@ export const Claim = () => {
             </Flex>
           </Box>
         </Flex>
-        <Flex flexDir="column" flex="2" backgroundColor="grey.300" p='32px'>
+        <Flex flexDir="column" flex="2" backgroundColor="grey.300" p="32px">
           <Carousel
             showArrows={false}
             showStatus={false}
@@ -82,6 +82,7 @@ export const Claim = () => {
               <p>Even More Stuff</p>
             </Box>
           </Carousel>
+          <Button onClick={() => {}}>Next</Button>
         </Flex>
       </Flex>
     </Panel>
