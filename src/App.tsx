@@ -15,7 +15,7 @@ function App() {
         textAlign="center"
         containerProps={{ maxWidth: 'container.lg', display: 'flex', flexDir: 'column', gap: 2, height: '100vh' }}
       >
-        <Image src={BackgroundImage} position="absolute" top={0} right="-20%" bottom="auto" zIndex="-1" />
+        <Image src={BackgroundImage} position="absolute" top={0} bottom="auto" zIndex="-1" />
         <Image src={Logo} position="absolute" top={10} />
         <BrowserRouter>
           <Routes>
