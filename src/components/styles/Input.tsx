@@ -17,7 +17,6 @@ export const Input = defineStyleConfig({
       },
     },
   },
-  // The default size and variant values
   defaultProps: {
     size: 'md',
     variant: 'filled',

@@ -6,8 +6,6 @@ export const Link = defineStyleConfig({
     fontWeight: 400,
     lineHeight: '28px',
   },
-
-  // The default size and variant values
   defaultProps: {
     size: 'md',
   },

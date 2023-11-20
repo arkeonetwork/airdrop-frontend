@@ -1,0 +1,35 @@
+import React from 'react';
+import { Flex, Container, Text, Image } from '@chakra-ui/react';
+import { MiddleEllipsis } from './MiddleEllipsis';
+import Symbol from '../assets/arkeo-symbol.svg';
+
+type Props = {
+  amount: string;
+  symbol: string;
+  account: string;
+};
+
+export const Account: React.FC<Props> = ({ amount, symbol, account, ...rest }) => (
+  <Flex flex="1" flexDir="column" {...rest}>
+    <Container
+      borderRadius="24px"
+      border="1px solid"
+      borderColor="grey.200"
+      boxShadow="0px 0px 150px 0px rgba(0, 0, 0, 0.25)"
+      backgroundColor="grey.300"
+      backdropFilter="blur(50px)"
+      textAlign="left"
+      my="32px"
+      p="16px"
+      color="white"
+    >
+      <MiddleEllipsis text={'0x1234567898123450923840923fBc'} maxLength={14} fontSize="16px" fontWeight={500} lineHeight="24px" pb="16px" />
+      <Flex flexDir="row" alignItems="center" gap={2}>
+        <Image w="40px" h="40px" src={Symbol} />
+        <Text fontSize="24px" fontWeight="900" textAlign="center">
+          100 ARKEO
+        </Text>
+      </Flex>
+    </Container>
+  </Flex>
+);

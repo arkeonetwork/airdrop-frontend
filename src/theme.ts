@@ -1,6 +1,7 @@
 import { extendTheme } from '@chakra-ui/react';
-import { Input } from './components/Input';
-import { Link } from './components/Link';
+import { Input } from './components/styles/Input';
+import { Link } from './components/styles/Link';
+import { Button } from './components/styles/Button';
 
 export const theme = extendTheme({
   styles: {
@@ -31,6 +32,7 @@ export const theme = extendTheme({
       letterSpacing: '-0.03em',
       fontWeight: 'black',
     },
+    Button,
     Input,
     Link,
     // Styles for the size variations

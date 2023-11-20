@@ -1,4 +1,5 @@
-import { Box, Input, Link, Text } from '@chakra-ui/react';
+import { Box, Input, Link } from '@chakra-ui/react';
+import { Link as ReactRouterLink } from 'react-router-dom';
 import { Panel } from '../../components/Panel';
 import React from 'react';
 
@@ -8,7 +9,9 @@ export const Check = () => {
       <Box my="44px">
         <Input variant="filled" placeholder="Paste Address" />
       </Box>
-      <Link>Learn more about Arkeo</Link>
+      <Link as={ReactRouterLink} to="valid">
+        Learn more about Arkeo
+      </Link>
     </Panel>
   );
 };
