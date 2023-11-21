@@ -1,7 +1,7 @@
 import React from 'react';
 import { Flex, Container, Text, Image } from '@chakra-ui/react';
 import { MiddleEllipsis } from './MiddleEllipsis';
-import Symbol from '../assets/arkeo-symbol.svg';
+import Symbol from '@assets/arkeo-symbol.svg';
 
 type Props = {
   amount: string;

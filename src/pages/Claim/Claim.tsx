@@ -1,24 +1,37 @@
-import React, { useState } from 'react';
-import { Box, Button, Flex, Image, Link, ListItem, Text } from '@chakra-ui/react';
-import { Link as ReactRouterLink } from 'react-router-dom';
-import { Panel } from '../../components/Panel';
+import React from 'react';
+import { Box, Button, Flex, Image, Text } from '@chakra-ui/react';
+import { Panel } from '@components/Panel';
 import { Carousel } from 'react-responsive-carousel';
 import { useToken } from '@chakra-ui/react';
-import Symbol from '../../assets/arkeo-symbol.svg';
+import Symbol from '@assets/arkeo-symbol.svg';
+import { CircleNumber } from '@components/CircleNumber';
 
 export const Claim = () => {
   const [grey200, teal] = useToken('colors', ['grey.200', 'teal']);
+  const items = ['Learn About Arkeo', 'Connect Cosmos Account', 'Connect Arkeo Account', 'Connect ETH Account', 'Claim'];
 
   return (
-    <Panel width='800px'>
+    <Panel width="800px">
       <Flex flexDir="row" textAlign="left">
-        <Flex flexDir="column" flex="1" p="32px">
-          <Text pb="24px" fontWeight={900}>
-            Claim Airdrop
-          </Text>
-          <Text fontWeight={500} lineHeight="24px">
-            Learn About Arkeo
-          </Text>
+        <Flex flexDir="column" p="32px" gap="24px">
+          <Text fontWeight={900}>Claim Airdrop</Text>
+          {items.map((item, index) => (
+            <Flex key={index}>
+              <Box
+                height="24px"
+                width="5px"
+                backgroundColor="teal"
+                position="absolute"
+                left="0"
+                borderTopRightRadius="5px"
+                borderBottomRightRadius="5px"
+              />
+              <CircleNumber number={(index + 1).toString()} />
+              <Text fontWeight={500} lineHeight="24px">
+                {item}
+              </Text>
+            </Flex>
+          ))}
           <Box position="absolute" pb="32px" bottom="0">
             <Text fontSize="14px" fontWeight={500} color="grey.50">
               Available to Claim
@@ -31,7 +44,7 @@ export const Claim = () => {
             </Flex>
           </Box>
         </Flex>
-        <Flex flexDir="column" flex="2" backgroundColor="grey.300" p="32px">
+        <Flex flexDir="column" flex="1 0 0" backgroundColor="grey.300" p="32px">
           <Carousel
             showArrows={false}
             showStatus={false}

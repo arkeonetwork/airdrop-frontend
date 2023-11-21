@@ -1,6 +1,6 @@
 import { Box, Input, Link } from '@chakra-ui/react';
 import { Link as ReactRouterLink } from 'react-router-dom';
-import { Panel } from '../../components/Panel';
+import { Panel } from '@components/Panel';
 import React from 'react';
 
 export const Check = () => {
