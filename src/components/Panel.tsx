@@ -2,13 +2,13 @@ import React from 'react';
 import type { BoxProps, ContainerProps } from '@chakra-ui/react';
 import { Box, Flex, Container, Text } from '@chakra-ui/react';
 
-type PanelProps = {
+type Props = {
   header?: string;
   desc?: string;
   containerProps?: ContainerProps;
 } & BoxProps;
 
-export const Panel: React.FC<PanelProps> = ({ containerProps, children, header, desc, ...rest }) => (
+export const Panel: React.FC<Props> = ({ containerProps, children, header, desc, ...rest }) => (
   <Flex flex="1" flexDir="column" justifyContent="center" width="650px" px={{ base: 4, md: 0 }} {...rest}>
     <Container
       borderRadius="24px"
@@ -20,6 +20,7 @@ export const Panel: React.FC<PanelProps> = ({ containerProps, children, header, 
       backdropFilter="blur(50px)"
       maxW="auto"
       p="0"
+      height='inherit'
       {...containerProps}
     >
       {header && (
