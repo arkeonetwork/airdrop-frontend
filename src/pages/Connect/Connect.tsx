@@ -10,6 +10,7 @@ import { Eth } from './components/Eth';
 import { Claim } from './components/Claim';
 import { useConnect } from './ConnectContext';
 import { MiddleEllipsis } from '@components/MiddleEllipsis';
+import { Congrats } from './components/Congrats';
 
 export const Connect = () => {
   const items = ['Learn About Arkeo', 'Connect Cosmos Account', 'Connect Arkeo Account', 'Connect ETH Account', 'Claim'];
@@ -29,6 +30,8 @@ export const Connect = () => {
         return <Eth />;
       case 5:
         return <Claim />;
+      case 6:
+        return <Congrats />;
       default:
         console.log('finished');
     }

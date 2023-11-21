@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Box, Flex, Container, Text, Image, BoxProps, IconButton } from '@chakra-ui/react';
+import { Button, Flex, Container, Text, Image, BoxProps } from '@chakra-ui/react';
 import { MiddleEllipsis } from './MiddleEllipsis';
 import Symbol from '@assets/arkeo-symbol.svg';
 import { ChevronDownIcon } from '@chakra-ui/icons';
