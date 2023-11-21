@@ -1,13 +1,16 @@
 import React from 'react';
 import { Button, Box, Text, Image, Flex } from '@chakra-ui/react';
 import ArkeoLogo from '@assets/arkeo-symbol.svg';
+import { useConnect } from '../ConnectContext';
 
-type Props = {
-  setStep: (step: number) => void;
-  step: number;
-};
+type Props = {};
 
-export const Claim: React.FC<Props> = ({ setStep, step }) => {
+export const Claim: React.FC<Props> = ({}) => {
+  const {
+    state: { step },
+    dispatch,
+  } = useConnect();
+
   return (
     <>
       <Flex flexDir="column" flex="1 0 0" gap="42px" textAlign="center" alignItems="center" justifyContent="space-between">
@@ -28,7 +31,7 @@ export const Claim: React.FC<Props> = ({ setStep, step }) => {
             Available to Claim
           </Text>
         </Flex>
-        <Button onClick={() => setStep(step + 1)}>Claim</Button>
+        <Button onClick={() => dispatch({ type: 'SET_STEP', payload: step + 1 })}>Claim</Button>
       </Flex>
     </>
   );

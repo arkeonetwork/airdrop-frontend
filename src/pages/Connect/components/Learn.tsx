@@ -1,21 +1,23 @@
 import React from 'react';
 import { Button, Box, Text, Flex, useToken } from '@chakra-ui/react';
 import { Carousel } from 'react-responsive-carousel';
+import { useConnect } from '../ConnectContext';
 
-type Props = {
-  setStep: (step: number) => void;
-  step: number;
-};
+type Props = {};
 
-export const Learn: React.FC<Props> = ({ setStep, step }) => {
-  const [grey200, teal] = useToken('colors', ['grey.200', 'teal']);
+export const Learn: React.FC<Props> = ({}) => {
+  const [grey200, teal50] = useToken('colors', ['grey.200', 'teal.50']);
+  const {
+    state: { step },
+    dispatch,
+  } = useConnect();
 
   return (
     <Flex flexDir="column" justifyContent="space-between" height="100%">
       <Carousel
         showArrows={false}
         showStatus={false}
-        showThumbs={true}
+        showThumbs={false}
         autoPlay={false}
         infiniteLoop={true}
         interval={5000}
@@ -31,13 +33,13 @@ export const Learn: React.FC<Props> = ({ setStep, step }) => {
             cursor: 'pointer',
           };
           if (isSelected) {
-            style.backgroundColor = teal;
+            style.backgroundColor = teal50;
           }
           return <li onClick={clickHandler} style={style} />;
         }}
       >
         <Box height="100%" mt="52px">
-          <Text color="teal" fontSize="16px" fontWeight={700}>
+          <Text color="teal.50" fontSize="16px" fontWeight={700}>
             Learn About Arkeo
           </Text>
           <Text fontSize="24px" fontWeight={400} pb="42px">
@@ -57,7 +59,7 @@ export const Learn: React.FC<Props> = ({ setStep, step }) => {
           <p>Even More Stuff</p>
         </Box>
       </Carousel>
-      <Button onClick={() => setStep(step + 1)}>Next</Button>
+      <Button onClick={() => dispatch({ type: 'SET_STEP', payload: step + 1 })}>Next</Button>
     </Flex>
   );
 };

@@ -2,11 +2,13 @@ import React from 'react';
 import { Text, TextProps } from '@chakra-ui/react';
 
 type Props = {
-  text: string;
+  text?: string;
   maxLength: number;
 } & TextProps;
 
 export const MiddleEllipsis: React.FC<Props> = ({ text, maxLength, ...rest }) => {
+  if(!text) return (<></>);
+  
   if (text.length <= maxLength) {
     return <Text {...rest}>{text}</Text>;
   }

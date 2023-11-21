@@ -1,1 +1,1 @@
-export * from './Connect';
+export * from './ConnectWrapper';

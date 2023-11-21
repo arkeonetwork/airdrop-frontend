@@ -5,7 +5,7 @@ import BackgroundImage from './assets/planet.jpeg';
 import Logo from './assets/arkeo-logo.svg';
 import { Section } from './components/Section';
 import { Check, ValidCheck } from './pages/Check';
-import { Connect } from './pages/Connect';
+import { ConnectWrapper } from './pages/Connect';
 
 function App() {
   return (
@@ -17,7 +17,7 @@ function App() {
           <Routes>
             <Route path="/check" element={<Check />} />
             <Route path="/check/valid" element={<ValidCheck />} />
-            <Route path="/claim" element={<Connect />} />
+            <Route path="/claim" element={<ConnectWrapper />} />
             <Route path="*" element={<Navigate to="/check" />} />
           </Routes>
         </BrowserRouter>

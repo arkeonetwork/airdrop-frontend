@@ -1,12 +1,12 @@
 import React from 'react';
-import { Flex, Container, Text, Image } from '@chakra-ui/react';
+import { Button, Flex, Container, Text, Image, BoxProps } from '@chakra-ui/react';
 import { MiddleEllipsis } from './MiddleEllipsis';
 import Symbol from '@assets/arkeo-symbol.svg';
 
 type Props = {
   amount: string;
   account: string;
-};
+} & BoxProps;
 
 export const Account: React.FC<Props> = ({ amount, account, ...rest }) => (
   <Flex flex="1" flexDir="column" {...rest}>

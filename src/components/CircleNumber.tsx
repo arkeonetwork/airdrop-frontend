@@ -10,7 +10,7 @@ export const CircleNumber: React.FC<{ number: number; step: number }> = ({ numbe
         borderRadius="50%"
         width="24px"
         height="24px"
-        backgroundColor={number > step ? 'grey.100' : 'teal'}
+        backgroundColor={number > step ? 'grey.100' : 'teal.50'}
         mr="8px"
         textAlign="center"
       >

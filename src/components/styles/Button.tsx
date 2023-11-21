@@ -3,19 +3,23 @@ import { defineStyleConfig } from '@chakra-ui/react';
 export const Button = defineStyleConfig({
   baseStyle: {
     color: 'black',
-    backgroundColor: 'teal',
+    backgroundColor: 'teal.50',
     width: '100%',
     borderRadius: '8px',
   },
   variants: {
     solid: {
-      backgroundColor: 'teal',
+      backgroundColor: 'teal.50',
       color: 'black',
     },
+    outline: {
+      border: '1px solid',
+      borderColor: 'grey.150'
+    }
   },
   defaultProps: {
     size: 'md',
     variant: 'solid',
-    colorScheme: 'teal',
+    colorScheme: 'teal.50',
   },
 });
