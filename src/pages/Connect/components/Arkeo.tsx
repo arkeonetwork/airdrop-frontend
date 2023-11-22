@@ -2,7 +2,7 @@ import React from 'react';
 import { Button, Box, Text, Image, Flex } from '@chakra-ui/react';
 import ArkeoLogo from '@assets/arkeo-symbol-grey.svg';
 import { useConnect } from '../ConnectContext';
-import { ConnectedAccount } from '@components/ConnectedAccount';
+import { ConnectedAccount } from './ConnectedAccount';
 
 type Props = {};
 
@@ -22,7 +22,7 @@ export const Arkeo: React.FC<Props> = ({}) => {
 
   const renderWallet = () => {
     if (arkeoAccount) {
-      return <ConnectedAccount width="100%" amount="100" account={arkeoAccount} />;
+      return <ConnectedAccount width="100%" amount="100" account={arkeoAccount} type="SET_ARKEO_ACCOUNT" />;
     }
     return <Image w="150px" h="150px" src={ArkeoLogo} />;
   };

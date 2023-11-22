@@ -2,7 +2,7 @@ import React from 'react';
 import { Button, Box, Text, Image, Flex } from '@chakra-ui/react';
 import EthLogo from '@assets/eth-logo-diamond.svg';
 import { useConnect } from '../ConnectContext';
-import { ConnectedAccount } from '@components/ConnectedAccount';
+import { ConnectedAccount } from './ConnectedAccount';
 
 type Props = {};
 
@@ -22,7 +22,7 @@ export const Eth: React.FC<Props> = ({}) => {
 
   const renderWallet = () => {
     if (ethAccount) {
-      return <ConnectedAccount width="100%" amount="100" account={ethAccount} />;
+      return <ConnectedAccount width="100%" amount="100" account={ethAccount} type="SET_ETH_ACCOUNT" />;
     }
     return <Image w="150px" h="150px" src={EthLogo} />;
   };

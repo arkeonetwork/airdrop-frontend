@@ -2,7 +2,7 @@ import React from 'react';
 import { Button, Box, Text, Image, Flex } from '@chakra-ui/react';
 import CosmosLogo from '@assets/cosmos-atom-logo.svg';
 import { useConnect } from '../ConnectContext';
-import { ConnectedAccount } from '@components/ConnectedAccount';
+import { ConnectedAccount } from './ConnectedAccount';
 
 type Props = {};
 
@@ -22,7 +22,7 @@ export const Cosmos: React.FC<Props> = ({}) => {
 
   const renderWallet = () => {
     if (cosmosAccount) {
-      return <ConnectedAccount width="100%" amount="100" account={cosmosAccount} />;
+      return <ConnectedAccount width="100%" amount="100" account={cosmosAccount} type="SET_COSMOS_ACCOUNT" />;
     }
     return <Image w="150px" h="150px" src={CosmosLogo} />;
   };

@@ -6,7 +6,7 @@ interface StateProps {
   arkeoAccount?: string;
   ethAccount?: string;
 }
-interface DispatchProps {
+export interface DispatchProps {
   type: string;
   payload: any;
 }
