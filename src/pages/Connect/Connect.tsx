@@ -65,6 +65,7 @@ export const Connect = () => {
                     backgroundColor="teal.50"
                     position="absolute"
                     left="-32px"
+                    top={!subText ? '-3px' : '0'}
                     borderTopRightRadius="5px"
                     borderBottomRightRadius="5px"
                   />
