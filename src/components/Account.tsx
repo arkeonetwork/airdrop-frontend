@@ -18,7 +18,7 @@ export const Account: React.FC<Props> = ({ amount, account, ...rest }) => (
       backgroundColor="grey.300"
       backdropFilter="blur(50px)"
       textAlign="left"
-      my="32px"
+      mb="32px"
       p="16px"
       color="white"
     >
