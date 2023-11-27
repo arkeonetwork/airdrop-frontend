@@ -8,15 +8,11 @@ import { useConnect } from '../ConnectContext';
 type Props = {
   amount: string;
   account: string;
-  type: string;
+  disconnect: () => void;
 } & BoxProps;
 
-export const ConnectedAccount: React.FC<Props> = ({ amount, account, type, ...rest }) => {
+export const ConnectedAccount: React.FC<Props> = ({ amount, account, disconnect, ...rest }) => {
   const { dispatch } = useConnect();
-
-  const disconnect = () => {
-    dispatch({ type, payload: undefined });
-  };
 
   return (
     <Flex width="100%" flex="1" flexDir="column" {...rest}>
