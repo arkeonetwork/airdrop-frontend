@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Button, Box, Text, Image, Flex } from '@chakra-ui/react';
 import CosmosLogo from '@assets/cosmos-atom-logo.svg';
 import { useConnect } from '../ConnectContext';
 import { ConnectedAccount } from './ConnectedAccount';
-import { useWeb3Modal } from '@web3modal/wagmi/react';
+import { useChain } from '@cosmos-kit/react';
 
 type Props = {};
 
@@ -12,20 +12,23 @@ export const Cosmos: React.FC<Props> = ({}) => {
     state: { step, cosmosAccount },
     dispatch,
   } = useConnect();
-  const { open } = useWeb3Modal();
+  const { status, username, address, message, connect, disconnect, openView } = useChain('cosmoshub');
+
+  useEffect(() => {
+    dispatch({ type: 'SET_COSMOS_ACCOUNT', payload: address });
+  }, [address]);
 
   const handleClick = () => {
     if (cosmosAccount) {
       dispatch({ type: 'SET_STEP', payload: step + 1 });
     } else {
-      open();
-      dispatch({ type: 'SET_COSMOS_ACCOUNT', payload: 'cosmosf6EC7ab88b098defB751B7401B5f6d12345' });
+      openView();
     }
   };
 
   const renderWallet = () => {
     if (cosmosAccount) {
-      return <ConnectedAccount width="100%" amount="100" account={cosmosAccount} type="SET_COSMOS_ACCOUNT" />;
+      return <ConnectedAccount width="100%" amount="100" account={cosmosAccount} disconnect={disconnect} />;
     }
     return <Image w="150px" h="150px" src={CosmosLogo} />;
   };
