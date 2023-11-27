@@ -14,11 +14,14 @@
     "@chakra-ui/react": "^2.8.2",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
+    "@web3modal/wagmi": "^3.3.2",
     "framer-motion": "^10.16.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-responsive-carousel": "^3.2.23",
-    "react-router-dom": "^6.19.0"
+    "react-router-dom": "^6.19.0",
+    "viem": "^1.19.9",
+    "wagmi": "^1.4.7"
   },
   "devDependencies": {
     "@types/react": "^18.2.37",
