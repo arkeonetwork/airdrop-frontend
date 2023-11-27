@@ -12,16 +12,14 @@ type Props = {
 } & BoxProps;
 
 export const ConnectedAccount: React.FC<Props> = ({ amount, account, type, ...rest }) => {
-  const {
-    dispatch,
-  } = useConnect();
-  
+  const { dispatch } = useConnect();
+
   const disconnect = () => {
     dispatch({ type, payload: undefined });
   };
 
   return (
-    <Flex flex="1" flexDir="column" {...rest}>
+    <Flex width="100%" flex="1" flexDir="column" {...rest}>
       <Container
         borderRadius="24px"
         border="1px solid"

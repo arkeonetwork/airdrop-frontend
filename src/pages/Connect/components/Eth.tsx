@@ -25,7 +25,7 @@ export const Eth: React.FC<Props> = ({}) => {
 
   const renderWallet = () => {
     if (ethAccount) {
-      return <ConnectedAccount width="100%" amount="100" account={ethAccount} type="SET_ETH_ACCOUNT" />;
+      return <ConnectedAccount amount="100" account={ethAccount} type="SET_ETH_ACCOUNT" />;
     }
     return <Image w="150px" h="150px" src={EthLogo} />;
   };
