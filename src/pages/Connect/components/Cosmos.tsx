@@ -4,6 +4,7 @@ import CosmosLogo from '@assets/cosmos-atom-logo.svg';
 import { useConnect } from '../ConnectContext';
 import { ConnectedAccount } from './ConnectedAccount';
 import { useChain } from '@cosmos-kit/react';
+import { StdFee } from '@cosmjs/stargate';
 
 type Props = {};
 
@@ -12,17 +13,33 @@ export const Cosmos: React.FC<Props> = ({}) => {
     state: { step, cosmosAccount },
     dispatch,
   } = useConnect();
-  const { status, username, address, message, connect, disconnect, openView } = useChain('cosmoshub');
+  const { status, username, address, message, connect, disconnect, openView, sign, isWalletConnected } = useChain('cosmoshub');
 
   useEffect(() => {
     dispatch({ type: 'SET_COSMOS_ACCOUNT', payload: address });
   }, [address]);
 
+  const fee: StdFee = {
+    amount: [
+      {
+        denom: 'uatom',
+        amount: '0',
+      },
+    ],
+    gas: '0',
+  };
+
   const handleClick = () => {
     if (cosmosAccount) {
       dispatch({ type: 'SET_STEP', payload: step + 1 });
     } else {
-      openView();
+      console.log({ isWalletConnected });
+      if (!isWalletConnected) {
+        openView();
+      } else {
+        console.log('signing');
+        sign([{ typeUrl: '/cosmos.bank.v1beta1.MsgSend', value: 'sldkfj' }], fee);
+      }
     }
   };
 

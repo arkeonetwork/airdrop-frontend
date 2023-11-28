@@ -21,10 +21,6 @@ export const Eth: React.FC<Props> = ({}) => {
   const { disconnect } = useDisconnect();
 
   useEffect(() => {
-    open();
-  }, []);
-
-  useEffect(() => {
     console.log({ data, isError, isLoading, isSuccess });
     if (isSuccess && !!address) {
       dispatch({ type: 'SET_ETH_ACCOUNT', payload: address });
@@ -32,16 +28,32 @@ export const Eth: React.FC<Props> = ({}) => {
   }, [data, isError, isLoading, isSuccess]);
 
   const handleClick = () => {
+    console.log({ address, isSuccess });
     if (ethAccount) {
       dispatch({ type: 'SET_STEP', payload: step + 1 });
     } else {
-      signMessage();
+      if (address) {
+        signMessage();
+      } else {
+        console.log('OPEN');
+        open();
+      }
     }
   };
 
   const renderWallet = () => {
     if (ethAccount) {
-      return <ConnectedAccount width="100%" amount="100" account={ethAccount} disconnect={disconnect} />;
+      return (
+        <ConnectedAccount
+          width="100%"
+          amount="100"
+          account={ethAccount}
+          disconnect={() => {
+            disconnect();
+            dispatch({ type: 'SET_ETH_ACCOUNT', payload: undefined });
+          }}
+        />
+      );
     }
     return <Image w="150px" h="150px" src={CosmosLogo} />;
   };
