@@ -20,12 +20,7 @@ export const Cosmos: React.FC<Props> = ({}) => {
   }, [address]);
 
   const fee: StdFee = {
-    amount: [
-      {
-        denom: 'uatom',
-        amount: '0',
-      },
-    ],
+    amount: [],
     gas: '0',
   };
 
@@ -38,7 +33,7 @@ export const Cosmos: React.FC<Props> = ({}) => {
         openView();
       } else {
         console.log('signing');
-        sign([{ typeUrl: '/cosmos.bank.v1beta1.MsgSend', value: 'sldkfj' }], fee);
+        sign([{ typeUrl: 'cosmos-sdk/MsgSend', value: { signer: address, data: 'sldkfj' } }], fee);
       }
     }
   };
