@@ -1,22 +1,21 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Button, Box, Text, Image, Flex } from '@chakra-ui/react';
 import ArkeoLogo from '@assets/arkeo-symbol-grey.svg';
 import { useConnect } from '../ConnectContext';
 import { ConnectedAccount } from './ConnectedAccount';
+import { bech32, bech32m } from 'bech32';
 
 type Props = {};
 
 export const Arkeo: React.FC<Props> = ({}) => {
   const {
-    state: { step, arkeoAccount },
+    state: { step, arkeoAccount, cosmosAccount },
     dispatch,
   } = useConnect();
 
   const handleClick = () => {
     if (arkeoAccount) {
       dispatch({ type: 'SET_STEP', payload: step + 1 });
-    } else {
-      dispatch({ type: 'SET_ARKEO_ACCOUNT', payload: 'arkeof6EC7ab88b098defB751B7401B5f6d12345' });
     }
   };
 
@@ -27,6 +26,14 @@ export const Arkeo: React.FC<Props> = ({}) => {
     return <Image w="150px" h="150px" src={ArkeoLogo} />;
   };
 
+  useEffect(() => {
+    if (cosmosAccount) {
+      const { prefix, words } = bech32.decode(cosmosAccount);
+      const address = bech32.encode('arkeo', words);
+      dispatch({ type: 'SET_ARKEO_ACCOUNT', payload: address });
+    }
+  }, [cosmosAccount]);
+  
   return (
     <>
       <Flex flexDir="column" flex="1 0 0" gap="42px" textAlign="center" alignItems="center" justifyContent="space-between">
