@@ -21,15 +21,12 @@ export const Eth: React.FC<Props> = ({}) => {
   const { disconnect } = useDisconnect();
 
   useEffect(() => {
-    console.log({ data, isError, isLoading, isSuccess, status });
-
-    if (isSuccess && !!address) {
+    if (isSuccess && address) {
       dispatch({ type: 'SET_ETH_ACCOUNT', payload: address });
     }
   }, [data, isError, isLoading, isSuccess]);
 
   const handleClick = () => {
-    console.log({ address, isSuccess });
     if (ethAccount) {
       dispatch({ type: 'SET_STEP', payload: step + 1 });
     } else {
