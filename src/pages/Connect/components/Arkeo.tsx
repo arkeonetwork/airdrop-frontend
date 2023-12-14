@@ -28,7 +28,7 @@ export const Arkeo: React.FC<Props> = ({}) => {
 
   const renderWallet = () => {
     if (arkeoAccount) {
-      return <ConnectedAccount width="100%" amount="100" account={arkeoAccount} disconnect={disconnect} />;
+      return <ConnectedAccount width="100%" amount="100" account={arkeoAccount} name={username} disconnect={disconnect} />;
     }
     return <Image w="150px" h="150px" src={ArkeoLogo} />;
   };
