@@ -28,13 +28,7 @@ export const Cosmos: React.FC<Props> = ({}) => {
     if (cosmosAccount) {
       dispatch({ type: 'SET_STEP', payload: step + 1 });
     } else {
-      console.log({ isWalletConnected });
-      if (!isWalletConnected) {
-        openView();
-      } else {
-        console.log('signing');
-        sign([{ typeUrl: 'cosmos-sdk/MsgSend', value: { signer: address, data: 'sldkfj' } }], fee);
-      }
+      openView();
     }
   };
 
