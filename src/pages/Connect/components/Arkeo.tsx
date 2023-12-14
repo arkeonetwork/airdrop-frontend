@@ -1,31 +1,39 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Button, Box, Text, Image, Flex } from '@chakra-ui/react';
 import ArkeoLogo from '@assets/arkeo-symbol-grey.svg';
 import { useConnect } from '../ConnectContext';
 import { ConnectedAccount } from './ConnectedAccount';
+import { useChain } from '@cosmos-kit/react';
 
 type Props = {};
 
 export const Arkeo: React.FC<Props> = ({}) => {
   const {
-    state: { step, arkeoAccount },
+    state: { step, arkeoAccount, cosmosAccount },
     dispatch,
   } = useConnect();
+  const { status, username, address, message, connect, disconnect, openView, sign, isWalletConnected } = useChain('arkeonetworktestnet');
+
+  useEffect(() => {
+    dispatch({ type: 'SET_ARKEO_ACCOUNT', payload: address });
+  }, [address]);
 
   const handleClick = () => {
     if (arkeoAccount) {
       dispatch({ type: 'SET_STEP', payload: step + 1 });
     } else {
-      dispatch({ type: 'SET_ARKEO_ACCOUNT', payload: 'arkeof6EC7ab88b098defB751B7401B5f6d12345' });
+      openView();
     }
   };
 
   const renderWallet = () => {
     if (arkeoAccount) {
-      return <ConnectedAccount width="100%" amount="100" account={arkeoAccount} disconnect={() => {}} />;
+      return <ConnectedAccount width="100%" amount="100" account={arkeoAccount} disconnect={disconnect} />;
     }
     return <Image w="150px" h="150px" src={ArkeoLogo} />;
   };
+
+
 
   return (
     <>
