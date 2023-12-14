@@ -13,15 +13,13 @@ import { wallets } from '@cosmos-kit/keplr';
 
 import '@interchain-ui/react/styles';
 
-// 1. Get projectId at https://cloud.walletconnect.com
 const projectId = import.meta.env.VITE_WALLET_CONNECT_ID;
 
-// 2. Create wagmiConfig
 const metadata = {
-  name: 'Web3Modal',
-  description: 'Web3Modal Example',
-  url: 'https://web3modal.com',
-  icons: ['https://avatars.githubusercontent.com/u/37784886'],
+  name: 'Arkeo',
+  description: 'Arkeo Airdrop',
+  url: 'https://arkeo.network',
+  icons: ['https://avatars.githubusercontent.com/u/37784886'], // TODO: update to arkeo
 };
 
 const evmChains = [mainnet];
