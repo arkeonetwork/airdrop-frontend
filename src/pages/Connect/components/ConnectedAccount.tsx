@@ -9,9 +9,10 @@ type Props = {
   amount: string;
   account: string;
   disconnect: () => void;
+  name?: string;
 } & BoxProps;
 
-export const ConnectedAccount: React.FC<Props> = ({ amount, account, disconnect, ...rest }) => {
+export const ConnectedAccount: React.FC<Props> = ({ amount, account, name, disconnect, ...rest }) => {
   const { dispatch } = useConnect();
 
   return (
@@ -33,10 +34,12 @@ export const ConnectedAccount: React.FC<Props> = ({ amount, account, disconnect,
             <MiddleEllipsis text={account} maxLength={10} fontSize="16px" fontWeight={400} pb="16px" />
             <Text pl="4px">will receive</Text>
           </Flex>
-          <Flex alignItems="center" gap={2}>
-            <Text>Account #0</Text>
-            <ChevronDownIcon width="24px" height="24px" backgroundColor="grey.100" borderRadius="4px" padding="4px" color="grey.50" />
-          </Flex>
+          {name && (
+            <Flex alignItems="center" gap={2}>
+              <Text>{name}</Text>
+              <ChevronDownIcon width="24px" height="24px" backgroundColor="grey.100" borderRadius="4px" padding="4px" color="grey.50" />
+            </Flex>
+          )}
         </Flex>
         <Flex flexDir="row" alignItems="center" gap={2}>
           <Image w="24px" h="24px" src={Symbol} />
