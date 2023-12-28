@@ -14,7 +14,7 @@ export const Eth: React.FC<Props> = ({}) => {
     dispatch,
   } = useConnect();
   const { open } = useWeb3Modal();
-  const { data, isError, isLoading, isSuccess, signMessage, status } = useSignMessage({
+  const { data, isError, isLoading, isSuccess, signMessage, status, reset } = useSignMessage({
     message: 'ETH airdrop eligibility check',
   });
   const { address } = useAccount();
@@ -33,7 +33,6 @@ export const Eth: React.FC<Props> = ({}) => {
       if (address) {
         signMessage();
       } else {
-        console.log('OPEN');
         open();
       }
     }
@@ -49,14 +48,15 @@ export const Eth: React.FC<Props> = ({}) => {
           disconnect={() => {
             disconnect();
             dispatch({ type: 'SET_ETH_ACCOUNT', payload: undefined });
+            reset();
           }}
         />
       );
     }
     return <Image w="150px" h="150px" src={CosmosLogo} />;
   };
-  const buttonText = ethAccount ? 'Next' : status === 'loading' ? 'Sign With Wallet' : 'Connect Wallet';
-
+  const buttonText = ethAccount ? 'Next' : address ? 'Sign With Wallet' : 'Connect Wallet';
+  console.log({ status, isSuccess, data });
   return (
     <>
       <Flex flexDir="column" flex="1 0 0" gap="42px" textAlign="center" alignItems="center" justifyContent="space-between">

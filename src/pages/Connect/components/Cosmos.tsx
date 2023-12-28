@@ -34,7 +34,7 @@ export const Cosmos: React.FC<Props> = ({}) => {
 
   const renderWallet = () => {
     if (cosmosAccount) {
-      return <ConnectedAccount width="100%" amount="100" account={cosmosAccount} disconnect={disconnect} />;
+      return <ConnectedAccount width="100%" amount="100" account={cosmosAccount} name={username} disconnect={disconnect} />;
     }
     return <Image w="150px" h="150px" src={CosmosLogo} />;
   };
