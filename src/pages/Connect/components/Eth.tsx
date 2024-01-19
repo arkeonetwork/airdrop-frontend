@@ -30,7 +30,6 @@ export const Eth: React.FC<Props> = ({}) => {
     if (ethAccount) {
       dispatch({ type: 'SET_STEP', payload: step + 1 });
     } else {
-
       if (address) {
         signMessage();
       } else {
