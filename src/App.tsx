@@ -16,7 +16,7 @@ function App() {
         <BrowserRouter>
           <Routes>
             <Route path="/check" element={<Check />} />
-            <Route path="/check/valid" element={<ValidCheck />} />
+            <Route path="/check/valid/:address/:amount" element={<ValidCheck />} />
             <Route path="/claim" element={<ConnectWrapper />} />
             <Route path="*" element={<Navigate to="/check" />} />
           </Routes>

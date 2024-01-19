@@ -1,38 +1,62 @@
-import { useState, useEffect } from 'react';
+import axios from 'axios'
+import { ethers } from 'ethers'
+import { useState, useEffect } from 'react'
+import { bech32 } from 'bech32'
 
-export const useClaim = () => {
-  const [data, setData] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
+const arkeoEndpoint = import.meta.env.VITE_ARKEO_ENDPOINT
+
+enum ChainEnum {
+  INVALID = -1,
+  ARKEO = 0,
+  ETHEREUM = 1,
+}
+
+type UseClaim = {
+  path: string
+  address: string
+}
+
+export const useClaim = ({ path, address }: UseClaim) => {
+  const [claimRecord, setClaimRecord] = useState<any>(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<Error | unknown>(null)
+  const validCosmosPrefix = ['cosmos', 'tarkeo', 'arkeo']
+
+  const getChainType = (address: string) => {
+    if (ethers.isAddress(address)) {
+      return ChainEnum.ETHEREUM
+    } else if (validCosmosPrefix.includes(bech32.decode(address).prefix)) {
+      return ChainEnum.ARKEO
+    }
+    return ChainEnum.INVALID
+  }
+
+  const buildUrl = (path: string, address: string) => {
+    return arkeoEndpoint + path + '/' + address
+  }
+
+  const fetchData = async () => {
+    try {
+      const chain = getChainType(address)
+      if (chain !== ChainEnum.INVALID) {
+        setIsLoading(true)
+        setError(null)
+        const params = { chain }
+        const url = buildUrl(path, address)
+        const { data } = await axios.get(url, { params })
+        setClaimRecord(data.claim_record)
+      }
+    } catch (error) {
+      setError(error)
+      setClaimRecord(null)
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // Start loading
-        setIsLoading(true);
-        // Make the API call
-        const response = await fetch("apiUrl");
-        // Check if the response is successful
-        if (!response.ok) {
-          throw new Error('Failed to fetch data');
-        }
-        // Parse the JSON data
-        const result = await response.json();
-        // Set the data
-        setData(result);
-      } catch (error) {
-        // Set the error if an exception occurs
-        setError(error);
-      } finally {
-        // Stop loading, whether the call was successful or not
-        setIsLoading(false);
-      }
-    };
+    fetchData()
+  }, [arkeoEndpoint, address, path])
 
-    // Call the fetchData function
-    fetchData();
-  }, []); // Re-run the effect when the apiUrl changes
-
-  // Return the data, loading status, and error
-  return { data, isLoading, error };
-};
+  return { claimRecord, isLoading, error }
+}
