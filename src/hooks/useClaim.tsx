@@ -1,35 +1,54 @@
 import axios from 'axios'
+import { ethers } from 'ethers'
 import { useState, useEffect } from 'react'
+import { bech32 } from 'bech32'
 
 const arkeoEndpoint = import.meta.env.VITE_ARKEO_ENDPOINT
+
+enum ChainEnum {
+  INVALID = -1,
+  ARKEO = 0,
+  ETHEREUM = 1,
+}
 
 type UseClaim = {
   path: string
   address: string
-  chain: number
 }
 
-export const useClaim = ({ path, address, chain }: UseClaim) => {
-  const [claimRecord, setClaimRecord] = useState(null)
+export const useClaim = ({ path, address }: UseClaim) => {
+  const [claimRecord, setClaimRecord] = useState<any>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<Error | unknown>(null)
+  const validCosmosPrefix = ['cosmos', 'tarkeo', 'arkeo']
+
+  const getChainType = (address: string) => {
+    if (ethers.isAddress(address)) {
+      return ChainEnum.ETHEREUM
+    } else if (validCosmosPrefix.includes(bech32.decode(address).prefix)) {
+      return ChainEnum.ARKEO
+    }
+    return ChainEnum.INVALID
+  }
+
+  const buildUrl = (path: string, address: string) => {
+    return arkeoEndpoint + path + '/' + address
+  }
 
   const fetchData = async () => {
     try {
-      console.info('Fetching data', arkeoEndpoint)
-      setIsLoading(true)
-      const params = { chain }
-      const url = arkeoEndpoint + path + '/' + address
-      const response = await axios
-        .get(url, { params })
-        .then((res) => res.data())
-      if (!response.ok) {
-        throw new Error('Failed to fetch data')
+      const chain = getChainType(address)
+      if (chain !== ChainEnum.INVALID) {
+        setIsLoading(true)
+        setError(null)
+        const params = { chain }
+        const url = buildUrl(path, address)
+        const { data } = await axios.get(url, { params })
+        setClaimRecord(data.claim_record)
       }
-      const result = await response.json()
-      setClaimRecord(result)
     } catch (error) {
       setError(error)
+      setClaimRecord(null)
     } finally {
       setIsLoading(false)
     }
@@ -37,7 +56,7 @@ export const useClaim = ({ path, address, chain }: UseClaim) => {
 
   useEffect(() => {
     fetchData()
-  }, [arkeoEndpoint, address])
+  }, [arkeoEndpoint, address, path])
 
   return { claimRecord, isLoading, error }
 }
