@@ -12,15 +12,24 @@ enum ChainEnum {
 }
 
 type UseClaim = {
-  path: string
   address: string
 }
 
-export const useClaim = ({ path, address }: UseClaim) => {
+export const useClaim = ({ address }: UseClaim) => {
   const [claimRecord, setClaimRecord] = useState<any>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<Error | unknown>(null)
   const validCosmosPrefix = ['cosmos', 'tarkeo', 'arkeo']
+
+  const calculateClaimAmount = (claimRecord: any) => {
+    const parseAmount = (amount: string) => parseInt(amount, 10) ?? 0
+
+    const amountClaim = parseAmount(claimRecord?.amount_claim?.amount)
+    const amountDelegate = parseAmount(claimRecord?.amount_delegate?.amount)
+    const amountVote = parseAmount(claimRecord?.amount_vote?.amount)
+
+    return amountClaim + amountDelegate + amountVote
+  }
 
   const getChainType = (address: string) => {
     if (ethers.isAddress(address)) {
@@ -38,15 +47,20 @@ export const useClaim = ({ path, address }: UseClaim) => {
   const fetchData = async () => {
     try {
       const chain = getChainType(address)
+      console.log({ chain })
       if (chain !== ChainEnum.INVALID) {
         setIsLoading(true)
         setError(null)
         const params = { chain }
-        const url = buildUrl(path, address)
+        const url = buildUrl('/arkeo/claim/claimrecord', address)
         const { data } = await axios.get(url, { params })
-        setClaimRecord(data.claim_record)
+        setClaimRecord({
+          ...data.claim_record,
+          total: calculateClaimAmount(data.claim_record),
+        })
       }
     } catch (error) {
+      console.error(error)
       setError(error)
       setClaimRecord(null)
     } finally {
@@ -56,7 +70,7 @@ export const useClaim = ({ path, address }: UseClaim) => {
 
   useEffect(() => {
     fetchData()
-  }, [arkeoEndpoint, address, path])
+  }, [arkeoEndpoint, address])
 
   return { claimRecord, isLoading, error }
 }

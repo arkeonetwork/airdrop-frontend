@@ -1,64 +1,82 @@
-import { createContext, useContext, useReducer } from 'react';
+import { createContext, useContext, useReducer } from 'react'
 
 interface StateProps {
-  step: number;
-  cosmosAccount?: string;
-  arkeoAccount?: string;
-  ethAccount?: string;
+  step: number
+  totalAmount: number
+  cosmosAccount?: string
+  arkeoAccount?: string
+  ethAccount?: string
 }
 
 export interface DispatchProps {
-  type: string;
-  payload: any;
+  type: string
+  payload: any
 }
 
 export const initialState = {
   step: 1,
-};
+  totalAmount: 0,
+}
 
 const connectReducer = (state: StateProps, action: DispatchProps) => {
-  const { type, payload } = action;
+  const { type, payload } = action
   switch (type) {
     case 'SET_STEP':
       return {
         ...state,
         step: payload,
-      };
+      }
     case 'SET_COSMOS_ACCOUNT':
       return {
         ...state,
         cosmosAccount: payload,
-      };
+      }
     case 'SET_ARKEO_ACCOUNT':
       return {
         ...state,
         arkeoAccount: payload,
-      };
+      }
     case 'SET_ETH_ACCOUNT':
       return {
         ...state,
         ethAccount: payload,
-      };
+      }
+    case 'SET_TOTAL_AMOUNT':
+      return {
+        ...state,
+        totalAmount: payload,
+      }
     default:
-      return state;
+      return state
   }
-};
-interface ContextProps {
-  state: StateProps;
-  dispatch: React.Dispatch<DispatchProps>;
 }
-const ConnectContext = createContext<ContextProps>({ state: initialState, dispatch: () => null });
+interface ContextProps {
+  state: StateProps
+  dispatch: React.Dispatch<DispatchProps>
+}
+const ConnectContext = createContext<ContextProps>({
+  state: initialState,
+  dispatch: () => null,
+})
 
-export const ConnectProvider = ({ children }: { children: React.ReactNode }) => {
-  const [state, dispatch] = useReducer(connectReducer, initialState);
+export const ConnectProvider = ({
+  children,
+}: {
+  children: React.ReactNode
+}) => {
+  const [state, dispatch] = useReducer(connectReducer, initialState)
 
-  return <ConnectContext.Provider value={{ state, dispatch }}>{children}</ConnectContext.Provider>;
-};
+  return (
+    <ConnectContext.Provider value={{ state, dispatch }}>
+      {children}
+    </ConnectContext.Provider>
+  )
+}
 
 export const useConnect = (): ContextProps => {
-  const context = useContext(ConnectContext);
+  const context = useContext(ConnectContext)
   if (!context) {
-    throw new Error('useConnect must be used within an ConnectProvider');
+    throw new Error('useConnect must be used within an ConnectProvider')
   }
-  return context;
-};
+  return context
+}

@@ -3,6 +3,9 @@ import { Link as ReactRouterLink, useNavigate } from 'react-router-dom'
 import { Panel } from '@components/Panel'
 import React, { useEffect, useState } from 'react'
 import { useClaim } from '@hooks/useClaim'
+import axios from 'axios'
+
+const arkeoEndpoint = import.meta.env.VITE_ARKEO_ENDPOINT
 
 export const Check = () => {
   const [address, setAddress] = useState('')
@@ -11,33 +14,36 @@ export const Check = () => {
   const navigate = useNavigate()
 
   const { claimRecord, error } = useClaim({
-    path: '/claim/claimrecord',
     address,
   })
 
-  useEffect(() => {
-    if (claimRecord) {
-      const amount = calculateClaimAmount()
-      if (amount > 0) {
-        console.log('NAV')
-        navigate('/check/valid/' + address + '/' + amount)
-      } else {
-        setErrorMessage('You are not eligible for the Arkeo airdrop')
-      }
+  const fetchData = async () => {
+    try {
+      const url = arkeoEndpoint + '/cosmos/tx/v1beta1/txs'
+      const { data } = await axios.post(url, {
+        type: 'arkeo.claim.MsgClaimEth',
+      })
+      console.log(data)
+    } catch (error) {
+      console.error(error)
     }
-  }, [claimRecord])
+  }
+
+  useEffect(() => {
+    fetchData()
+  }, [])
+
+  // useEffect(() => {
+  //   if (claimRecord) {
+  //     if (claimRecord?.total > 0) {
+  //       navigate('/check/valid/' + address + '/' + claimRecord?.total)
+  //     } else {
+  //       setErrorMessage('You are not eligible for the Arkeo airdrop')
+  //     }
+  //   }
+  // }, [claimRecord?.total])
   console.log('claimRecord', claimRecord)
   console.log('error', error)
-
-  const calculateClaimAmount = () => {
-    const parseAmount = (amount: string) => parseInt(amount, 10) ?? 0
-
-    const amountClaim = parseAmount(claimRecord?.amount_claim?.amount)
-    const amountDelegate = parseAmount(claimRecord?.amount_delegate?.amount)
-    const amountVote = parseAmount(claimRecord?.amount_vote?.amount)
-
-    return amountClaim + amountDelegate + amountVote
-  }
 
   const changeAddress = (event: any) => {
     setAddress(event.target.value)
@@ -62,9 +68,7 @@ export const Check = () => {
           {errorMessage}
         </Text>
 
-        <Link as={ReactRouterLink}>
-          Learn more about Arkeo
-        </Link>
+        <Link as={ReactRouterLink}>Learn more about Arkeo</Link>
       </Box>
     </Panel>
   )

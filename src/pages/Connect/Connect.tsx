@@ -15,7 +15,7 @@ import { Congrats } from './components/Congrats';
 export const Connect = () => {
   const items = ['Learn About Arkeo', 'Connect Cosmos Account', 'Connect Arkeo Account', 'Connect ETH Account', 'Claim'];
   const {
-    state: { step, cosmosAccount, arkeoAccount, ethAccount },
+    state: { step, cosmosAccount, arkeoAccount, ethAccount, totalAmount },
   } = useConnect();
 
   const displayStep = () => {
@@ -100,7 +100,7 @@ export const Connect = () => {
             <Flex flexDir="row" alignItems="center">
               <Image w="24px" h="24px" src={Symbol} />
               <Text fontSize="24px" fontWeight="900" pl="5px">
-                0.0 ARKEO
+                {totalAmount} ARKEO
               </Text>
             </Flex>
           </Box>
