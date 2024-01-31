@@ -1,17 +1,13 @@
 /* eslint-disable */
-import {
-  Chain,
-  ClaimRecord,
-  chainFromJSON,
-  chainToJSON,
-} from "../../arkeo/claim/claim_record";
-import { Reader, Writer } from "protobufjs/minimal";
-import { Params } from "../../arkeo/claim/params";
+import _m0 from "protobufjs/minimal";
+import { Chain, chainFromJSON, chainToJSON, ClaimRecord } from "./claim_record";
+import { Params } from "./params";
 
 export const protobufPackage = "arkeo.claim";
 
 /** QueryParamsRequest is request type for the Query/Params RPC method. */
-export interface QueryParamsRequest {}
+export interface QueryParamsRequest {
+}
 
 /** QueryParamsResponse is response type for the Query/Params RPC method. */
 export interface QueryParamsResponse {
@@ -28,17 +24,19 @@ export interface QueryClaimRecordResponse {
   claimRecord: ClaimRecord | undefined;
 }
 
-const baseQueryParamsRequest: object = {};
+function createBaseQueryParamsRequest(): QueryParamsRequest {
+  return {};
+}
 
 export const QueryParamsRequest = {
-  encode(_: QueryParamsRequest, writer: Writer = Writer.create()): Writer {
+  encode(_: QueryParamsRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     return writer;
   },
 
-  decode(input: Reader | Uint8Array, length?: number): QueryParamsRequest {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryParamsRequest {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseQueryParamsRequest } as QueryParamsRequest;
+    const message = createBaseQueryParamsRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -51,8 +49,7 @@ export const QueryParamsRequest = {
   },
 
   fromJSON(_: any): QueryParamsRequest {
-    const message = { ...baseQueryParamsRequest } as QueryParamsRequest;
-    return message;
+    return {};
   },
 
   toJSON(_: QueryParamsRequest): unknown {
@@ -60,29 +57,28 @@ export const QueryParamsRequest = {
     return obj;
   },
 
-  fromPartial(_: DeepPartial<QueryParamsRequest>): QueryParamsRequest {
-    const message = { ...baseQueryParamsRequest } as QueryParamsRequest;
+  fromPartial<I extends Exact<DeepPartial<QueryParamsRequest>, I>>(_: I): QueryParamsRequest {
+    const message = createBaseQueryParamsRequest();
     return message;
   },
 };
 
-const baseQueryParamsResponse: object = {};
+function createBaseQueryParamsResponse(): QueryParamsResponse {
+  return { params: undefined };
+}
 
 export const QueryParamsResponse = {
-  encode(
-    message: QueryParamsResponse,
-    writer: Writer = Writer.create()
-  ): Writer {
+  encode(message: QueryParamsResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.params !== undefined) {
       Params.encode(message.params, writer.uint32(10).fork()).ldelim();
     }
     return writer;
   },
 
-  decode(input: Reader | Uint8Array, length?: number): QueryParamsResponse {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryParamsResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseQueryParamsResponse } as QueryParamsResponse;
+    const message = createBaseQueryParamsResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -98,40 +94,30 @@ export const QueryParamsResponse = {
   },
 
   fromJSON(object: any): QueryParamsResponse {
-    const message = { ...baseQueryParamsResponse } as QueryParamsResponse;
-    if (object.params !== undefined && object.params !== null) {
-      message.params = Params.fromJSON(object.params);
-    } else {
-      message.params = undefined;
-    }
-    return message;
+    return { params: isSet(object.params) ? Params.fromJSON(object.params) : undefined };
   },
 
   toJSON(message: QueryParamsResponse): unknown {
     const obj: any = {};
-    message.params !== undefined &&
-      (obj.params = message.params ? Params.toJSON(message.params) : undefined);
+    message.params !== undefined && (obj.params = message.params ? Params.toJSON(message.params) : undefined);
     return obj;
   },
 
-  fromPartial(object: DeepPartial<QueryParamsResponse>): QueryParamsResponse {
-    const message = { ...baseQueryParamsResponse } as QueryParamsResponse;
-    if (object.params !== undefined && object.params !== null) {
-      message.params = Params.fromPartial(object.params);
-    } else {
-      message.params = undefined;
-    }
+  fromPartial<I extends Exact<DeepPartial<QueryParamsResponse>, I>>(object: I): QueryParamsResponse {
+    const message = createBaseQueryParamsResponse();
+    message.params = (object.params !== undefined && object.params !== null)
+      ? Params.fromPartial(object.params)
+      : undefined;
     return message;
   },
 };
 
-const baseQueryClaimRecordRequest: object = { address: "", chain: 0 };
+function createBaseQueryClaimRecordRequest(): QueryClaimRecordRequest {
+  return { address: "", chain: 0 };
+}
 
 export const QueryClaimRecordRequest = {
-  encode(
-    message: QueryClaimRecordRequest,
-    writer: Writer = Writer.create()
-  ): Writer {
+  encode(message: QueryClaimRecordRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.address !== "") {
       writer.uint32(10).string(message.address);
     }
@@ -141,12 +127,10 @@ export const QueryClaimRecordRequest = {
     return writer;
   },
 
-  decode(input: Reader | Uint8Array, length?: number): QueryClaimRecordRequest {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryClaimRecordRequest {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = {
-      ...baseQueryClaimRecordRequest,
-    } as QueryClaimRecordRequest;
+    const message = createBaseQueryClaimRecordRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -165,20 +149,10 @@ export const QueryClaimRecordRequest = {
   },
 
   fromJSON(object: any): QueryClaimRecordRequest {
-    const message = {
-      ...baseQueryClaimRecordRequest,
-    } as QueryClaimRecordRequest;
-    if (object.address !== undefined && object.address !== null) {
-      message.address = String(object.address);
-    } else {
-      message.address = "";
-    }
-    if (object.chain !== undefined && object.chain !== null) {
-      message.chain = chainFromJSON(object.chain);
-    } else {
-      message.chain = 0;
-    }
-    return message;
+    return {
+      address: isSet(object.address) ? String(object.address) : "",
+      chain: isSet(object.chain) ? chainFromJSON(object.chain) : 0,
+    };
   },
 
   toJSON(message: QueryClaimRecordRequest): unknown {
@@ -188,51 +162,30 @@ export const QueryClaimRecordRequest = {
     return obj;
   },
 
-  fromPartial(
-    object: DeepPartial<QueryClaimRecordRequest>
-  ): QueryClaimRecordRequest {
-    const message = {
-      ...baseQueryClaimRecordRequest,
-    } as QueryClaimRecordRequest;
-    if (object.address !== undefined && object.address !== null) {
-      message.address = object.address;
-    } else {
-      message.address = "";
-    }
-    if (object.chain !== undefined && object.chain !== null) {
-      message.chain = object.chain;
-    } else {
-      message.chain = 0;
-    }
+  fromPartial<I extends Exact<DeepPartial<QueryClaimRecordRequest>, I>>(object: I): QueryClaimRecordRequest {
+    const message = createBaseQueryClaimRecordRequest();
+    message.address = object.address ?? "";
+    message.chain = object.chain ?? 0;
     return message;
   },
 };
 
-const baseQueryClaimRecordResponse: object = {};
+function createBaseQueryClaimRecordResponse(): QueryClaimRecordResponse {
+  return { claimRecord: undefined };
+}
 
 export const QueryClaimRecordResponse = {
-  encode(
-    message: QueryClaimRecordResponse,
-    writer: Writer = Writer.create()
-  ): Writer {
+  encode(message: QueryClaimRecordResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.claimRecord !== undefined) {
-      ClaimRecord.encode(
-        message.claimRecord,
-        writer.uint32(10).fork()
-      ).ldelim();
+      ClaimRecord.encode(message.claimRecord, writer.uint32(10).fork()).ldelim();
     }
     return writer;
   },
 
-  decode(
-    input: Reader | Uint8Array,
-    length?: number
-  ): QueryClaimRecordResponse {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryClaimRecordResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = {
-      ...baseQueryClaimRecordResponse,
-    } as QueryClaimRecordResponse;
+    const message = createBaseQueryClaimRecordResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -248,37 +201,21 @@ export const QueryClaimRecordResponse = {
   },
 
   fromJSON(object: any): QueryClaimRecordResponse {
-    const message = {
-      ...baseQueryClaimRecordResponse,
-    } as QueryClaimRecordResponse;
-    if (object.claimRecord !== undefined && object.claimRecord !== null) {
-      message.claimRecord = ClaimRecord.fromJSON(object.claimRecord);
-    } else {
-      message.claimRecord = undefined;
-    }
-    return message;
+    return { claimRecord: isSet(object.claimRecord) ? ClaimRecord.fromJSON(object.claimRecord) : undefined };
   },
 
   toJSON(message: QueryClaimRecordResponse): unknown {
     const obj: any = {};
-    message.claimRecord !== undefined &&
-      (obj.claimRecord = message.claimRecord
-        ? ClaimRecord.toJSON(message.claimRecord)
-        : undefined);
+    message.claimRecord !== undefined
+      && (obj.claimRecord = message.claimRecord ? ClaimRecord.toJSON(message.claimRecord) : undefined);
     return obj;
   },
 
-  fromPartial(
-    object: DeepPartial<QueryClaimRecordResponse>
-  ): QueryClaimRecordResponse {
-    const message = {
-      ...baseQueryClaimRecordResponse,
-    } as QueryClaimRecordResponse;
-    if (object.claimRecord !== undefined && object.claimRecord !== null) {
-      message.claimRecord = ClaimRecord.fromPartial(object.claimRecord);
-    } else {
-      message.claimRecord = undefined;
-    }
+  fromPartial<I extends Exact<DeepPartial<QueryClaimRecordResponse>, I>>(object: I): QueryClaimRecordResponse {
+    const message = createBaseQueryClaimRecordResponse();
+    message.claimRecord = (object.claimRecord !== undefined && object.claimRecord !== null)
+      ? ClaimRecord.fromPartial(object.claimRecord)
+      : undefined;
     return message;
   },
 };
@@ -288,48 +225,44 @@ export interface Query {
   /** Parameters queries the parameters of the module. */
   Params(request: QueryParamsRequest): Promise<QueryParamsResponse>;
   /** Queries a list of ClaimRecord items. */
-  ClaimRecord(
-    request: QueryClaimRecordRequest
-  ): Promise<QueryClaimRecordResponse>;
+  ClaimRecord(request: QueryClaimRecordRequest): Promise<QueryClaimRecordResponse>;
 }
 
 export class QueryClientImpl implements Query {
   private readonly rpc: Rpc;
   constructor(rpc: Rpc) {
     this.rpc = rpc;
+    this.Params = this.Params.bind(this);
+    this.ClaimRecord = this.ClaimRecord.bind(this);
   }
   Params(request: QueryParamsRequest): Promise<QueryParamsResponse> {
     const data = QueryParamsRequest.encode(request).finish();
     const promise = this.rpc.request("arkeo.claim.Query", "Params", data);
-    return promise.then((data) => QueryParamsResponse.decode(new Reader(data)));
+    return promise.then((data) => QueryParamsResponse.decode(new _m0.Reader(data)));
   }
 
-  ClaimRecord(
-    request: QueryClaimRecordRequest
-  ): Promise<QueryClaimRecordResponse> {
+  ClaimRecord(request: QueryClaimRecordRequest): Promise<QueryClaimRecordResponse> {
     const data = QueryClaimRecordRequest.encode(request).finish();
     const promise = this.rpc.request("arkeo.claim.Query", "ClaimRecord", data);
-    return promise.then((data) =>
-      QueryClaimRecordResponse.decode(new Reader(data))
-    );
+    return promise.then((data) => QueryClaimRecordResponse.decode(new _m0.Reader(data)));
   }
 }
 
 interface Rpc {
-  request(
-    service: string,
-    method: string,
-    data: Uint8Array
-  ): Promise<Uint8Array>;
+  request(service: string, method: string, data: Uint8Array): Promise<Uint8Array>;
 }
 
-type Builtin = Date | Function | Uint8Array | string | number | undefined;
-export type DeepPartial<T> = T extends Builtin
-  ? T
-  : T extends Array<infer U>
-  ? Array<DeepPartial<U>>
-  : T extends ReadonlyArray<infer U>
-  ? ReadonlyArray<DeepPartial<U>>
-  : T extends {}
-  ? { [K in keyof T]?: DeepPartial<T[K]> }
+type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
+
+export type DeepPartial<T> = T extends Builtin ? T
+  : T extends Array<infer U> ? Array<DeepPartial<U>> : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
+  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
+
+type KeysOfUnion<T> = T extends T ? keyof T : never;
+export type Exact<P, I extends P> = P extends Builtin ? P
+  : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
+
+function isSet(value: any): boolean {
+  return value !== null && value !== undefined;
+}

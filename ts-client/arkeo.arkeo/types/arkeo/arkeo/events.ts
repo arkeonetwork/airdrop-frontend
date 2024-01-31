@@ -1,18 +1,18 @@
 /* eslint-disable */
+import Long from "long";
+import _m0 from "protobufjs/minimal";
+import { Coin } from "../../cosmos/base/v1beta1/coin";
 import {
-  ProviderStatus,
-  ContractType,
   ContractAuthorization,
+  contractAuthorizationFromJSON,
+  contractAuthorizationToJSON,
+  ContractType,
+  contractTypeFromJSON,
+  contractTypeToJSON,
+  ProviderStatus,
   providerStatusFromJSON,
   providerStatusToJSON,
-  contractTypeFromJSON,
-  contractAuthorizationFromJSON,
-  contractTypeToJSON,
-  contractAuthorizationToJSON,
-} from "../../arkeo/arkeo/keeper";
-import * as Long from "long";
-import { util, configure, Writer, Reader } from "protobufjs/minimal";
-import { Coin } from "../../cosmos/base/v1beta1/coin";
+} from "./keeper";
 
 export const protobufPackage = "arkeo.arkeo";
 
@@ -81,10 +81,12 @@ export interface EventValidatorPayout {
   reward: string;
 }
 
-const baseEventBondProvider: object = { service: "", bondRel: "", bondAbs: "" };
+function createBaseEventBondProvider(): EventBondProvider {
+  return { provider: new Uint8Array(), service: "", bondRel: "", bondAbs: "" };
+}
 
 export const EventBondProvider = {
-  encode(message: EventBondProvider, writer: Writer = Writer.create()): Writer {
+  encode(message: EventBondProvider, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.provider.length !== 0) {
       writer.uint32(10).bytes(message.provider);
     }
@@ -100,10 +102,10 @@ export const EventBondProvider = {
     return writer;
   },
 
-  decode(input: Reader | Uint8Array, length?: number): EventBondProvider {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+  decode(input: _m0.Reader | Uint8Array, length?: number): EventBondProvider {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseEventBondProvider } as EventBondProvider;
+    const message = createBaseEventBondProvider();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -128,79 +130,53 @@ export const EventBondProvider = {
   },
 
   fromJSON(object: any): EventBondProvider {
-    const message = { ...baseEventBondProvider } as EventBondProvider;
-    if (object.provider !== undefined && object.provider !== null) {
-      message.provider = bytesFromBase64(object.provider);
-    }
-    if (object.service !== undefined && object.service !== null) {
-      message.service = String(object.service);
-    } else {
-      message.service = "";
-    }
-    if (object.bondRel !== undefined && object.bondRel !== null) {
-      message.bondRel = String(object.bondRel);
-    } else {
-      message.bondRel = "";
-    }
-    if (object.bondAbs !== undefined && object.bondAbs !== null) {
-      message.bondAbs = String(object.bondAbs);
-    } else {
-      message.bondAbs = "";
-    }
-    return message;
+    return {
+      provider: isSet(object.provider) ? bytesFromBase64(object.provider) : new Uint8Array(),
+      service: isSet(object.service) ? String(object.service) : "",
+      bondRel: isSet(object.bondRel) ? String(object.bondRel) : "",
+      bondAbs: isSet(object.bondAbs) ? String(object.bondAbs) : "",
+    };
   },
 
   toJSON(message: EventBondProvider): unknown {
     const obj: any = {};
-    message.provider !== undefined &&
-      (obj.provider = base64FromBytes(
-        message.provider !== undefined ? message.provider : new Uint8Array()
-      ));
+    message.provider !== undefined
+      && (obj.provider = base64FromBytes(message.provider !== undefined ? message.provider : new Uint8Array()));
     message.service !== undefined && (obj.service = message.service);
     message.bondRel !== undefined && (obj.bondRel = message.bondRel);
     message.bondAbs !== undefined && (obj.bondAbs = message.bondAbs);
     return obj;
   },
 
-  fromPartial(object: DeepPartial<EventBondProvider>): EventBondProvider {
-    const message = { ...baseEventBondProvider } as EventBondProvider;
-    if (object.provider !== undefined && object.provider !== null) {
-      message.provider = object.provider;
-    } else {
-      message.provider = new Uint8Array();
-    }
-    if (object.service !== undefined && object.service !== null) {
-      message.service = object.service;
-    } else {
-      message.service = "";
-    }
-    if (object.bondRel !== undefined && object.bondRel !== null) {
-      message.bondRel = object.bondRel;
-    } else {
-      message.bondRel = "";
-    }
-    if (object.bondAbs !== undefined && object.bondAbs !== null) {
-      message.bondAbs = object.bondAbs;
-    } else {
-      message.bondAbs = "";
-    }
+  fromPartial<I extends Exact<DeepPartial<EventBondProvider>, I>>(object: I): EventBondProvider {
+    const message = createBaseEventBondProvider();
+    message.provider = object.provider ?? new Uint8Array();
+    message.service = object.service ?? "";
+    message.bondRel = object.bondRel ?? "";
+    message.bondAbs = object.bondAbs ?? "";
     return message;
   },
 };
 
-const baseEventModProvider: object = {
-  service: "",
-  metadataUri: "",
-  metadataNonce: 0,
-  status: 0,
-  minContractDuration: 0,
-  maxContractDuration: 0,
-  bond: "",
-  settlementDuration: 0,
-};
+function createBaseEventModProvider(): EventModProvider {
+  return {
+    creator: new Uint8Array(),
+    provider: new Uint8Array(),
+    service: "",
+    metadataUri: "",
+    metadataNonce: 0,
+    status: 0,
+    minContractDuration: 0,
+    maxContractDuration: 0,
+    subscriptionRate: [],
+    payAsYouGoRate: [],
+    bond: "",
+    settlementDuration: 0,
+  };
+}
 
 export const EventModProvider = {
-  encode(message: EventModProvider, writer: Writer = Writer.create()): Writer {
+  encode(message: EventModProvider, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.creator.length !== 0) {
       writer.uint32(10).bytes(message.creator);
     }
@@ -240,12 +216,10 @@ export const EventModProvider = {
     return writer;
   },
 
-  decode(input: Reader | Uint8Array, length?: number): EventModProvider {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+  decode(input: _m0.Reader | Uint8Array, length?: number): EventModProvider {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseEventModProvider } as EventModProvider;
-    message.subscriptionRate = [];
-    message.payAsYouGoRate = [];
+    const message = createBaseEventModProvider();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -294,216 +268,92 @@ export const EventModProvider = {
   },
 
   fromJSON(object: any): EventModProvider {
-    const message = { ...baseEventModProvider } as EventModProvider;
-    message.subscriptionRate = [];
-    message.payAsYouGoRate = [];
-    if (object.creator !== undefined && object.creator !== null) {
-      message.creator = bytesFromBase64(object.creator);
-    }
-    if (object.provider !== undefined && object.provider !== null) {
-      message.provider = bytesFromBase64(object.provider);
-    }
-    if (object.service !== undefined && object.service !== null) {
-      message.service = String(object.service);
-    } else {
-      message.service = "";
-    }
-    if (object.metadataUri !== undefined && object.metadataUri !== null) {
-      message.metadataUri = String(object.metadataUri);
-    } else {
-      message.metadataUri = "";
-    }
-    if (object.metadataNonce !== undefined && object.metadataNonce !== null) {
-      message.metadataNonce = Number(object.metadataNonce);
-    } else {
-      message.metadataNonce = 0;
-    }
-    if (object.status !== undefined && object.status !== null) {
-      message.status = providerStatusFromJSON(object.status);
-    } else {
-      message.status = 0;
-    }
-    if (
-      object.minContractDuration !== undefined &&
-      object.minContractDuration !== null
-    ) {
-      message.minContractDuration = Number(object.minContractDuration);
-    } else {
-      message.minContractDuration = 0;
-    }
-    if (
-      object.maxContractDuration !== undefined &&
-      object.maxContractDuration !== null
-    ) {
-      message.maxContractDuration = Number(object.maxContractDuration);
-    } else {
-      message.maxContractDuration = 0;
-    }
-    if (
-      object.subscriptionRate !== undefined &&
-      object.subscriptionRate !== null
-    ) {
-      for (const e of object.subscriptionRate) {
-        message.subscriptionRate.push(Coin.fromJSON(e));
-      }
-    }
-    if (object.payAsYouGoRate !== undefined && object.payAsYouGoRate !== null) {
-      for (const e of object.payAsYouGoRate) {
-        message.payAsYouGoRate.push(Coin.fromJSON(e));
-      }
-    }
-    if (object.bond !== undefined && object.bond !== null) {
-      message.bond = String(object.bond);
-    } else {
-      message.bond = "";
-    }
-    if (
-      object.settlementDuration !== undefined &&
-      object.settlementDuration !== null
-    ) {
-      message.settlementDuration = Number(object.settlementDuration);
-    } else {
-      message.settlementDuration = 0;
-    }
-    return message;
+    return {
+      creator: isSet(object.creator) ? bytesFromBase64(object.creator) : new Uint8Array(),
+      provider: isSet(object.provider) ? bytesFromBase64(object.provider) : new Uint8Array(),
+      service: isSet(object.service) ? String(object.service) : "",
+      metadataUri: isSet(object.metadataUri) ? String(object.metadataUri) : "",
+      metadataNonce: isSet(object.metadataNonce) ? Number(object.metadataNonce) : 0,
+      status: isSet(object.status) ? providerStatusFromJSON(object.status) : 0,
+      minContractDuration: isSet(object.minContractDuration) ? Number(object.minContractDuration) : 0,
+      maxContractDuration: isSet(object.maxContractDuration) ? Number(object.maxContractDuration) : 0,
+      subscriptionRate: Array.isArray(object?.subscriptionRate)
+        ? object.subscriptionRate.map((e: any) => Coin.fromJSON(e))
+        : [],
+      payAsYouGoRate: Array.isArray(object?.payAsYouGoRate)
+        ? object.payAsYouGoRate.map((e: any) => Coin.fromJSON(e))
+        : [],
+      bond: isSet(object.bond) ? String(object.bond) : "",
+      settlementDuration: isSet(object.settlementDuration) ? Number(object.settlementDuration) : 0,
+    };
   },
 
   toJSON(message: EventModProvider): unknown {
     const obj: any = {};
-    message.creator !== undefined &&
-      (obj.creator = base64FromBytes(
-        message.creator !== undefined ? message.creator : new Uint8Array()
-      ));
-    message.provider !== undefined &&
-      (obj.provider = base64FromBytes(
-        message.provider !== undefined ? message.provider : new Uint8Array()
-      ));
+    message.creator !== undefined
+      && (obj.creator = base64FromBytes(message.creator !== undefined ? message.creator : new Uint8Array()));
+    message.provider !== undefined
+      && (obj.provider = base64FromBytes(message.provider !== undefined ? message.provider : new Uint8Array()));
     message.service !== undefined && (obj.service = message.service);
-    message.metadataUri !== undefined &&
-      (obj.metadataUri = message.metadataUri);
-    message.metadataNonce !== undefined &&
-      (obj.metadataNonce = message.metadataNonce);
-    message.status !== undefined &&
-      (obj.status = providerStatusToJSON(message.status));
-    message.minContractDuration !== undefined &&
-      (obj.minContractDuration = message.minContractDuration);
-    message.maxContractDuration !== undefined &&
-      (obj.maxContractDuration = message.maxContractDuration);
+    message.metadataUri !== undefined && (obj.metadataUri = message.metadataUri);
+    message.metadataNonce !== undefined && (obj.metadataNonce = Math.round(message.metadataNonce));
+    message.status !== undefined && (obj.status = providerStatusToJSON(message.status));
+    message.minContractDuration !== undefined && (obj.minContractDuration = Math.round(message.minContractDuration));
+    message.maxContractDuration !== undefined && (obj.maxContractDuration = Math.round(message.maxContractDuration));
     if (message.subscriptionRate) {
-      obj.subscriptionRate = message.subscriptionRate.map((e) =>
-        e ? Coin.toJSON(e) : undefined
-      );
+      obj.subscriptionRate = message.subscriptionRate.map((e) => e ? Coin.toJSON(e) : undefined);
     } else {
       obj.subscriptionRate = [];
     }
     if (message.payAsYouGoRate) {
-      obj.payAsYouGoRate = message.payAsYouGoRate.map((e) =>
-        e ? Coin.toJSON(e) : undefined
-      );
+      obj.payAsYouGoRate = message.payAsYouGoRate.map((e) => e ? Coin.toJSON(e) : undefined);
     } else {
       obj.payAsYouGoRate = [];
     }
     message.bond !== undefined && (obj.bond = message.bond);
-    message.settlementDuration !== undefined &&
-      (obj.settlementDuration = message.settlementDuration);
+    message.settlementDuration !== undefined && (obj.settlementDuration = Math.round(message.settlementDuration));
     return obj;
   },
 
-  fromPartial(object: DeepPartial<EventModProvider>): EventModProvider {
-    const message = { ...baseEventModProvider } as EventModProvider;
-    message.subscriptionRate = [];
-    message.payAsYouGoRate = [];
-    if (object.creator !== undefined && object.creator !== null) {
-      message.creator = object.creator;
-    } else {
-      message.creator = new Uint8Array();
-    }
-    if (object.provider !== undefined && object.provider !== null) {
-      message.provider = object.provider;
-    } else {
-      message.provider = new Uint8Array();
-    }
-    if (object.service !== undefined && object.service !== null) {
-      message.service = object.service;
-    } else {
-      message.service = "";
-    }
-    if (object.metadataUri !== undefined && object.metadataUri !== null) {
-      message.metadataUri = object.metadataUri;
-    } else {
-      message.metadataUri = "";
-    }
-    if (object.metadataNonce !== undefined && object.metadataNonce !== null) {
-      message.metadataNonce = object.metadataNonce;
-    } else {
-      message.metadataNonce = 0;
-    }
-    if (object.status !== undefined && object.status !== null) {
-      message.status = object.status;
-    } else {
-      message.status = 0;
-    }
-    if (
-      object.minContractDuration !== undefined &&
-      object.minContractDuration !== null
-    ) {
-      message.minContractDuration = object.minContractDuration;
-    } else {
-      message.minContractDuration = 0;
-    }
-    if (
-      object.maxContractDuration !== undefined &&
-      object.maxContractDuration !== null
-    ) {
-      message.maxContractDuration = object.maxContractDuration;
-    } else {
-      message.maxContractDuration = 0;
-    }
-    if (
-      object.subscriptionRate !== undefined &&
-      object.subscriptionRate !== null
-    ) {
-      for (const e of object.subscriptionRate) {
-        message.subscriptionRate.push(Coin.fromPartial(e));
-      }
-    }
-    if (object.payAsYouGoRate !== undefined && object.payAsYouGoRate !== null) {
-      for (const e of object.payAsYouGoRate) {
-        message.payAsYouGoRate.push(Coin.fromPartial(e));
-      }
-    }
-    if (object.bond !== undefined && object.bond !== null) {
-      message.bond = object.bond;
-    } else {
-      message.bond = "";
-    }
-    if (
-      object.settlementDuration !== undefined &&
-      object.settlementDuration !== null
-    ) {
-      message.settlementDuration = object.settlementDuration;
-    } else {
-      message.settlementDuration = 0;
-    }
+  fromPartial<I extends Exact<DeepPartial<EventModProvider>, I>>(object: I): EventModProvider {
+    const message = createBaseEventModProvider();
+    message.creator = object.creator ?? new Uint8Array();
+    message.provider = object.provider ?? new Uint8Array();
+    message.service = object.service ?? "";
+    message.metadataUri = object.metadataUri ?? "";
+    message.metadataNonce = object.metadataNonce ?? 0;
+    message.status = object.status ?? 0;
+    message.minContractDuration = object.minContractDuration ?? 0;
+    message.maxContractDuration = object.maxContractDuration ?? 0;
+    message.subscriptionRate = object.subscriptionRate?.map((e) => Coin.fromPartial(e)) || [];
+    message.payAsYouGoRate = object.payAsYouGoRate?.map((e) => Coin.fromPartial(e)) || [];
+    message.bond = object.bond ?? "";
+    message.settlementDuration = object.settlementDuration ?? 0;
     return message;
   },
 };
 
-const baseEventOpenContract: object = {
-  contractId: 0,
-  service: "",
-  type: 0,
-  height: 0,
-  duration: 0,
-  openCost: 0,
-  deposit: "",
-  settlementDuration: 0,
-  authorization: 0,
-  queriesPerMinute: 0,
-};
+function createBaseEventOpenContract(): EventOpenContract {
+  return {
+    provider: new Uint8Array(),
+    contractId: 0,
+    service: "",
+    client: new Uint8Array(),
+    delegate: new Uint8Array(),
+    type: 0,
+    height: 0,
+    duration: 0,
+    rate: undefined,
+    openCost: 0,
+    deposit: "",
+    settlementDuration: 0,
+    authorization: 0,
+    queriesPerMinute: 0,
+  };
+}
 
 export const EventOpenContract = {
-  encode(message: EventOpenContract, writer: Writer = Writer.create()): Writer {
+  encode(message: EventOpenContract, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.provider.length !== 0) {
       writer.uint32(10).bytes(message.provider);
     }
@@ -549,10 +399,10 @@ export const EventOpenContract = {
     return writer;
   },
 
-  decode(input: Reader | Uint8Array, length?: number): EventOpenContract {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+  decode(input: _m0.Reader | Uint8Array, length?: number): EventOpenContract {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseEventOpenContract } as EventOpenContract;
+    const message = createBaseEventOpenContract();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -607,211 +457,83 @@ export const EventOpenContract = {
   },
 
   fromJSON(object: any): EventOpenContract {
-    const message = { ...baseEventOpenContract } as EventOpenContract;
-    if (object.provider !== undefined && object.provider !== null) {
-      message.provider = bytesFromBase64(object.provider);
-    }
-    if (object.contractId !== undefined && object.contractId !== null) {
-      message.contractId = Number(object.contractId);
-    } else {
-      message.contractId = 0;
-    }
-    if (object.service !== undefined && object.service !== null) {
-      message.service = String(object.service);
-    } else {
-      message.service = "";
-    }
-    if (object.client !== undefined && object.client !== null) {
-      message.client = bytesFromBase64(object.client);
-    }
-    if (object.delegate !== undefined && object.delegate !== null) {
-      message.delegate = bytesFromBase64(object.delegate);
-    }
-    if (object.type !== undefined && object.type !== null) {
-      message.type = contractTypeFromJSON(object.type);
-    } else {
-      message.type = 0;
-    }
-    if (object.height !== undefined && object.height !== null) {
-      message.height = Number(object.height);
-    } else {
-      message.height = 0;
-    }
-    if (object.duration !== undefined && object.duration !== null) {
-      message.duration = Number(object.duration);
-    } else {
-      message.duration = 0;
-    }
-    if (object.rate !== undefined && object.rate !== null) {
-      message.rate = Coin.fromJSON(object.rate);
-    } else {
-      message.rate = undefined;
-    }
-    if (object.openCost !== undefined && object.openCost !== null) {
-      message.openCost = Number(object.openCost);
-    } else {
-      message.openCost = 0;
-    }
-    if (object.deposit !== undefined && object.deposit !== null) {
-      message.deposit = String(object.deposit);
-    } else {
-      message.deposit = "";
-    }
-    if (
-      object.settlementDuration !== undefined &&
-      object.settlementDuration !== null
-    ) {
-      message.settlementDuration = Number(object.settlementDuration);
-    } else {
-      message.settlementDuration = 0;
-    }
-    if (object.authorization !== undefined && object.authorization !== null) {
-      message.authorization = contractAuthorizationFromJSON(
-        object.authorization
-      );
-    } else {
-      message.authorization = 0;
-    }
-    if (
-      object.queriesPerMinute !== undefined &&
-      object.queriesPerMinute !== null
-    ) {
-      message.queriesPerMinute = Number(object.queriesPerMinute);
-    } else {
-      message.queriesPerMinute = 0;
-    }
-    return message;
+    return {
+      provider: isSet(object.provider) ? bytesFromBase64(object.provider) : new Uint8Array(),
+      contractId: isSet(object.contractId) ? Number(object.contractId) : 0,
+      service: isSet(object.service) ? String(object.service) : "",
+      client: isSet(object.client) ? bytesFromBase64(object.client) : new Uint8Array(),
+      delegate: isSet(object.delegate) ? bytesFromBase64(object.delegate) : new Uint8Array(),
+      type: isSet(object.type) ? contractTypeFromJSON(object.type) : 0,
+      height: isSet(object.height) ? Number(object.height) : 0,
+      duration: isSet(object.duration) ? Number(object.duration) : 0,
+      rate: isSet(object.rate) ? Coin.fromJSON(object.rate) : undefined,
+      openCost: isSet(object.openCost) ? Number(object.openCost) : 0,
+      deposit: isSet(object.deposit) ? String(object.deposit) : "",
+      settlementDuration: isSet(object.settlementDuration) ? Number(object.settlementDuration) : 0,
+      authorization: isSet(object.authorization) ? contractAuthorizationFromJSON(object.authorization) : 0,
+      queriesPerMinute: isSet(object.queriesPerMinute) ? Number(object.queriesPerMinute) : 0,
+    };
   },
 
   toJSON(message: EventOpenContract): unknown {
     const obj: any = {};
-    message.provider !== undefined &&
-      (obj.provider = base64FromBytes(
-        message.provider !== undefined ? message.provider : new Uint8Array()
-      ));
-    message.contractId !== undefined && (obj.contractId = message.contractId);
+    message.provider !== undefined
+      && (obj.provider = base64FromBytes(message.provider !== undefined ? message.provider : new Uint8Array()));
+    message.contractId !== undefined && (obj.contractId = Math.round(message.contractId));
     message.service !== undefined && (obj.service = message.service);
-    message.client !== undefined &&
-      (obj.client = base64FromBytes(
-        message.client !== undefined ? message.client : new Uint8Array()
-      ));
-    message.delegate !== undefined &&
-      (obj.delegate = base64FromBytes(
-        message.delegate !== undefined ? message.delegate : new Uint8Array()
-      ));
+    message.client !== undefined
+      && (obj.client = base64FromBytes(message.client !== undefined ? message.client : new Uint8Array()));
+    message.delegate !== undefined
+      && (obj.delegate = base64FromBytes(message.delegate !== undefined ? message.delegate : new Uint8Array()));
     message.type !== undefined && (obj.type = contractTypeToJSON(message.type));
-    message.height !== undefined && (obj.height = message.height);
-    message.duration !== undefined && (obj.duration = message.duration);
-    message.rate !== undefined &&
-      (obj.rate = message.rate ? Coin.toJSON(message.rate) : undefined);
-    message.openCost !== undefined && (obj.openCost = message.openCost);
+    message.height !== undefined && (obj.height = Math.round(message.height));
+    message.duration !== undefined && (obj.duration = Math.round(message.duration));
+    message.rate !== undefined && (obj.rate = message.rate ? Coin.toJSON(message.rate) : undefined);
+    message.openCost !== undefined && (obj.openCost = Math.round(message.openCost));
     message.deposit !== undefined && (obj.deposit = message.deposit);
-    message.settlementDuration !== undefined &&
-      (obj.settlementDuration = message.settlementDuration);
-    message.authorization !== undefined &&
-      (obj.authorization = contractAuthorizationToJSON(message.authorization));
-    message.queriesPerMinute !== undefined &&
-      (obj.queriesPerMinute = message.queriesPerMinute);
+    message.settlementDuration !== undefined && (obj.settlementDuration = Math.round(message.settlementDuration));
+    message.authorization !== undefined && (obj.authorization = contractAuthorizationToJSON(message.authorization));
+    message.queriesPerMinute !== undefined && (obj.queriesPerMinute = Math.round(message.queriesPerMinute));
     return obj;
   },
 
-  fromPartial(object: DeepPartial<EventOpenContract>): EventOpenContract {
-    const message = { ...baseEventOpenContract } as EventOpenContract;
-    if (object.provider !== undefined && object.provider !== null) {
-      message.provider = object.provider;
-    } else {
-      message.provider = new Uint8Array();
-    }
-    if (object.contractId !== undefined && object.contractId !== null) {
-      message.contractId = object.contractId;
-    } else {
-      message.contractId = 0;
-    }
-    if (object.service !== undefined && object.service !== null) {
-      message.service = object.service;
-    } else {
-      message.service = "";
-    }
-    if (object.client !== undefined && object.client !== null) {
-      message.client = object.client;
-    } else {
-      message.client = new Uint8Array();
-    }
-    if (object.delegate !== undefined && object.delegate !== null) {
-      message.delegate = object.delegate;
-    } else {
-      message.delegate = new Uint8Array();
-    }
-    if (object.type !== undefined && object.type !== null) {
-      message.type = object.type;
-    } else {
-      message.type = 0;
-    }
-    if (object.height !== undefined && object.height !== null) {
-      message.height = object.height;
-    } else {
-      message.height = 0;
-    }
-    if (object.duration !== undefined && object.duration !== null) {
-      message.duration = object.duration;
-    } else {
-      message.duration = 0;
-    }
-    if (object.rate !== undefined && object.rate !== null) {
-      message.rate = Coin.fromPartial(object.rate);
-    } else {
-      message.rate = undefined;
-    }
-    if (object.openCost !== undefined && object.openCost !== null) {
-      message.openCost = object.openCost;
-    } else {
-      message.openCost = 0;
-    }
-    if (object.deposit !== undefined && object.deposit !== null) {
-      message.deposit = object.deposit;
-    } else {
-      message.deposit = "";
-    }
-    if (
-      object.settlementDuration !== undefined &&
-      object.settlementDuration !== null
-    ) {
-      message.settlementDuration = object.settlementDuration;
-    } else {
-      message.settlementDuration = 0;
-    }
-    if (object.authorization !== undefined && object.authorization !== null) {
-      message.authorization = object.authorization;
-    } else {
-      message.authorization = 0;
-    }
-    if (
-      object.queriesPerMinute !== undefined &&
-      object.queriesPerMinute !== null
-    ) {
-      message.queriesPerMinute = object.queriesPerMinute;
-    } else {
-      message.queriesPerMinute = 0;
-    }
+  fromPartial<I extends Exact<DeepPartial<EventOpenContract>, I>>(object: I): EventOpenContract {
+    const message = createBaseEventOpenContract();
+    message.provider = object.provider ?? new Uint8Array();
+    message.contractId = object.contractId ?? 0;
+    message.service = object.service ?? "";
+    message.client = object.client ?? new Uint8Array();
+    message.delegate = object.delegate ?? new Uint8Array();
+    message.type = object.type ?? 0;
+    message.height = object.height ?? 0;
+    message.duration = object.duration ?? 0;
+    message.rate = (object.rate !== undefined && object.rate !== null) ? Coin.fromPartial(object.rate) : undefined;
+    message.openCost = object.openCost ?? 0;
+    message.deposit = object.deposit ?? "";
+    message.settlementDuration = object.settlementDuration ?? 0;
+    message.authorization = object.authorization ?? 0;
+    message.queriesPerMinute = object.queriesPerMinute ?? 0;
     return message;
   },
 };
 
-const baseEventSettleContract: object = {
-  contractId: 0,
-  service: "",
-  type: 0,
-  nonce: 0,
-  height: 0,
-  paid: "",
-  reserve: "",
-};
+function createBaseEventSettleContract(): EventSettleContract {
+  return {
+    provider: new Uint8Array(),
+    contractId: 0,
+    service: "",
+    client: new Uint8Array(),
+    delegate: new Uint8Array(),
+    type: 0,
+    nonce: 0,
+    height: 0,
+    paid: "",
+    reserve: "",
+  };
+}
 
 export const EventSettleContract = {
-  encode(
-    message: EventSettleContract,
-    writer: Writer = Writer.create()
-  ): Writer {
+  encode(message: EventSettleContract, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.provider.length !== 0) {
       writer.uint32(10).bytes(message.provider);
     }
@@ -845,10 +567,10 @@ export const EventSettleContract = {
     return writer;
   },
 
-  decode(input: Reader | Uint8Array, length?: number): EventSettleContract {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+  decode(input: _m0.Reader | Uint8Array, length?: number): EventSettleContract {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseEventSettleContract } as EventSettleContract;
+    const message = createBaseEventSettleContract();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -891,141 +613,66 @@ export const EventSettleContract = {
   },
 
   fromJSON(object: any): EventSettleContract {
-    const message = { ...baseEventSettleContract } as EventSettleContract;
-    if (object.provider !== undefined && object.provider !== null) {
-      message.provider = bytesFromBase64(object.provider);
-    }
-    if (object.contractId !== undefined && object.contractId !== null) {
-      message.contractId = Number(object.contractId);
-    } else {
-      message.contractId = 0;
-    }
-    if (object.service !== undefined && object.service !== null) {
-      message.service = String(object.service);
-    } else {
-      message.service = "";
-    }
-    if (object.client !== undefined && object.client !== null) {
-      message.client = bytesFromBase64(object.client);
-    }
-    if (object.delegate !== undefined && object.delegate !== null) {
-      message.delegate = bytesFromBase64(object.delegate);
-    }
-    if (object.type !== undefined && object.type !== null) {
-      message.type = contractTypeFromJSON(object.type);
-    } else {
-      message.type = 0;
-    }
-    if (object.nonce !== undefined && object.nonce !== null) {
-      message.nonce = Number(object.nonce);
-    } else {
-      message.nonce = 0;
-    }
-    if (object.height !== undefined && object.height !== null) {
-      message.height = Number(object.height);
-    } else {
-      message.height = 0;
-    }
-    if (object.paid !== undefined && object.paid !== null) {
-      message.paid = String(object.paid);
-    } else {
-      message.paid = "";
-    }
-    if (object.reserve !== undefined && object.reserve !== null) {
-      message.reserve = String(object.reserve);
-    } else {
-      message.reserve = "";
-    }
-    return message;
+    return {
+      provider: isSet(object.provider) ? bytesFromBase64(object.provider) : new Uint8Array(),
+      contractId: isSet(object.contractId) ? Number(object.contractId) : 0,
+      service: isSet(object.service) ? String(object.service) : "",
+      client: isSet(object.client) ? bytesFromBase64(object.client) : new Uint8Array(),
+      delegate: isSet(object.delegate) ? bytesFromBase64(object.delegate) : new Uint8Array(),
+      type: isSet(object.type) ? contractTypeFromJSON(object.type) : 0,
+      nonce: isSet(object.nonce) ? Number(object.nonce) : 0,
+      height: isSet(object.height) ? Number(object.height) : 0,
+      paid: isSet(object.paid) ? String(object.paid) : "",
+      reserve: isSet(object.reserve) ? String(object.reserve) : "",
+    };
   },
 
   toJSON(message: EventSettleContract): unknown {
     const obj: any = {};
-    message.provider !== undefined &&
-      (obj.provider = base64FromBytes(
-        message.provider !== undefined ? message.provider : new Uint8Array()
-      ));
-    message.contractId !== undefined && (obj.contractId = message.contractId);
+    message.provider !== undefined
+      && (obj.provider = base64FromBytes(message.provider !== undefined ? message.provider : new Uint8Array()));
+    message.contractId !== undefined && (obj.contractId = Math.round(message.contractId));
     message.service !== undefined && (obj.service = message.service);
-    message.client !== undefined &&
-      (obj.client = base64FromBytes(
-        message.client !== undefined ? message.client : new Uint8Array()
-      ));
-    message.delegate !== undefined &&
-      (obj.delegate = base64FromBytes(
-        message.delegate !== undefined ? message.delegate : new Uint8Array()
-      ));
+    message.client !== undefined
+      && (obj.client = base64FromBytes(message.client !== undefined ? message.client : new Uint8Array()));
+    message.delegate !== undefined
+      && (obj.delegate = base64FromBytes(message.delegate !== undefined ? message.delegate : new Uint8Array()));
     message.type !== undefined && (obj.type = contractTypeToJSON(message.type));
-    message.nonce !== undefined && (obj.nonce = message.nonce);
-    message.height !== undefined && (obj.height = message.height);
+    message.nonce !== undefined && (obj.nonce = Math.round(message.nonce));
+    message.height !== undefined && (obj.height = Math.round(message.height));
     message.paid !== undefined && (obj.paid = message.paid);
     message.reserve !== undefined && (obj.reserve = message.reserve);
     return obj;
   },
 
-  fromPartial(object: DeepPartial<EventSettleContract>): EventSettleContract {
-    const message = { ...baseEventSettleContract } as EventSettleContract;
-    if (object.provider !== undefined && object.provider !== null) {
-      message.provider = object.provider;
-    } else {
-      message.provider = new Uint8Array();
-    }
-    if (object.contractId !== undefined && object.contractId !== null) {
-      message.contractId = object.contractId;
-    } else {
-      message.contractId = 0;
-    }
-    if (object.service !== undefined && object.service !== null) {
-      message.service = object.service;
-    } else {
-      message.service = "";
-    }
-    if (object.client !== undefined && object.client !== null) {
-      message.client = object.client;
-    } else {
-      message.client = new Uint8Array();
-    }
-    if (object.delegate !== undefined && object.delegate !== null) {
-      message.delegate = object.delegate;
-    } else {
-      message.delegate = new Uint8Array();
-    }
-    if (object.type !== undefined && object.type !== null) {
-      message.type = object.type;
-    } else {
-      message.type = 0;
-    }
-    if (object.nonce !== undefined && object.nonce !== null) {
-      message.nonce = object.nonce;
-    } else {
-      message.nonce = 0;
-    }
-    if (object.height !== undefined && object.height !== null) {
-      message.height = object.height;
-    } else {
-      message.height = 0;
-    }
-    if (object.paid !== undefined && object.paid !== null) {
-      message.paid = object.paid;
-    } else {
-      message.paid = "";
-    }
-    if (object.reserve !== undefined && object.reserve !== null) {
-      message.reserve = object.reserve;
-    } else {
-      message.reserve = "";
-    }
+  fromPartial<I extends Exact<DeepPartial<EventSettleContract>, I>>(object: I): EventSettleContract {
+    const message = createBaseEventSettleContract();
+    message.provider = object.provider ?? new Uint8Array();
+    message.contractId = object.contractId ?? 0;
+    message.service = object.service ?? "";
+    message.client = object.client ?? new Uint8Array();
+    message.delegate = object.delegate ?? new Uint8Array();
+    message.type = object.type ?? 0;
+    message.nonce = object.nonce ?? 0;
+    message.height = object.height ?? 0;
+    message.paid = object.paid ?? "";
+    message.reserve = object.reserve ?? "";
     return message;
   },
 };
 
-const baseEventCloseContract: object = { contractId: 0, service: "" };
+function createBaseEventCloseContract(): EventCloseContract {
+  return {
+    contractId: 0,
+    provider: new Uint8Array(),
+    service: "",
+    client: new Uint8Array(),
+    delegate: new Uint8Array(),
+  };
+}
 
 export const EventCloseContract = {
-  encode(
-    message: EventCloseContract,
-    writer: Writer = Writer.create()
-  ): Writer {
+  encode(message: EventCloseContract, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.contractId !== 0) {
       writer.uint32(8).uint64(message.contractId);
     }
@@ -1044,10 +691,10 @@ export const EventCloseContract = {
     return writer;
   },
 
-  decode(input: Reader | Uint8Array, length?: number): EventCloseContract {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+  decode(input: _m0.Reader | Uint8Array, length?: number): EventCloseContract {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseEventCloseContract } as EventCloseContract;
+    const message = createBaseEventCloseContract();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -1075,86 +722,45 @@ export const EventCloseContract = {
   },
 
   fromJSON(object: any): EventCloseContract {
-    const message = { ...baseEventCloseContract } as EventCloseContract;
-    if (object.contractId !== undefined && object.contractId !== null) {
-      message.contractId = Number(object.contractId);
-    } else {
-      message.contractId = 0;
-    }
-    if (object.provider !== undefined && object.provider !== null) {
-      message.provider = bytesFromBase64(object.provider);
-    }
-    if (object.service !== undefined && object.service !== null) {
-      message.service = String(object.service);
-    } else {
-      message.service = "";
-    }
-    if (object.client !== undefined && object.client !== null) {
-      message.client = bytesFromBase64(object.client);
-    }
-    if (object.delegate !== undefined && object.delegate !== null) {
-      message.delegate = bytesFromBase64(object.delegate);
-    }
-    return message;
+    return {
+      contractId: isSet(object.contractId) ? Number(object.contractId) : 0,
+      provider: isSet(object.provider) ? bytesFromBase64(object.provider) : new Uint8Array(),
+      service: isSet(object.service) ? String(object.service) : "",
+      client: isSet(object.client) ? bytesFromBase64(object.client) : new Uint8Array(),
+      delegate: isSet(object.delegate) ? bytesFromBase64(object.delegate) : new Uint8Array(),
+    };
   },
 
   toJSON(message: EventCloseContract): unknown {
     const obj: any = {};
-    message.contractId !== undefined && (obj.contractId = message.contractId);
-    message.provider !== undefined &&
-      (obj.provider = base64FromBytes(
-        message.provider !== undefined ? message.provider : new Uint8Array()
-      ));
+    message.contractId !== undefined && (obj.contractId = Math.round(message.contractId));
+    message.provider !== undefined
+      && (obj.provider = base64FromBytes(message.provider !== undefined ? message.provider : new Uint8Array()));
     message.service !== undefined && (obj.service = message.service);
-    message.client !== undefined &&
-      (obj.client = base64FromBytes(
-        message.client !== undefined ? message.client : new Uint8Array()
-      ));
-    message.delegate !== undefined &&
-      (obj.delegate = base64FromBytes(
-        message.delegate !== undefined ? message.delegate : new Uint8Array()
-      ));
+    message.client !== undefined
+      && (obj.client = base64FromBytes(message.client !== undefined ? message.client : new Uint8Array()));
+    message.delegate !== undefined
+      && (obj.delegate = base64FromBytes(message.delegate !== undefined ? message.delegate : new Uint8Array()));
     return obj;
   },
 
-  fromPartial(object: DeepPartial<EventCloseContract>): EventCloseContract {
-    const message = { ...baseEventCloseContract } as EventCloseContract;
-    if (object.contractId !== undefined && object.contractId !== null) {
-      message.contractId = object.contractId;
-    } else {
-      message.contractId = 0;
-    }
-    if (object.provider !== undefined && object.provider !== null) {
-      message.provider = object.provider;
-    } else {
-      message.provider = new Uint8Array();
-    }
-    if (object.service !== undefined && object.service !== null) {
-      message.service = object.service;
-    } else {
-      message.service = "";
-    }
-    if (object.client !== undefined && object.client !== null) {
-      message.client = object.client;
-    } else {
-      message.client = new Uint8Array();
-    }
-    if (object.delegate !== undefined && object.delegate !== null) {
-      message.delegate = object.delegate;
-    } else {
-      message.delegate = new Uint8Array();
-    }
+  fromPartial<I extends Exact<DeepPartial<EventCloseContract>, I>>(object: I): EventCloseContract {
+    const message = createBaseEventCloseContract();
+    message.contractId = object.contractId ?? 0;
+    message.provider = object.provider ?? new Uint8Array();
+    message.service = object.service ?? "";
+    message.client = object.client ?? new Uint8Array();
+    message.delegate = object.delegate ?? new Uint8Array();
     return message;
   },
 };
 
-const baseEventValidatorPayout: object = { reward: "" };
+function createBaseEventValidatorPayout(): EventValidatorPayout {
+  return { validator: new Uint8Array(), reward: "" };
+}
 
 export const EventValidatorPayout = {
-  encode(
-    message: EventValidatorPayout,
-    writer: Writer = Writer.create()
-  ): Writer {
+  encode(message: EventValidatorPayout, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.validator.length !== 0) {
       writer.uint32(10).bytes(message.validator);
     }
@@ -1164,10 +770,10 @@ export const EventValidatorPayout = {
     return writer;
   },
 
-  decode(input: Reader | Uint8Array, length?: number): EventValidatorPayout {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+  decode(input: _m0.Reader | Uint8Array, length?: number): EventValidatorPayout {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseEventValidatorPayout } as EventValidatorPayout;
+    const message = createBaseEventValidatorPayout();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -1186,87 +792,82 @@ export const EventValidatorPayout = {
   },
 
   fromJSON(object: any): EventValidatorPayout {
-    const message = { ...baseEventValidatorPayout } as EventValidatorPayout;
-    if (object.validator !== undefined && object.validator !== null) {
-      message.validator = bytesFromBase64(object.validator);
-    }
-    if (object.reward !== undefined && object.reward !== null) {
-      message.reward = String(object.reward);
-    } else {
-      message.reward = "";
-    }
-    return message;
+    return {
+      validator: isSet(object.validator) ? bytesFromBase64(object.validator) : new Uint8Array(),
+      reward: isSet(object.reward) ? String(object.reward) : "",
+    };
   },
 
   toJSON(message: EventValidatorPayout): unknown {
     const obj: any = {};
-    message.validator !== undefined &&
-      (obj.validator = base64FromBytes(
-        message.validator !== undefined ? message.validator : new Uint8Array()
-      ));
+    message.validator !== undefined
+      && (obj.validator = base64FromBytes(message.validator !== undefined ? message.validator : new Uint8Array()));
     message.reward !== undefined && (obj.reward = message.reward);
     return obj;
   },
 
-  fromPartial(object: DeepPartial<EventValidatorPayout>): EventValidatorPayout {
-    const message = { ...baseEventValidatorPayout } as EventValidatorPayout;
-    if (object.validator !== undefined && object.validator !== null) {
-      message.validator = object.validator;
-    } else {
-      message.validator = new Uint8Array();
-    }
-    if (object.reward !== undefined && object.reward !== null) {
-      message.reward = object.reward;
-    } else {
-      message.reward = "";
-    }
+  fromPartial<I extends Exact<DeepPartial<EventValidatorPayout>, I>>(object: I): EventValidatorPayout {
+    const message = createBaseEventValidatorPayout();
+    message.validator = object.validator ?? new Uint8Array();
+    message.reward = object.reward ?? "";
     return message;
   },
 };
 
 declare var self: any | undefined;
 declare var window: any | undefined;
+declare var global: any | undefined;
 var globalThis: any = (() => {
-  if (typeof globalThis !== "undefined") return globalThis;
-  if (typeof self !== "undefined") return self;
-  if (typeof window !== "undefined") return window;
-  if (typeof global !== "undefined") return global;
+  if (typeof globalThis !== "undefined") {
+    return globalThis;
+  }
+  if (typeof self !== "undefined") {
+    return self;
+  }
+  if (typeof window !== "undefined") {
+    return window;
+  }
+  if (typeof global !== "undefined") {
+    return global;
+  }
   throw "Unable to locate global object";
 })();
 
-const atob: (b64: string) => string =
-  globalThis.atob ||
-  ((b64) => globalThis.Buffer.from(b64, "base64").toString("binary"));
 function bytesFromBase64(b64: string): Uint8Array {
-  const bin = atob(b64);
-  const arr = new Uint8Array(bin.length);
-  for (let i = 0; i < bin.length; ++i) {
-    arr[i] = bin.charCodeAt(i);
+  if (globalThis.Buffer) {
+    return Uint8Array.from(globalThis.Buffer.from(b64, "base64"));
+  } else {
+    const bin = globalThis.atob(b64);
+    const arr = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; ++i) {
+      arr[i] = bin.charCodeAt(i);
+    }
+    return arr;
   }
-  return arr;
 }
 
-const btoa: (bin: string) => string =
-  globalThis.btoa ||
-  ((bin) => globalThis.Buffer.from(bin, "binary").toString("base64"));
 function base64FromBytes(arr: Uint8Array): string {
-  const bin: string[] = [];
-  for (let i = 0; i < arr.byteLength; ++i) {
-    bin.push(String.fromCharCode(arr[i]));
+  if (globalThis.Buffer) {
+    return globalThis.Buffer.from(arr).toString("base64");
+  } else {
+    const bin: string[] = [];
+    arr.forEach((byte) => {
+      bin.push(String.fromCharCode(byte));
+    });
+    return globalThis.btoa(bin.join(""));
   }
-  return btoa(bin.join(""));
 }
 
-type Builtin = Date | Function | Uint8Array | string | number | undefined;
-export type DeepPartial<T> = T extends Builtin
-  ? T
-  : T extends Array<infer U>
-  ? Array<DeepPartial<U>>
-  : T extends ReadonlyArray<infer U>
-  ? ReadonlyArray<DeepPartial<U>>
-  : T extends {}
-  ? { [K in keyof T]?: DeepPartial<T[K]> }
+type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
+
+export type DeepPartial<T> = T extends Builtin ? T
+  : T extends Array<infer U> ? Array<DeepPartial<U>> : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
+  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
+
+type KeysOfUnion<T> = T extends T ? keyof T : never;
+export type Exact<P, I extends P> = P extends Builtin ? P
+  : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
 
 function longToNumber(long: Long): number {
   if (long.gt(Number.MAX_SAFE_INTEGER)) {
@@ -1275,7 +876,11 @@ function longToNumber(long: Long): number {
   return long.toNumber();
 }
 
-if (util.Long !== Long) {
-  util.Long = Long as any;
-  configure();
+if (_m0.util.Long !== Long) {
+  _m0.util.Long = Long as any;
+  _m0.configure();
+}
+
+function isSet(value: any): boolean {
+  return value !== null && value !== undefined;
 }

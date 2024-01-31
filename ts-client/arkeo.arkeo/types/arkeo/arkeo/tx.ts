@@ -1,18 +1,18 @@
 /* eslint-disable */
+import Long from "long";
+import _m0 from "protobufjs/minimal";
+import { Coin } from "../../cosmos/base/v1beta1/coin";
 import {
-  ProviderStatus,
-  ContractType,
   ContractAuthorization,
+  contractAuthorizationFromJSON,
+  contractAuthorizationToJSON,
+  ContractType,
+  contractTypeFromJSON,
+  contractTypeToJSON,
+  ProviderStatus,
   providerStatusFromJSON,
   providerStatusToJSON,
-  contractTypeFromJSON,
-  contractAuthorizationFromJSON,
-  contractTypeToJSON,
-  contractAuthorizationToJSON,
-} from "../../arkeo/arkeo/keeper";
-import { Reader, util, configure, Writer } from "protobufjs/minimal";
-import * as Long from "long";
-import { Coin } from "../../cosmos/base/v1beta1/coin";
+} from "./keeper";
 
 export const protobufPackage = "arkeo.arkeo";
 
@@ -23,7 +23,8 @@ export interface MsgBondProvider {
   bond: string;
 }
 
-export interface MsgBondProviderResponse {}
+export interface MsgBondProviderResponse {
+}
 
 export interface MsgModProvider {
   creator: Uint8Array;
@@ -39,7 +40,8 @@ export interface MsgModProvider {
   settlementDuration: number;
 }
 
-export interface MsgModProviderResponse {}
+export interface MsgModProviderResponse {
+}
 
 export interface MsgOpenContract {
   creator: Uint8Array;
@@ -56,14 +58,16 @@ export interface MsgOpenContract {
   queriesPerMinute: number;
 }
 
-export interface MsgOpenContractResponse {}
+export interface MsgOpenContractResponse {
+}
 
 export interface MsgCloseContract {
   creator: Uint8Array;
   contractId: number;
 }
 
-export interface MsgCloseContractResponse {}
+export interface MsgCloseContractResponse {
+}
 
 export interface MsgClaimContractIncome {
   creator: Uint8Array;
@@ -72,20 +76,24 @@ export interface MsgClaimContractIncome {
   nonce: number;
 }
 
-export interface MsgClaimContractIncomeResponse {}
+export interface MsgClaimContractIncomeResponse {
+}
 
 /** this line is used by starport scaffolding # proto/tx/message */
 export interface MsgSetVersion {
-  creator: Uint8Array;
+  creator: string;
   version: number;
 }
 
-export interface MsgSetVersionResponse {}
+export interface MsgSetVersionResponse {
+}
 
-const baseMsgBondProvider: object = { service: "", bond: "" };
+function createBaseMsgBondProvider(): MsgBondProvider {
+  return { creator: new Uint8Array(), provider: new Uint8Array(), service: "", bond: "" };
+}
 
 export const MsgBondProvider = {
-  encode(message: MsgBondProvider, writer: Writer = Writer.create()): Writer {
+  encode(message: MsgBondProvider, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.creator.length !== 0) {
       writer.uint32(10).bytes(message.creator);
     }
@@ -101,10 +109,10 @@ export const MsgBondProvider = {
     return writer;
   },
 
-  decode(input: Reader | Uint8Array, length?: number): MsgBondProvider {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgBondProvider {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseMsgBondProvider } as MsgBondProvider;
+    const message = createBaseMsgBondProvider();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -129,80 +137,48 @@ export const MsgBondProvider = {
   },
 
   fromJSON(object: any): MsgBondProvider {
-    const message = { ...baseMsgBondProvider } as MsgBondProvider;
-    if (object.creator !== undefined && object.creator !== null) {
-      message.creator = bytesFromBase64(object.creator);
-    }
-    if (object.provider !== undefined && object.provider !== null) {
-      message.provider = bytesFromBase64(object.provider);
-    }
-    if (object.service !== undefined && object.service !== null) {
-      message.service = String(object.service);
-    } else {
-      message.service = "";
-    }
-    if (object.bond !== undefined && object.bond !== null) {
-      message.bond = String(object.bond);
-    } else {
-      message.bond = "";
-    }
-    return message;
+    return {
+      creator: isSet(object.creator) ? bytesFromBase64(object.creator) : new Uint8Array(),
+      provider: isSet(object.provider) ? bytesFromBase64(object.provider) : new Uint8Array(),
+      service: isSet(object.service) ? String(object.service) : "",
+      bond: isSet(object.bond) ? String(object.bond) : "",
+    };
   },
 
   toJSON(message: MsgBondProvider): unknown {
     const obj: any = {};
-    message.creator !== undefined &&
-      (obj.creator = base64FromBytes(
-        message.creator !== undefined ? message.creator : new Uint8Array()
-      ));
-    message.provider !== undefined &&
-      (obj.provider = base64FromBytes(
-        message.provider !== undefined ? message.provider : new Uint8Array()
-      ));
+    message.creator !== undefined
+      && (obj.creator = base64FromBytes(message.creator !== undefined ? message.creator : new Uint8Array()));
+    message.provider !== undefined
+      && (obj.provider = base64FromBytes(message.provider !== undefined ? message.provider : new Uint8Array()));
     message.service !== undefined && (obj.service = message.service);
     message.bond !== undefined && (obj.bond = message.bond);
     return obj;
   },
 
-  fromPartial(object: DeepPartial<MsgBondProvider>): MsgBondProvider {
-    const message = { ...baseMsgBondProvider } as MsgBondProvider;
-    if (object.creator !== undefined && object.creator !== null) {
-      message.creator = object.creator;
-    } else {
-      message.creator = new Uint8Array();
-    }
-    if (object.provider !== undefined && object.provider !== null) {
-      message.provider = object.provider;
-    } else {
-      message.provider = new Uint8Array();
-    }
-    if (object.service !== undefined && object.service !== null) {
-      message.service = object.service;
-    } else {
-      message.service = "";
-    }
-    if (object.bond !== undefined && object.bond !== null) {
-      message.bond = object.bond;
-    } else {
-      message.bond = "";
-    }
+  fromPartial<I extends Exact<DeepPartial<MsgBondProvider>, I>>(object: I): MsgBondProvider {
+    const message = createBaseMsgBondProvider();
+    message.creator = object.creator ?? new Uint8Array();
+    message.provider = object.provider ?? new Uint8Array();
+    message.service = object.service ?? "";
+    message.bond = object.bond ?? "";
     return message;
   },
 };
 
-const baseMsgBondProviderResponse: object = {};
+function createBaseMsgBondProviderResponse(): MsgBondProviderResponse {
+  return {};
+}
 
 export const MsgBondProviderResponse = {
-  encode(_: MsgBondProviderResponse, writer: Writer = Writer.create()): Writer {
+  encode(_: MsgBondProviderResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     return writer;
   },
 
-  decode(input: Reader | Uint8Array, length?: number): MsgBondProviderResponse {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgBondProviderResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = {
-      ...baseMsgBondProviderResponse,
-    } as MsgBondProviderResponse;
+    const message = createBaseMsgBondProviderResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -215,10 +191,7 @@ export const MsgBondProviderResponse = {
   },
 
   fromJSON(_: any): MsgBondProviderResponse {
-    const message = {
-      ...baseMsgBondProviderResponse,
-    } as MsgBondProviderResponse;
-    return message;
+    return {};
   },
 
   toJSON(_: MsgBondProviderResponse): unknown {
@@ -226,28 +199,30 @@ export const MsgBondProviderResponse = {
     return obj;
   },
 
-  fromPartial(
-    _: DeepPartial<MsgBondProviderResponse>
-  ): MsgBondProviderResponse {
-    const message = {
-      ...baseMsgBondProviderResponse,
-    } as MsgBondProviderResponse;
+  fromPartial<I extends Exact<DeepPartial<MsgBondProviderResponse>, I>>(_: I): MsgBondProviderResponse {
+    const message = createBaseMsgBondProviderResponse();
     return message;
   },
 };
 
-const baseMsgModProvider: object = {
-  service: "",
-  metadataUri: "",
-  metadataNonce: 0,
-  status: 0,
-  minContractDuration: 0,
-  maxContractDuration: 0,
-  settlementDuration: 0,
-};
+function createBaseMsgModProvider(): MsgModProvider {
+  return {
+    creator: new Uint8Array(),
+    provider: new Uint8Array(),
+    service: "",
+    metadataUri: "",
+    metadataNonce: 0,
+    status: 0,
+    minContractDuration: 0,
+    maxContractDuration: 0,
+    subscriptionRate: [],
+    payAsYouGoRate: [],
+    settlementDuration: 0,
+  };
+}
 
 export const MsgModProvider = {
-  encode(message: MsgModProvider, writer: Writer = Writer.create()): Writer {
+  encode(message: MsgModProvider, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.creator.length !== 0) {
       writer.uint32(10).bytes(message.creator);
     }
@@ -284,12 +259,10 @@ export const MsgModProvider = {
     return writer;
   },
 
-  decode(input: Reader | Uint8Array, length?: number): MsgModProvider {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgModProvider {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseMsgModProvider } as MsgModProvider;
-    message.subscriptionRate = [];
-    message.payAsYouGoRate = [];
+    const message = createBaseMsgModProvider();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -335,201 +308,81 @@ export const MsgModProvider = {
   },
 
   fromJSON(object: any): MsgModProvider {
-    const message = { ...baseMsgModProvider } as MsgModProvider;
-    message.subscriptionRate = [];
-    message.payAsYouGoRate = [];
-    if (object.creator !== undefined && object.creator !== null) {
-      message.creator = bytesFromBase64(object.creator);
-    }
-    if (object.provider !== undefined && object.provider !== null) {
-      message.provider = bytesFromBase64(object.provider);
-    }
-    if (object.service !== undefined && object.service !== null) {
-      message.service = String(object.service);
-    } else {
-      message.service = "";
-    }
-    if (object.metadataUri !== undefined && object.metadataUri !== null) {
-      message.metadataUri = String(object.metadataUri);
-    } else {
-      message.metadataUri = "";
-    }
-    if (object.metadataNonce !== undefined && object.metadataNonce !== null) {
-      message.metadataNonce = Number(object.metadataNonce);
-    } else {
-      message.metadataNonce = 0;
-    }
-    if (object.status !== undefined && object.status !== null) {
-      message.status = providerStatusFromJSON(object.status);
-    } else {
-      message.status = 0;
-    }
-    if (
-      object.minContractDuration !== undefined &&
-      object.minContractDuration !== null
-    ) {
-      message.minContractDuration = Number(object.minContractDuration);
-    } else {
-      message.minContractDuration = 0;
-    }
-    if (
-      object.maxContractDuration !== undefined &&
-      object.maxContractDuration !== null
-    ) {
-      message.maxContractDuration = Number(object.maxContractDuration);
-    } else {
-      message.maxContractDuration = 0;
-    }
-    if (
-      object.subscriptionRate !== undefined &&
-      object.subscriptionRate !== null
-    ) {
-      for (const e of object.subscriptionRate) {
-        message.subscriptionRate.push(Coin.fromJSON(e));
-      }
-    }
-    if (object.payAsYouGoRate !== undefined && object.payAsYouGoRate !== null) {
-      for (const e of object.payAsYouGoRate) {
-        message.payAsYouGoRate.push(Coin.fromJSON(e));
-      }
-    }
-    if (
-      object.settlementDuration !== undefined &&
-      object.settlementDuration !== null
-    ) {
-      message.settlementDuration = Number(object.settlementDuration);
-    } else {
-      message.settlementDuration = 0;
-    }
-    return message;
+    return {
+      creator: isSet(object.creator) ? bytesFromBase64(object.creator) : new Uint8Array(),
+      provider: isSet(object.provider) ? bytesFromBase64(object.provider) : new Uint8Array(),
+      service: isSet(object.service) ? String(object.service) : "",
+      metadataUri: isSet(object.metadataUri) ? String(object.metadataUri) : "",
+      metadataNonce: isSet(object.metadataNonce) ? Number(object.metadataNonce) : 0,
+      status: isSet(object.status) ? providerStatusFromJSON(object.status) : 0,
+      minContractDuration: isSet(object.minContractDuration) ? Number(object.minContractDuration) : 0,
+      maxContractDuration: isSet(object.maxContractDuration) ? Number(object.maxContractDuration) : 0,
+      subscriptionRate: Array.isArray(object?.subscriptionRate)
+        ? object.subscriptionRate.map((e: any) => Coin.fromJSON(e))
+        : [],
+      payAsYouGoRate: Array.isArray(object?.payAsYouGoRate)
+        ? object.payAsYouGoRate.map((e: any) => Coin.fromJSON(e))
+        : [],
+      settlementDuration: isSet(object.settlementDuration) ? Number(object.settlementDuration) : 0,
+    };
   },
 
   toJSON(message: MsgModProvider): unknown {
     const obj: any = {};
-    message.creator !== undefined &&
-      (obj.creator = base64FromBytes(
-        message.creator !== undefined ? message.creator : new Uint8Array()
-      ));
-    message.provider !== undefined &&
-      (obj.provider = base64FromBytes(
-        message.provider !== undefined ? message.provider : new Uint8Array()
-      ));
+    message.creator !== undefined
+      && (obj.creator = base64FromBytes(message.creator !== undefined ? message.creator : new Uint8Array()));
+    message.provider !== undefined
+      && (obj.provider = base64FromBytes(message.provider !== undefined ? message.provider : new Uint8Array()));
     message.service !== undefined && (obj.service = message.service);
-    message.metadataUri !== undefined &&
-      (obj.metadataUri = message.metadataUri);
-    message.metadataNonce !== undefined &&
-      (obj.metadataNonce = message.metadataNonce);
-    message.status !== undefined &&
-      (obj.status = providerStatusToJSON(message.status));
-    message.minContractDuration !== undefined &&
-      (obj.minContractDuration = message.minContractDuration);
-    message.maxContractDuration !== undefined &&
-      (obj.maxContractDuration = message.maxContractDuration);
+    message.metadataUri !== undefined && (obj.metadataUri = message.metadataUri);
+    message.metadataNonce !== undefined && (obj.metadataNonce = Math.round(message.metadataNonce));
+    message.status !== undefined && (obj.status = providerStatusToJSON(message.status));
+    message.minContractDuration !== undefined && (obj.minContractDuration = Math.round(message.minContractDuration));
+    message.maxContractDuration !== undefined && (obj.maxContractDuration = Math.round(message.maxContractDuration));
     if (message.subscriptionRate) {
-      obj.subscriptionRate = message.subscriptionRate.map((e) =>
-        e ? Coin.toJSON(e) : undefined
-      );
+      obj.subscriptionRate = message.subscriptionRate.map((e) => e ? Coin.toJSON(e) : undefined);
     } else {
       obj.subscriptionRate = [];
     }
     if (message.payAsYouGoRate) {
-      obj.payAsYouGoRate = message.payAsYouGoRate.map((e) =>
-        e ? Coin.toJSON(e) : undefined
-      );
+      obj.payAsYouGoRate = message.payAsYouGoRate.map((e) => e ? Coin.toJSON(e) : undefined);
     } else {
       obj.payAsYouGoRate = [];
     }
-    message.settlementDuration !== undefined &&
-      (obj.settlementDuration = message.settlementDuration);
+    message.settlementDuration !== undefined && (obj.settlementDuration = Math.round(message.settlementDuration));
     return obj;
   },
 
-  fromPartial(object: DeepPartial<MsgModProvider>): MsgModProvider {
-    const message = { ...baseMsgModProvider } as MsgModProvider;
-    message.subscriptionRate = [];
-    message.payAsYouGoRate = [];
-    if (object.creator !== undefined && object.creator !== null) {
-      message.creator = object.creator;
-    } else {
-      message.creator = new Uint8Array();
-    }
-    if (object.provider !== undefined && object.provider !== null) {
-      message.provider = object.provider;
-    } else {
-      message.provider = new Uint8Array();
-    }
-    if (object.service !== undefined && object.service !== null) {
-      message.service = object.service;
-    } else {
-      message.service = "";
-    }
-    if (object.metadataUri !== undefined && object.metadataUri !== null) {
-      message.metadataUri = object.metadataUri;
-    } else {
-      message.metadataUri = "";
-    }
-    if (object.metadataNonce !== undefined && object.metadataNonce !== null) {
-      message.metadataNonce = object.metadataNonce;
-    } else {
-      message.metadataNonce = 0;
-    }
-    if (object.status !== undefined && object.status !== null) {
-      message.status = object.status;
-    } else {
-      message.status = 0;
-    }
-    if (
-      object.minContractDuration !== undefined &&
-      object.minContractDuration !== null
-    ) {
-      message.minContractDuration = object.minContractDuration;
-    } else {
-      message.minContractDuration = 0;
-    }
-    if (
-      object.maxContractDuration !== undefined &&
-      object.maxContractDuration !== null
-    ) {
-      message.maxContractDuration = object.maxContractDuration;
-    } else {
-      message.maxContractDuration = 0;
-    }
-    if (
-      object.subscriptionRate !== undefined &&
-      object.subscriptionRate !== null
-    ) {
-      for (const e of object.subscriptionRate) {
-        message.subscriptionRate.push(Coin.fromPartial(e));
-      }
-    }
-    if (object.payAsYouGoRate !== undefined && object.payAsYouGoRate !== null) {
-      for (const e of object.payAsYouGoRate) {
-        message.payAsYouGoRate.push(Coin.fromPartial(e));
-      }
-    }
-    if (
-      object.settlementDuration !== undefined &&
-      object.settlementDuration !== null
-    ) {
-      message.settlementDuration = object.settlementDuration;
-    } else {
-      message.settlementDuration = 0;
-    }
+  fromPartial<I extends Exact<DeepPartial<MsgModProvider>, I>>(object: I): MsgModProvider {
+    const message = createBaseMsgModProvider();
+    message.creator = object.creator ?? new Uint8Array();
+    message.provider = object.provider ?? new Uint8Array();
+    message.service = object.service ?? "";
+    message.metadataUri = object.metadataUri ?? "";
+    message.metadataNonce = object.metadataNonce ?? 0;
+    message.status = object.status ?? 0;
+    message.minContractDuration = object.minContractDuration ?? 0;
+    message.maxContractDuration = object.maxContractDuration ?? 0;
+    message.subscriptionRate = object.subscriptionRate?.map((e) => Coin.fromPartial(e)) || [];
+    message.payAsYouGoRate = object.payAsYouGoRate?.map((e) => Coin.fromPartial(e)) || [];
+    message.settlementDuration = object.settlementDuration ?? 0;
     return message;
   },
 };
 
-const baseMsgModProviderResponse: object = {};
+function createBaseMsgModProviderResponse(): MsgModProviderResponse {
+  return {};
+}
 
 export const MsgModProviderResponse = {
-  encode(_: MsgModProviderResponse, writer: Writer = Writer.create()): Writer {
+  encode(_: MsgModProviderResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     return writer;
   },
 
-  decode(input: Reader | Uint8Array, length?: number): MsgModProviderResponse {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgModProviderResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseMsgModProviderResponse } as MsgModProviderResponse;
+    const message = createBaseMsgModProviderResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -542,8 +395,7 @@ export const MsgModProviderResponse = {
   },
 
   fromJSON(_: any): MsgModProviderResponse {
-    const message = { ...baseMsgModProviderResponse } as MsgModProviderResponse;
-    return message;
+    return {};
   },
 
   toJSON(_: MsgModProviderResponse): unknown {
@@ -551,24 +403,31 @@ export const MsgModProviderResponse = {
     return obj;
   },
 
-  fromPartial(_: DeepPartial<MsgModProviderResponse>): MsgModProviderResponse {
-    const message = { ...baseMsgModProviderResponse } as MsgModProviderResponse;
+  fromPartial<I extends Exact<DeepPartial<MsgModProviderResponse>, I>>(_: I): MsgModProviderResponse {
+    const message = createBaseMsgModProviderResponse();
     return message;
   },
 };
 
-const baseMsgOpenContract: object = {
-  service: "",
-  contractType: 0,
-  duration: 0,
-  deposit: "",
-  settlementDuration: 0,
-  authorization: 0,
-  queriesPerMinute: 0,
-};
+function createBaseMsgOpenContract(): MsgOpenContract {
+  return {
+    creator: new Uint8Array(),
+    provider: new Uint8Array(),
+    service: "",
+    client: new Uint8Array(),
+    delegate: new Uint8Array(),
+    contractType: 0,
+    duration: 0,
+    rate: undefined,
+    deposit: "",
+    settlementDuration: 0,
+    authorization: 0,
+    queriesPerMinute: 0,
+  };
+}
 
 export const MsgOpenContract = {
-  encode(message: MsgOpenContract, writer: Writer = Writer.create()): Writer {
+  encode(message: MsgOpenContract, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.creator.length !== 0) {
       writer.uint32(10).bytes(message.creator);
     }
@@ -608,10 +467,10 @@ export const MsgOpenContract = {
     return writer;
   },
 
-  decode(input: Reader | Uint8Array, length?: number): MsgOpenContract {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgOpenContract {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseMsgOpenContract } as MsgOpenContract;
+    const message = createBaseMsgOpenContract();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -660,189 +519,74 @@ export const MsgOpenContract = {
   },
 
   fromJSON(object: any): MsgOpenContract {
-    const message = { ...baseMsgOpenContract } as MsgOpenContract;
-    if (object.creator !== undefined && object.creator !== null) {
-      message.creator = bytesFromBase64(object.creator);
-    }
-    if (object.provider !== undefined && object.provider !== null) {
-      message.provider = bytesFromBase64(object.provider);
-    }
-    if (object.service !== undefined && object.service !== null) {
-      message.service = String(object.service);
-    } else {
-      message.service = "";
-    }
-    if (object.client !== undefined && object.client !== null) {
-      message.client = bytesFromBase64(object.client);
-    }
-    if (object.delegate !== undefined && object.delegate !== null) {
-      message.delegate = bytesFromBase64(object.delegate);
-    }
-    if (object.contractType !== undefined && object.contractType !== null) {
-      message.contractType = contractTypeFromJSON(object.contractType);
-    } else {
-      message.contractType = 0;
-    }
-    if (object.duration !== undefined && object.duration !== null) {
-      message.duration = Number(object.duration);
-    } else {
-      message.duration = 0;
-    }
-    if (object.rate !== undefined && object.rate !== null) {
-      message.rate = Coin.fromJSON(object.rate);
-    } else {
-      message.rate = undefined;
-    }
-    if (object.deposit !== undefined && object.deposit !== null) {
-      message.deposit = String(object.deposit);
-    } else {
-      message.deposit = "";
-    }
-    if (
-      object.settlementDuration !== undefined &&
-      object.settlementDuration !== null
-    ) {
-      message.settlementDuration = Number(object.settlementDuration);
-    } else {
-      message.settlementDuration = 0;
-    }
-    if (object.authorization !== undefined && object.authorization !== null) {
-      message.authorization = contractAuthorizationFromJSON(
-        object.authorization
-      );
-    } else {
-      message.authorization = 0;
-    }
-    if (
-      object.queriesPerMinute !== undefined &&
-      object.queriesPerMinute !== null
-    ) {
-      message.queriesPerMinute = Number(object.queriesPerMinute);
-    } else {
-      message.queriesPerMinute = 0;
-    }
-    return message;
+    return {
+      creator: isSet(object.creator) ? bytesFromBase64(object.creator) : new Uint8Array(),
+      provider: isSet(object.provider) ? bytesFromBase64(object.provider) : new Uint8Array(),
+      service: isSet(object.service) ? String(object.service) : "",
+      client: isSet(object.client) ? bytesFromBase64(object.client) : new Uint8Array(),
+      delegate: isSet(object.delegate) ? bytesFromBase64(object.delegate) : new Uint8Array(),
+      contractType: isSet(object.contractType) ? contractTypeFromJSON(object.contractType) : 0,
+      duration: isSet(object.duration) ? Number(object.duration) : 0,
+      rate: isSet(object.rate) ? Coin.fromJSON(object.rate) : undefined,
+      deposit: isSet(object.deposit) ? String(object.deposit) : "",
+      settlementDuration: isSet(object.settlementDuration) ? Number(object.settlementDuration) : 0,
+      authorization: isSet(object.authorization) ? contractAuthorizationFromJSON(object.authorization) : 0,
+      queriesPerMinute: isSet(object.queriesPerMinute) ? Number(object.queriesPerMinute) : 0,
+    };
   },
 
   toJSON(message: MsgOpenContract): unknown {
     const obj: any = {};
-    message.creator !== undefined &&
-      (obj.creator = base64FromBytes(
-        message.creator !== undefined ? message.creator : new Uint8Array()
-      ));
-    message.provider !== undefined &&
-      (obj.provider = base64FromBytes(
-        message.provider !== undefined ? message.provider : new Uint8Array()
-      ));
+    message.creator !== undefined
+      && (obj.creator = base64FromBytes(message.creator !== undefined ? message.creator : new Uint8Array()));
+    message.provider !== undefined
+      && (obj.provider = base64FromBytes(message.provider !== undefined ? message.provider : new Uint8Array()));
     message.service !== undefined && (obj.service = message.service);
-    message.client !== undefined &&
-      (obj.client = base64FromBytes(
-        message.client !== undefined ? message.client : new Uint8Array()
-      ));
-    message.delegate !== undefined &&
-      (obj.delegate = base64FromBytes(
-        message.delegate !== undefined ? message.delegate : new Uint8Array()
-      ));
-    message.contractType !== undefined &&
-      (obj.contractType = contractTypeToJSON(message.contractType));
-    message.duration !== undefined && (obj.duration = message.duration);
-    message.rate !== undefined &&
-      (obj.rate = message.rate ? Coin.toJSON(message.rate) : undefined);
+    message.client !== undefined
+      && (obj.client = base64FromBytes(message.client !== undefined ? message.client : new Uint8Array()));
+    message.delegate !== undefined
+      && (obj.delegate = base64FromBytes(message.delegate !== undefined ? message.delegate : new Uint8Array()));
+    message.contractType !== undefined && (obj.contractType = contractTypeToJSON(message.contractType));
+    message.duration !== undefined && (obj.duration = Math.round(message.duration));
+    message.rate !== undefined && (obj.rate = message.rate ? Coin.toJSON(message.rate) : undefined);
     message.deposit !== undefined && (obj.deposit = message.deposit);
-    message.settlementDuration !== undefined &&
-      (obj.settlementDuration = message.settlementDuration);
-    message.authorization !== undefined &&
-      (obj.authorization = contractAuthorizationToJSON(message.authorization));
-    message.queriesPerMinute !== undefined &&
-      (obj.queriesPerMinute = message.queriesPerMinute);
+    message.settlementDuration !== undefined && (obj.settlementDuration = Math.round(message.settlementDuration));
+    message.authorization !== undefined && (obj.authorization = contractAuthorizationToJSON(message.authorization));
+    message.queriesPerMinute !== undefined && (obj.queriesPerMinute = Math.round(message.queriesPerMinute));
     return obj;
   },
 
-  fromPartial(object: DeepPartial<MsgOpenContract>): MsgOpenContract {
-    const message = { ...baseMsgOpenContract } as MsgOpenContract;
-    if (object.creator !== undefined && object.creator !== null) {
-      message.creator = object.creator;
-    } else {
-      message.creator = new Uint8Array();
-    }
-    if (object.provider !== undefined && object.provider !== null) {
-      message.provider = object.provider;
-    } else {
-      message.provider = new Uint8Array();
-    }
-    if (object.service !== undefined && object.service !== null) {
-      message.service = object.service;
-    } else {
-      message.service = "";
-    }
-    if (object.client !== undefined && object.client !== null) {
-      message.client = object.client;
-    } else {
-      message.client = new Uint8Array();
-    }
-    if (object.delegate !== undefined && object.delegate !== null) {
-      message.delegate = object.delegate;
-    } else {
-      message.delegate = new Uint8Array();
-    }
-    if (object.contractType !== undefined && object.contractType !== null) {
-      message.contractType = object.contractType;
-    } else {
-      message.contractType = 0;
-    }
-    if (object.duration !== undefined && object.duration !== null) {
-      message.duration = object.duration;
-    } else {
-      message.duration = 0;
-    }
-    if (object.rate !== undefined && object.rate !== null) {
-      message.rate = Coin.fromPartial(object.rate);
-    } else {
-      message.rate = undefined;
-    }
-    if (object.deposit !== undefined && object.deposit !== null) {
-      message.deposit = object.deposit;
-    } else {
-      message.deposit = "";
-    }
-    if (
-      object.settlementDuration !== undefined &&
-      object.settlementDuration !== null
-    ) {
-      message.settlementDuration = object.settlementDuration;
-    } else {
-      message.settlementDuration = 0;
-    }
-    if (object.authorization !== undefined && object.authorization !== null) {
-      message.authorization = object.authorization;
-    } else {
-      message.authorization = 0;
-    }
-    if (
-      object.queriesPerMinute !== undefined &&
-      object.queriesPerMinute !== null
-    ) {
-      message.queriesPerMinute = object.queriesPerMinute;
-    } else {
-      message.queriesPerMinute = 0;
-    }
+  fromPartial<I extends Exact<DeepPartial<MsgOpenContract>, I>>(object: I): MsgOpenContract {
+    const message = createBaseMsgOpenContract();
+    message.creator = object.creator ?? new Uint8Array();
+    message.provider = object.provider ?? new Uint8Array();
+    message.service = object.service ?? "";
+    message.client = object.client ?? new Uint8Array();
+    message.delegate = object.delegate ?? new Uint8Array();
+    message.contractType = object.contractType ?? 0;
+    message.duration = object.duration ?? 0;
+    message.rate = (object.rate !== undefined && object.rate !== null) ? Coin.fromPartial(object.rate) : undefined;
+    message.deposit = object.deposit ?? "";
+    message.settlementDuration = object.settlementDuration ?? 0;
+    message.authorization = object.authorization ?? 0;
+    message.queriesPerMinute = object.queriesPerMinute ?? 0;
     return message;
   },
 };
 
-const baseMsgOpenContractResponse: object = {};
+function createBaseMsgOpenContractResponse(): MsgOpenContractResponse {
+  return {};
+}
 
 export const MsgOpenContractResponse = {
-  encode(_: MsgOpenContractResponse, writer: Writer = Writer.create()): Writer {
+  encode(_: MsgOpenContractResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     return writer;
   },
 
-  decode(input: Reader | Uint8Array, length?: number): MsgOpenContractResponse {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgOpenContractResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = {
-      ...baseMsgOpenContractResponse,
-    } as MsgOpenContractResponse;
+    const message = createBaseMsgOpenContractResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -855,10 +599,7 @@ export const MsgOpenContractResponse = {
   },
 
   fromJSON(_: any): MsgOpenContractResponse {
-    const message = {
-      ...baseMsgOpenContractResponse,
-    } as MsgOpenContractResponse;
-    return message;
+    return {};
   },
 
   toJSON(_: MsgOpenContractResponse): unknown {
@@ -866,20 +607,18 @@ export const MsgOpenContractResponse = {
     return obj;
   },
 
-  fromPartial(
-    _: DeepPartial<MsgOpenContractResponse>
-  ): MsgOpenContractResponse {
-    const message = {
-      ...baseMsgOpenContractResponse,
-    } as MsgOpenContractResponse;
+  fromPartial<I extends Exact<DeepPartial<MsgOpenContractResponse>, I>>(_: I): MsgOpenContractResponse {
+    const message = createBaseMsgOpenContractResponse();
     return message;
   },
 };
 
-const baseMsgCloseContract: object = { contractId: 0 };
+function createBaseMsgCloseContract(): MsgCloseContract {
+  return { creator: new Uint8Array(), contractId: 0 };
+}
 
 export const MsgCloseContract = {
-  encode(message: MsgCloseContract, writer: Writer = Writer.create()): Writer {
+  encode(message: MsgCloseContract, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.creator.length !== 0) {
       writer.uint32(10).bytes(message.creator);
     }
@@ -889,10 +628,10 @@ export const MsgCloseContract = {
     return writer;
   },
 
-  decode(input: Reader | Uint8Array, length?: number): MsgCloseContract {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgCloseContract {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseMsgCloseContract } as MsgCloseContract;
+    const message = createBaseMsgCloseContract();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -911,63 +650,41 @@ export const MsgCloseContract = {
   },
 
   fromJSON(object: any): MsgCloseContract {
-    const message = { ...baseMsgCloseContract } as MsgCloseContract;
-    if (object.creator !== undefined && object.creator !== null) {
-      message.creator = bytesFromBase64(object.creator);
-    }
-    if (object.contractId !== undefined && object.contractId !== null) {
-      message.contractId = Number(object.contractId);
-    } else {
-      message.contractId = 0;
-    }
-    return message;
+    return {
+      creator: isSet(object.creator) ? bytesFromBase64(object.creator) : new Uint8Array(),
+      contractId: isSet(object.contractId) ? Number(object.contractId) : 0,
+    };
   },
 
   toJSON(message: MsgCloseContract): unknown {
     const obj: any = {};
-    message.creator !== undefined &&
-      (obj.creator = base64FromBytes(
-        message.creator !== undefined ? message.creator : new Uint8Array()
-      ));
-    message.contractId !== undefined && (obj.contractId = message.contractId);
+    message.creator !== undefined
+      && (obj.creator = base64FromBytes(message.creator !== undefined ? message.creator : new Uint8Array()));
+    message.contractId !== undefined && (obj.contractId = Math.round(message.contractId));
     return obj;
   },
 
-  fromPartial(object: DeepPartial<MsgCloseContract>): MsgCloseContract {
-    const message = { ...baseMsgCloseContract } as MsgCloseContract;
-    if (object.creator !== undefined && object.creator !== null) {
-      message.creator = object.creator;
-    } else {
-      message.creator = new Uint8Array();
-    }
-    if (object.contractId !== undefined && object.contractId !== null) {
-      message.contractId = object.contractId;
-    } else {
-      message.contractId = 0;
-    }
+  fromPartial<I extends Exact<DeepPartial<MsgCloseContract>, I>>(object: I): MsgCloseContract {
+    const message = createBaseMsgCloseContract();
+    message.creator = object.creator ?? new Uint8Array();
+    message.contractId = object.contractId ?? 0;
     return message;
   },
 };
 
-const baseMsgCloseContractResponse: object = {};
+function createBaseMsgCloseContractResponse(): MsgCloseContractResponse {
+  return {};
+}
 
 export const MsgCloseContractResponse = {
-  encode(
-    _: MsgCloseContractResponse,
-    writer: Writer = Writer.create()
-  ): Writer {
+  encode(_: MsgCloseContractResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     return writer;
   },
 
-  decode(
-    input: Reader | Uint8Array,
-    length?: number
-  ): MsgCloseContractResponse {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgCloseContractResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = {
-      ...baseMsgCloseContractResponse,
-    } as MsgCloseContractResponse;
+    const message = createBaseMsgCloseContractResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -980,10 +697,7 @@ export const MsgCloseContractResponse = {
   },
 
   fromJSON(_: any): MsgCloseContractResponse {
-    const message = {
-      ...baseMsgCloseContractResponse,
-    } as MsgCloseContractResponse;
-    return message;
+    return {};
   },
 
   toJSON(_: MsgCloseContractResponse): unknown {
@@ -991,23 +705,18 @@ export const MsgCloseContractResponse = {
     return obj;
   },
 
-  fromPartial(
-    _: DeepPartial<MsgCloseContractResponse>
-  ): MsgCloseContractResponse {
-    const message = {
-      ...baseMsgCloseContractResponse,
-    } as MsgCloseContractResponse;
+  fromPartial<I extends Exact<DeepPartial<MsgCloseContractResponse>, I>>(_: I): MsgCloseContractResponse {
+    const message = createBaseMsgCloseContractResponse();
     return message;
   },
 };
 
-const baseMsgClaimContractIncome: object = { contractId: 0, nonce: 0 };
+function createBaseMsgClaimContractIncome(): MsgClaimContractIncome {
+  return { creator: new Uint8Array(), contractId: 0, signature: new Uint8Array(), nonce: 0 };
+}
 
 export const MsgClaimContractIncome = {
-  encode(
-    message: MsgClaimContractIncome,
-    writer: Writer = Writer.create()
-  ): Writer {
+  encode(message: MsgClaimContractIncome, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.creator.length !== 0) {
       writer.uint32(10).bytes(message.creator);
     }
@@ -1023,10 +732,10 @@ export const MsgClaimContractIncome = {
     return writer;
   },
 
-  decode(input: Reader | Uint8Array, length?: number): MsgClaimContractIncome {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgClaimContractIncome {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseMsgClaimContractIncome } as MsgClaimContractIncome;
+    const message = createBaseMsgClaimContractIncome();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -1051,88 +760,48 @@ export const MsgClaimContractIncome = {
   },
 
   fromJSON(object: any): MsgClaimContractIncome {
-    const message = { ...baseMsgClaimContractIncome } as MsgClaimContractIncome;
-    if (object.creator !== undefined && object.creator !== null) {
-      message.creator = bytesFromBase64(object.creator);
-    }
-    if (object.contractId !== undefined && object.contractId !== null) {
-      message.contractId = Number(object.contractId);
-    } else {
-      message.contractId = 0;
-    }
-    if (object.signature !== undefined && object.signature !== null) {
-      message.signature = bytesFromBase64(object.signature);
-    }
-    if (object.nonce !== undefined && object.nonce !== null) {
-      message.nonce = Number(object.nonce);
-    } else {
-      message.nonce = 0;
-    }
-    return message;
+    return {
+      creator: isSet(object.creator) ? bytesFromBase64(object.creator) : new Uint8Array(),
+      contractId: isSet(object.contractId) ? Number(object.contractId) : 0,
+      signature: isSet(object.signature) ? bytesFromBase64(object.signature) : new Uint8Array(),
+      nonce: isSet(object.nonce) ? Number(object.nonce) : 0,
+    };
   },
 
   toJSON(message: MsgClaimContractIncome): unknown {
     const obj: any = {};
-    message.creator !== undefined &&
-      (obj.creator = base64FromBytes(
-        message.creator !== undefined ? message.creator : new Uint8Array()
-      ));
-    message.contractId !== undefined && (obj.contractId = message.contractId);
-    message.signature !== undefined &&
-      (obj.signature = base64FromBytes(
-        message.signature !== undefined ? message.signature : new Uint8Array()
-      ));
-    message.nonce !== undefined && (obj.nonce = message.nonce);
+    message.creator !== undefined
+      && (obj.creator = base64FromBytes(message.creator !== undefined ? message.creator : new Uint8Array()));
+    message.contractId !== undefined && (obj.contractId = Math.round(message.contractId));
+    message.signature !== undefined
+      && (obj.signature = base64FromBytes(message.signature !== undefined ? message.signature : new Uint8Array()));
+    message.nonce !== undefined && (obj.nonce = Math.round(message.nonce));
     return obj;
   },
 
-  fromPartial(
-    object: DeepPartial<MsgClaimContractIncome>
-  ): MsgClaimContractIncome {
-    const message = { ...baseMsgClaimContractIncome } as MsgClaimContractIncome;
-    if (object.creator !== undefined && object.creator !== null) {
-      message.creator = object.creator;
-    } else {
-      message.creator = new Uint8Array();
-    }
-    if (object.contractId !== undefined && object.contractId !== null) {
-      message.contractId = object.contractId;
-    } else {
-      message.contractId = 0;
-    }
-    if (object.signature !== undefined && object.signature !== null) {
-      message.signature = object.signature;
-    } else {
-      message.signature = new Uint8Array();
-    }
-    if (object.nonce !== undefined && object.nonce !== null) {
-      message.nonce = object.nonce;
-    } else {
-      message.nonce = 0;
-    }
+  fromPartial<I extends Exact<DeepPartial<MsgClaimContractIncome>, I>>(object: I): MsgClaimContractIncome {
+    const message = createBaseMsgClaimContractIncome();
+    message.creator = object.creator ?? new Uint8Array();
+    message.contractId = object.contractId ?? 0;
+    message.signature = object.signature ?? new Uint8Array();
+    message.nonce = object.nonce ?? 0;
     return message;
   },
 };
 
-const baseMsgClaimContractIncomeResponse: object = {};
+function createBaseMsgClaimContractIncomeResponse(): MsgClaimContractIncomeResponse {
+  return {};
+}
 
 export const MsgClaimContractIncomeResponse = {
-  encode(
-    _: MsgClaimContractIncomeResponse,
-    writer: Writer = Writer.create()
-  ): Writer {
+  encode(_: MsgClaimContractIncomeResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     return writer;
   },
 
-  decode(
-    input: Reader | Uint8Array,
-    length?: number
-  ): MsgClaimContractIncomeResponse {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgClaimContractIncomeResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = {
-      ...baseMsgClaimContractIncomeResponse,
-    } as MsgClaimContractIncomeResponse;
+    const message = createBaseMsgClaimContractIncomeResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -1145,10 +814,7 @@ export const MsgClaimContractIncomeResponse = {
   },
 
   fromJSON(_: any): MsgClaimContractIncomeResponse {
-    const message = {
-      ...baseMsgClaimContractIncomeResponse,
-    } as MsgClaimContractIncomeResponse;
-    return message;
+    return {};
   },
 
   toJSON(_: MsgClaimContractIncomeResponse): unknown {
@@ -1156,41 +822,39 @@ export const MsgClaimContractIncomeResponse = {
     return obj;
   },
 
-  fromPartial(
-    _: DeepPartial<MsgClaimContractIncomeResponse>
-  ): MsgClaimContractIncomeResponse {
-    const message = {
-      ...baseMsgClaimContractIncomeResponse,
-    } as MsgClaimContractIncomeResponse;
+  fromPartial<I extends Exact<DeepPartial<MsgClaimContractIncomeResponse>, I>>(_: I): MsgClaimContractIncomeResponse {
+    const message = createBaseMsgClaimContractIncomeResponse();
     return message;
   },
 };
 
-const baseMsgSetVersion: object = { version: 0 };
+function createBaseMsgSetVersion(): MsgSetVersion {
+  return { creator: "", version: 0 };
+}
 
 export const MsgSetVersion = {
-  encode(message: MsgSetVersion, writer: Writer = Writer.create()): Writer {
-    if (message.creator.length !== 0) {
-      writer.uint32(10).bytes(message.creator);
+  encode(message: MsgSetVersion, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.creator !== "") {
+      writer.uint32(10).string(message.creator);
     }
     if (message.version !== 0) {
-      writer.uint32(16).int64(message.version);
+      writer.uint32(16).int32(message.version);
     }
     return writer;
   },
 
-  decode(input: Reader | Uint8Array, length?: number): MsgSetVersion {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgSetVersion {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseMsgSetVersion } as MsgSetVersion;
+    const message = createBaseMsgSetVersion();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.creator = reader.bytes();
+          message.creator = reader.string();
           break;
         case 2:
-          message.version = longToNumber(reader.int64() as Long);
+          message.version = reader.int32();
           break;
         default:
           reader.skipType(tag & 7);
@@ -1201,55 +865,40 @@ export const MsgSetVersion = {
   },
 
   fromJSON(object: any): MsgSetVersion {
-    const message = { ...baseMsgSetVersion } as MsgSetVersion;
-    if (object.creator !== undefined && object.creator !== null) {
-      message.creator = bytesFromBase64(object.creator);
-    }
-    if (object.version !== undefined && object.version !== null) {
-      message.version = Number(object.version);
-    } else {
-      message.version = 0;
-    }
-    return message;
+    return {
+      creator: isSet(object.creator) ? String(object.creator) : "",
+      version: isSet(object.version) ? Number(object.version) : 0,
+    };
   },
 
   toJSON(message: MsgSetVersion): unknown {
     const obj: any = {};
-    message.creator !== undefined &&
-      (obj.creator = base64FromBytes(
-        message.creator !== undefined ? message.creator : new Uint8Array()
-      ));
-    message.version !== undefined && (obj.version = message.version);
+    message.creator !== undefined && (obj.creator = message.creator);
+    message.version !== undefined && (obj.version = Math.round(message.version));
     return obj;
   },
 
-  fromPartial(object: DeepPartial<MsgSetVersion>): MsgSetVersion {
-    const message = { ...baseMsgSetVersion } as MsgSetVersion;
-    if (object.creator !== undefined && object.creator !== null) {
-      message.creator = object.creator;
-    } else {
-      message.creator = new Uint8Array();
-    }
-    if (object.version !== undefined && object.version !== null) {
-      message.version = object.version;
-    } else {
-      message.version = 0;
-    }
+  fromPartial<I extends Exact<DeepPartial<MsgSetVersion>, I>>(object: I): MsgSetVersion {
+    const message = createBaseMsgSetVersion();
+    message.creator = object.creator ?? "";
+    message.version = object.version ?? 0;
     return message;
   },
 };
 
-const baseMsgSetVersionResponse: object = {};
+function createBaseMsgSetVersionResponse(): MsgSetVersionResponse {
+  return {};
+}
 
 export const MsgSetVersionResponse = {
-  encode(_: MsgSetVersionResponse, writer: Writer = Writer.create()): Writer {
+  encode(_: MsgSetVersionResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     return writer;
   },
 
-  decode(input: Reader | Uint8Array, length?: number): MsgSetVersionResponse {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgSetVersionResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseMsgSetVersionResponse } as MsgSetVersionResponse;
+    const message = createBaseMsgSetVersionResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -1262,8 +911,7 @@ export const MsgSetVersionResponse = {
   },
 
   fromJSON(_: any): MsgSetVersionResponse {
-    const message = { ...baseMsgSetVersionResponse } as MsgSetVersionResponse;
-    return message;
+    return {};
   },
 
   toJSON(_: MsgSetVersionResponse): unknown {
@@ -1271,8 +919,8 @@ export const MsgSetVersionResponse = {
     return obj;
   },
 
-  fromPartial(_: DeepPartial<MsgSetVersionResponse>): MsgSetVersionResponse {
-    const message = { ...baseMsgSetVersionResponse } as MsgSetVersionResponse;
+  fromPartial<I extends Exact<DeepPartial<MsgSetVersionResponse>, I>>(_: I): MsgSetVersionResponse {
+    const message = createBaseMsgSetVersionResponse();
     return message;
   },
 };
@@ -1283,9 +931,7 @@ export interface Msg {
   ModProvider(request: MsgModProvider): Promise<MsgModProviderResponse>;
   OpenContract(request: MsgOpenContract): Promise<MsgOpenContractResponse>;
   CloseContract(request: MsgCloseContract): Promise<MsgCloseContractResponse>;
-  ClaimContractIncome(
-    request: MsgClaimContractIncome
-  ): Promise<MsgClaimContractIncomeResponse>;
+  ClaimContractIncome(request: MsgClaimContractIncome): Promise<MsgClaimContractIncomeResponse>;
   /** this line is used by starport scaffolding # proto/tx/rpc */
   SetVersion(request: MsgSetVersion): Promise<MsgSetVersionResponse>;
 }
@@ -1294,113 +940,108 @@ export class MsgClientImpl implements Msg {
   private readonly rpc: Rpc;
   constructor(rpc: Rpc) {
     this.rpc = rpc;
+    this.BondProvider = this.BondProvider.bind(this);
+    this.ModProvider = this.ModProvider.bind(this);
+    this.OpenContract = this.OpenContract.bind(this);
+    this.CloseContract = this.CloseContract.bind(this);
+    this.ClaimContractIncome = this.ClaimContractIncome.bind(this);
+    this.SetVersion = this.SetVersion.bind(this);
   }
   BondProvider(request: MsgBondProvider): Promise<MsgBondProviderResponse> {
     const data = MsgBondProvider.encode(request).finish();
     const promise = this.rpc.request("arkeo.arkeo.Msg", "BondProvider", data);
-    return promise.then((data) =>
-      MsgBondProviderResponse.decode(new Reader(data))
-    );
+    return promise.then((data) => MsgBondProviderResponse.decode(new _m0.Reader(data)));
   }
 
   ModProvider(request: MsgModProvider): Promise<MsgModProviderResponse> {
     const data = MsgModProvider.encode(request).finish();
     const promise = this.rpc.request("arkeo.arkeo.Msg", "ModProvider", data);
-    return promise.then((data) =>
-      MsgModProviderResponse.decode(new Reader(data))
-    );
+    return promise.then((data) => MsgModProviderResponse.decode(new _m0.Reader(data)));
   }
 
   OpenContract(request: MsgOpenContract): Promise<MsgOpenContractResponse> {
     const data = MsgOpenContract.encode(request).finish();
     const promise = this.rpc.request("arkeo.arkeo.Msg", "OpenContract", data);
-    return promise.then((data) =>
-      MsgOpenContractResponse.decode(new Reader(data))
-    );
+    return promise.then((data) => MsgOpenContractResponse.decode(new _m0.Reader(data)));
   }
 
   CloseContract(request: MsgCloseContract): Promise<MsgCloseContractResponse> {
     const data = MsgCloseContract.encode(request).finish();
     const promise = this.rpc.request("arkeo.arkeo.Msg", "CloseContract", data);
-    return promise.then((data) =>
-      MsgCloseContractResponse.decode(new Reader(data))
-    );
+    return promise.then((data) => MsgCloseContractResponse.decode(new _m0.Reader(data)));
   }
 
-  ClaimContractIncome(
-    request: MsgClaimContractIncome
-  ): Promise<MsgClaimContractIncomeResponse> {
+  ClaimContractIncome(request: MsgClaimContractIncome): Promise<MsgClaimContractIncomeResponse> {
     const data = MsgClaimContractIncome.encode(request).finish();
-    const promise = this.rpc.request(
-      "arkeo.arkeo.Msg",
-      "ClaimContractIncome",
-      data
-    );
-    return promise.then((data) =>
-      MsgClaimContractIncomeResponse.decode(new Reader(data))
-    );
+    const promise = this.rpc.request("arkeo.arkeo.Msg", "ClaimContractIncome", data);
+    return promise.then((data) => MsgClaimContractIncomeResponse.decode(new _m0.Reader(data)));
   }
 
   SetVersion(request: MsgSetVersion): Promise<MsgSetVersionResponse> {
     const data = MsgSetVersion.encode(request).finish();
     const promise = this.rpc.request("arkeo.arkeo.Msg", "SetVersion", data);
-    return promise.then((data) =>
-      MsgSetVersionResponse.decode(new Reader(data))
-    );
+    return promise.then((data) => MsgSetVersionResponse.decode(new _m0.Reader(data)));
   }
 }
 
 interface Rpc {
-  request(
-    service: string,
-    method: string,
-    data: Uint8Array
-  ): Promise<Uint8Array>;
+  request(service: string, method: string, data: Uint8Array): Promise<Uint8Array>;
 }
 
 declare var self: any | undefined;
 declare var window: any | undefined;
+declare var global: any | undefined;
 var globalThis: any = (() => {
-  if (typeof globalThis !== "undefined") return globalThis;
-  if (typeof self !== "undefined") return self;
-  if (typeof window !== "undefined") return window;
-  if (typeof global !== "undefined") return global;
+  if (typeof globalThis !== "undefined") {
+    return globalThis;
+  }
+  if (typeof self !== "undefined") {
+    return self;
+  }
+  if (typeof window !== "undefined") {
+    return window;
+  }
+  if (typeof global !== "undefined") {
+    return global;
+  }
   throw "Unable to locate global object";
 })();
 
-const atob: (b64: string) => string =
-  globalThis.atob ||
-  ((b64) => globalThis.Buffer.from(b64, "base64").toString("binary"));
 function bytesFromBase64(b64: string): Uint8Array {
-  const bin = atob(b64);
-  const arr = new Uint8Array(bin.length);
-  for (let i = 0; i < bin.length; ++i) {
-    arr[i] = bin.charCodeAt(i);
+  if (globalThis.Buffer) {
+    return Uint8Array.from(globalThis.Buffer.from(b64, "base64"));
+  } else {
+    const bin = globalThis.atob(b64);
+    const arr = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; ++i) {
+      arr[i] = bin.charCodeAt(i);
+    }
+    return arr;
   }
-  return arr;
 }
 
-const btoa: (bin: string) => string =
-  globalThis.btoa ||
-  ((bin) => globalThis.Buffer.from(bin, "binary").toString("base64"));
 function base64FromBytes(arr: Uint8Array): string {
-  const bin: string[] = [];
-  for (let i = 0; i < arr.byteLength; ++i) {
-    bin.push(String.fromCharCode(arr[i]));
+  if (globalThis.Buffer) {
+    return globalThis.Buffer.from(arr).toString("base64");
+  } else {
+    const bin: string[] = [];
+    arr.forEach((byte) => {
+      bin.push(String.fromCharCode(byte));
+    });
+    return globalThis.btoa(bin.join(""));
   }
-  return btoa(bin.join(""));
 }
 
-type Builtin = Date | Function | Uint8Array | string | number | undefined;
-export type DeepPartial<T> = T extends Builtin
-  ? T
-  : T extends Array<infer U>
-  ? Array<DeepPartial<U>>
-  : T extends ReadonlyArray<infer U>
-  ? ReadonlyArray<DeepPartial<U>>
-  : T extends {}
-  ? { [K in keyof T]?: DeepPartial<T[K]> }
+type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
+
+export type DeepPartial<T> = T extends Builtin ? T
+  : T extends Array<infer U> ? Array<DeepPartial<U>> : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
+  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
+
+type KeysOfUnion<T> = T extends T ? keyof T : never;
+export type Exact<P, I extends P> = P extends Builtin ? P
+  : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
 
 function longToNumber(long: Long): number {
   if (long.gt(Number.MAX_SAFE_INTEGER)) {
@@ -1409,7 +1050,11 @@ function longToNumber(long: Long): number {
   return long.toNumber();
 }
 
-if (util.Long !== Long) {
-  util.Long = Long as any;
-  configure();
+if (_m0.util.Long !== Long) {
+  _m0.util.Long = Long as any;
+  _m0.configure();
+}
+
+function isSet(value: any): boolean {
+  return value !== null && value !== undefined;
 }

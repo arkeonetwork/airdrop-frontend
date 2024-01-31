@@ -1,6 +1,6 @@
 /* eslint-disable */
+import _m0 from "protobufjs/minimal";
 import { Coin } from "../../cosmos/base/v1beta1/coin";
-import { Writer, Reader } from "protobufjs/minimal";
 
 export const protobufPackage = "arkeo.claim";
 
@@ -38,8 +38,9 @@ export function actionToJSON(object: Action): string {
       return "ACTION_VOTE";
     case Action.ACTION_DELEGATE:
       return "ACTION_DELEGATE";
+    case Action.UNRECOGNIZED:
     default:
-      return "UNKNOWN";
+      return "UNRECOGNIZED";
   }
 }
 
@@ -70,8 +71,9 @@ export function chainToJSON(object: Chain): string {
       return "ARKEO";
     case Chain.ETHEREUM:
       return "ETHEREUM";
+    case Chain.UNRECOGNIZED:
     default:
-      return "UNKNOWN";
+      return "UNRECOGNIZED";
   }
 }
 
@@ -90,14 +92,19 @@ export interface ClaimRecord {
   isTransferable: boolean;
 }
 
-const baseClaimRecord: object = {
-  chain: 0,
-  address: "",
-  isTransferable: false,
-};
+function createBaseClaimRecord(): ClaimRecord {
+  return {
+    chain: 0,
+    address: "",
+    amountClaim: undefined,
+    amountVote: undefined,
+    amountDelegate: undefined,
+    isTransferable: false,
+  };
+}
 
 export const ClaimRecord = {
-  encode(message: ClaimRecord, writer: Writer = Writer.create()): Writer {
+  encode(message: ClaimRecord, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.chain !== 0) {
       writer.uint32(8).int32(message.chain);
     }
@@ -119,10 +126,10 @@ export const ClaimRecord = {
     return writer;
   },
 
-  decode(input: Reader | Uint8Array, length?: number): ClaimRecord {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+  decode(input: _m0.Reader | Uint8Array, length?: number): ClaimRecord {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseClaimRecord } as ClaimRecord;
+    const message = createBaseClaimRecord();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -153,104 +160,59 @@ export const ClaimRecord = {
   },
 
   fromJSON(object: any): ClaimRecord {
-    const message = { ...baseClaimRecord } as ClaimRecord;
-    if (object.chain !== undefined && object.chain !== null) {
-      message.chain = chainFromJSON(object.chain);
-    } else {
-      message.chain = 0;
-    }
-    if (object.address !== undefined && object.address !== null) {
-      message.address = String(object.address);
-    } else {
-      message.address = "";
-    }
-    if (object.amountClaim !== undefined && object.amountClaim !== null) {
-      message.amountClaim = Coin.fromJSON(object.amountClaim);
-    } else {
-      message.amountClaim = undefined;
-    }
-    if (object.amountVote !== undefined && object.amountVote !== null) {
-      message.amountVote = Coin.fromJSON(object.amountVote);
-    } else {
-      message.amountVote = undefined;
-    }
-    if (object.amountDelegate !== undefined && object.amountDelegate !== null) {
-      message.amountDelegate = Coin.fromJSON(object.amountDelegate);
-    } else {
-      message.amountDelegate = undefined;
-    }
-    if (object.isTransferable !== undefined && object.isTransferable !== null) {
-      message.isTransferable = Boolean(object.isTransferable);
-    } else {
-      message.isTransferable = false;
-    }
-    return message;
+    return {
+      chain: isSet(object.chain) ? chainFromJSON(object.chain) : 0,
+      address: isSet(object.address) ? String(object.address) : "",
+      amountClaim: isSet(object.amountClaim) ? Coin.fromJSON(object.amountClaim) : undefined,
+      amountVote: isSet(object.amountVote) ? Coin.fromJSON(object.amountVote) : undefined,
+      amountDelegate: isSet(object.amountDelegate) ? Coin.fromJSON(object.amountDelegate) : undefined,
+      isTransferable: isSet(object.isTransferable) ? Boolean(object.isTransferable) : false,
+    };
   },
 
   toJSON(message: ClaimRecord): unknown {
     const obj: any = {};
     message.chain !== undefined && (obj.chain = chainToJSON(message.chain));
     message.address !== undefined && (obj.address = message.address);
-    message.amountClaim !== undefined &&
-      (obj.amountClaim = message.amountClaim
-        ? Coin.toJSON(message.amountClaim)
-        : undefined);
-    message.amountVote !== undefined &&
-      (obj.amountVote = message.amountVote
-        ? Coin.toJSON(message.amountVote)
-        : undefined);
-    message.amountDelegate !== undefined &&
-      (obj.amountDelegate = message.amountDelegate
-        ? Coin.toJSON(message.amountDelegate)
-        : undefined);
-    message.isTransferable !== undefined &&
-      (obj.isTransferable = message.isTransferable);
+    message.amountClaim !== undefined
+      && (obj.amountClaim = message.amountClaim ? Coin.toJSON(message.amountClaim) : undefined);
+    message.amountVote !== undefined
+      && (obj.amountVote = message.amountVote ? Coin.toJSON(message.amountVote) : undefined);
+    message.amountDelegate !== undefined
+      && (obj.amountDelegate = message.amountDelegate ? Coin.toJSON(message.amountDelegate) : undefined);
+    message.isTransferable !== undefined && (obj.isTransferable = message.isTransferable);
     return obj;
   },
 
-  fromPartial(object: DeepPartial<ClaimRecord>): ClaimRecord {
-    const message = { ...baseClaimRecord } as ClaimRecord;
-    if (object.chain !== undefined && object.chain !== null) {
-      message.chain = object.chain;
-    } else {
-      message.chain = 0;
-    }
-    if (object.address !== undefined && object.address !== null) {
-      message.address = object.address;
-    } else {
-      message.address = "";
-    }
-    if (object.amountClaim !== undefined && object.amountClaim !== null) {
-      message.amountClaim = Coin.fromPartial(object.amountClaim);
-    } else {
-      message.amountClaim = undefined;
-    }
-    if (object.amountVote !== undefined && object.amountVote !== null) {
-      message.amountVote = Coin.fromPartial(object.amountVote);
-    } else {
-      message.amountVote = undefined;
-    }
-    if (object.amountDelegate !== undefined && object.amountDelegate !== null) {
-      message.amountDelegate = Coin.fromPartial(object.amountDelegate);
-    } else {
-      message.amountDelegate = undefined;
-    }
-    if (object.isTransferable !== undefined && object.isTransferable !== null) {
-      message.isTransferable = object.isTransferable;
-    } else {
-      message.isTransferable = false;
-    }
+  fromPartial<I extends Exact<DeepPartial<ClaimRecord>, I>>(object: I): ClaimRecord {
+    const message = createBaseClaimRecord();
+    message.chain = object.chain ?? 0;
+    message.address = object.address ?? "";
+    message.amountClaim = (object.amountClaim !== undefined && object.amountClaim !== null)
+      ? Coin.fromPartial(object.amountClaim)
+      : undefined;
+    message.amountVote = (object.amountVote !== undefined && object.amountVote !== null)
+      ? Coin.fromPartial(object.amountVote)
+      : undefined;
+    message.amountDelegate = (object.amountDelegate !== undefined && object.amountDelegate !== null)
+      ? Coin.fromPartial(object.amountDelegate)
+      : undefined;
+    message.isTransferable = object.isTransferable ?? false;
     return message;
   },
 };
 
-type Builtin = Date | Function | Uint8Array | string | number | undefined;
-export type DeepPartial<T> = T extends Builtin
-  ? T
-  : T extends Array<infer U>
-  ? Array<DeepPartial<U>>
-  : T extends ReadonlyArray<infer U>
-  ? ReadonlyArray<DeepPartial<U>>
-  : T extends {}
-  ? { [K in keyof T]?: DeepPartial<T[K]> }
+type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
+
+export type DeepPartial<T> = T extends Builtin ? T
+  : T extends Array<infer U> ? Array<DeepPartial<U>> : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
+  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
+
+type KeysOfUnion<T> = T extends T ? keyof T : never;
+export type Exact<P, I extends P> = P extends Builtin ? P
+  : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
+
+function isSet(value: any): boolean {
+  return value !== null && value !== undefined;
+}

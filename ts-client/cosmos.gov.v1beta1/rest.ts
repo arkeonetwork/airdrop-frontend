@@ -10,176 +10,6 @@
  */
 
 /**
-* Deposit defines an amount deposited by an account address to an active
-proposal.
-*/
-export interface Govv1Beta1Deposit {
-  /** @format uint64 */
-  proposal_id?: string;
-  depositor?: string;
-  amount?: V1Beta1Coin[];
-}
-
-/**
- * Proposal defines the core field members of a governance proposal.
- */
-export interface Govv1Beta1Proposal {
-  /** @format uint64 */
-  proposal_id?: string;
-
-  /**
-   * `Any` contains an arbitrary serialized protocol buffer message along with a
-   * URL that describes the type of the serialized message.
-   *
-   * Protobuf library provides support to pack/unpack Any values in the form
-   * of utility functions or additional generated methods of the Any type.
-   *
-   * Example 1: Pack and unpack a message in C++.
-   *
-   *     Foo foo = ...;
-   *     Any any;
-   *     any.PackFrom(foo);
-   *     ...
-   *     if (any.UnpackTo(&foo)) {
-   *       ...
-   *     }
-   *
-   * Example 2: Pack and unpack a message in Java.
-   *
-   *     Foo foo = ...;
-   *     Any any = Any.pack(foo);
-   *     ...
-   *     if (any.is(Foo.class)) {
-   *       foo = any.unpack(Foo.class);
-   *     }
-   *
-   *  Example 3: Pack and unpack a message in Python.
-   *
-   *     foo = Foo(...)
-   *     any = Any()
-   *     any.Pack(foo)
-   *     ...
-   *     if any.Is(Foo.DESCRIPTOR):
-   *       any.Unpack(foo)
-   *       ...
-   *
-   *  Example 4: Pack and unpack a message in Go
-   *
-   *      foo := &pb.Foo{...}
-   *      any, err := anypb.New(foo)
-   *      if err != nil {
-   *        ...
-   *      }
-   *      ...
-   *      foo := &pb.Foo{}
-   *      if err := any.UnmarshalTo(foo); err != nil {
-   *        ...
-   *      }
-   *
-   * The pack methods provided by protobuf library will by default use
-   * 'type.googleapis.com/full.type.name' as the type URL and the unpack
-   * methods only use the fully qualified type name after the last '/'
-   * in the type URL, for example "foo.bar.com/x/y.z" will yield type
-   * name "y.z".
-   *
-   *
-   * JSON
-   * ====
-   * The JSON representation of an `Any` value uses the regular
-   * representation of the deserialized, embedded message, with an
-   * additional field `@type` which contains the type URL. Example:
-   *
-   *     package google.profile;
-   *     message Person {
-   *       string first_name = 1;
-   *       string last_name = 2;
-   *     }
-   *
-   *     {
-   *       "@type": "type.googleapis.com/google.profile.Person",
-   *       "firstName": <string>,
-   *       "lastName": <string>
-   *     }
-   *
-   * If the embedded message type is well-known and has a custom JSON
-   * representation, that representation will be embedded adding a field
-   * `value` which holds the custom JSON in addition to the `@type`
-   * field. Example (for message [google.protobuf.Duration][]):
-   *
-   *     {
-   *       "@type": "type.googleapis.com/google.protobuf.Duration",
-   *       "value": "1.212s"
-   *     }
-   */
-  content?: ProtobufAny;
-
-  /**
-   * ProposalStatus enumerates the valid statuses of a proposal.
-   *
-   *  - PROPOSAL_STATUS_UNSPECIFIED: PROPOSAL_STATUS_UNSPECIFIED defines the default proposal status.
-   *  - PROPOSAL_STATUS_DEPOSIT_PERIOD: PROPOSAL_STATUS_DEPOSIT_PERIOD defines a proposal status during the deposit
-   * period.
-   *  - PROPOSAL_STATUS_VOTING_PERIOD: PROPOSAL_STATUS_VOTING_PERIOD defines a proposal status during the voting
-   * period.
-   *  - PROPOSAL_STATUS_PASSED: PROPOSAL_STATUS_PASSED defines a proposal status of a proposal that has
-   * passed.
-   *  - PROPOSAL_STATUS_REJECTED: PROPOSAL_STATUS_REJECTED defines a proposal status of a proposal that has
-   * been rejected.
-   *  - PROPOSAL_STATUS_FAILED: PROPOSAL_STATUS_FAILED defines a proposal status of a proposal that has
-   * failed.
-   */
-  status?: V1Beta1ProposalStatus;
-
-  /**
-   * final_tally_result is the final tally result of the proposal. When
-   * querying a proposal via gRPC, this field is not populated until the
-   * proposal's voting period has ended.
-   */
-  final_tally_result?: Govv1Beta1TallyResult;
-
-  /** @format date-time */
-  submit_time?: string;
-
-  /** @format date-time */
-  deposit_end_time?: string;
-  total_deposit?: V1Beta1Coin[];
-
-  /** @format date-time */
-  voting_start_time?: string;
-
-  /** @format date-time */
-  voting_end_time?: string;
-}
-
-/**
- * TallyResult defines a standard tally for a governance proposal.
- */
-export interface Govv1Beta1TallyResult {
-  yes?: string;
-  abstain?: string;
-  no?: string;
-  no_with_veto?: string;
-}
-
-/**
-* Vote defines a vote on a governance proposal.
-A Vote consists of a proposal ID, the voter, and the vote option.
-*/
-export interface Govv1Beta1Vote {
-  /** @format uint64 */
-  proposal_id?: string;
-  voter?: string;
-
-  /**
-   * Deprecated: Prefer to use `options` instead. This field is set in queries
-   * if and only if `len(options) == 1` and that option has weight 1. In all
-   * other cases, this field will default to VOTE_OPTION_UNSPECIFIED.
-   */
-  option?: V1Beta1VoteOption;
-  options?: V1Beta1WeightedVoteOption[];
-}
-
-/**
 * `Any` contains an arbitrary serialized protocol buffer message along with a
 URL that describes the type of the serialized message.
 
@@ -276,7 +106,6 @@ export interface ProtobufAny {
    * expect it to use in the context of Any. However, for URLs which use the
    * scheme `http`, `https`, or no scheme, one can optionally set up a type
    * server that maps type URLs to message definitions as follows:
-   *
    * * If no scheme is provided, `https` is assumed.
    * * An HTTP GET on the URL must yield a [google.protobuf.Type][]
    *   value in binary format, or produce an error.
@@ -285,11 +114,9 @@ export interface ProtobufAny {
    *   lookup. Therefore, binary compatibility needs to be preserved
    *   on changes to types. (Use versioned type names to manage
    *   breaking changes.)
-   *
    * Note: this functionality is not currently available in the official
    * protobuf release, and it is not used for type URLs beginning with
    * type.googleapis.com.
-   *
    * Schemes other than `http`, `https` (or the empty scheme) might be
    * used with implementation specific semantics.
    */
@@ -312,6 +139,17 @@ signatures required by gogoproto.
 export interface V1Beta1Coin {
   denom?: string;
   amount?: string;
+}
+
+/**
+* Deposit defines an amount deposited by an account address to an active
+proposal.
+*/
+export interface V1Beta1Deposit {
+  /** @format uint64 */
+  proposal_id?: string;
+  depositor?: string;
+  amount?: V1Beta1Coin[];
 }
 
 /**
@@ -417,8 +255,116 @@ export interface V1Beta1PageResponse {
    */
   next_key?: string;
 
-  /** @format uint64 */
+  /**
+   * total is total number of results available if PageRequest.count_total
+   * was set, its value is undefined otherwise
+   * @format uint64
+   */
   total?: string;
+}
+
+/**
+ * Proposal defines the core field members of a governance proposal.
+ */
+export interface V1Beta1Proposal {
+  /** @format uint64 */
+  proposal_id?: string;
+
+  /**
+   * `Any` contains an arbitrary serialized protocol buffer message along with a
+   * URL that describes the type of the serialized message.
+   *
+   * Protobuf library provides support to pack/unpack Any values in the form
+   * of utility functions or additional generated methods of the Any type.
+   * Example 1: Pack and unpack a message in C++.
+   *     Foo foo = ...;
+   *     Any any;
+   *     any.PackFrom(foo);
+   *     ...
+   *     if (any.UnpackTo(&foo)) {
+   *       ...
+   *     }
+   * Example 2: Pack and unpack a message in Java.
+   *     Any any = Any.pack(foo);
+   *     if (any.is(Foo.class)) {
+   *       foo = any.unpack(Foo.class);
+   *  Example 3: Pack and unpack a message in Python.
+   *     foo = Foo(...)
+   *     any = Any()
+   *     any.Pack(foo)
+   *     if any.Is(Foo.DESCRIPTOR):
+   *       any.Unpack(foo)
+   *  Example 4: Pack and unpack a message in Go
+   *      foo := &pb.Foo{...}
+   *      any, err := anypb.New(foo)
+   *      if err != nil {
+   *        ...
+   *      }
+   *      ...
+   *      foo := &pb.Foo{}
+   *      if err := any.UnmarshalTo(foo); err != nil {
+   * The pack methods provided by protobuf library will by default use
+   * 'type.googleapis.com/full.type.name' as the type URL and the unpack
+   * methods only use the fully qualified type name after the last '/'
+   * in the type URL, for example "foo.bar.com/x/y.z" will yield type
+   * name "y.z".
+   * JSON
+   * ====
+   * The JSON representation of an `Any` value uses the regular
+   * representation of the deserialized, embedded message, with an
+   * additional field `@type` which contains the type URL. Example:
+   *     package google.profile;
+   *     message Person {
+   *       string first_name = 1;
+   *       string last_name = 2;
+   *     {
+   *       "@type": "type.googleapis.com/google.profile.Person",
+   *       "firstName": <string>,
+   *       "lastName": <string>
+   * If the embedded message type is well-known and has a custom JSON
+   * representation, that representation will be embedded adding a field
+   * `value` which holds the custom JSON in addition to the `@type`
+   * field. Example (for message [google.protobuf.Duration][]):
+   *       "@type": "type.googleapis.com/google.protobuf.Duration",
+   *       "value": "1.212s"
+   */
+  content?: ProtobufAny;
+
+  /**
+   * ProposalStatus enumerates the valid statuses of a proposal.
+   *
+   *  - PROPOSAL_STATUS_UNSPECIFIED: PROPOSAL_STATUS_UNSPECIFIED defines the default proposal status.
+   *  - PROPOSAL_STATUS_DEPOSIT_PERIOD: PROPOSAL_STATUS_DEPOSIT_PERIOD defines a proposal status during the deposit
+   * period.
+   *  - PROPOSAL_STATUS_VOTING_PERIOD: PROPOSAL_STATUS_VOTING_PERIOD defines a proposal status during the voting
+   *  - PROPOSAL_STATUS_PASSED: PROPOSAL_STATUS_PASSED defines a proposal status of a proposal that has
+   * passed.
+   *  - PROPOSAL_STATUS_REJECTED: PROPOSAL_STATUS_REJECTED defines a proposal status of a proposal that has
+   * been rejected.
+   *  - PROPOSAL_STATUS_FAILED: PROPOSAL_STATUS_FAILED defines a proposal status of a proposal that has
+   * failed.
+   */
+  status?: V1Beta1ProposalStatus;
+
+  /**
+   * final_tally_result is the final tally result of the proposal. When
+   * querying a proposal via gRPC, this field is not populated until the
+   * proposal's voting period has ended.
+   */
+  final_tally_result?: V1Beta1TallyResult;
+
+  /** @format date-time */
+  submit_time?: string;
+
+  /** @format date-time */
+  deposit_end_time?: string;
+  total_deposit?: V1Beta1Coin[];
+
+  /** @format date-time */
+  voting_start_time?: string;
+
+  /** @format date-time */
+  voting_end_time?: string;
 }
 
 /**
@@ -450,14 +396,14 @@ export enum V1Beta1ProposalStatus {
  */
 export interface V1Beta1QueryDepositResponse {
   /** deposit defines the requested deposit. */
-  deposit?: Govv1Beta1Deposit;
+  deposit?: V1Beta1Deposit;
 }
 
 /**
  * QueryDepositsResponse is the response type for the Query/Deposits RPC method.
  */
 export interface V1Beta1QueryDepositsResponse {
-  deposits?: Govv1Beta1Deposit[];
+  deposits?: V1Beta1Deposit[];
 
   /** pagination defines the pagination in the response. */
   pagination?: V1Beta1PageResponse;
@@ -482,7 +428,7 @@ export interface V1Beta1QueryParamsResponse {
  */
 export interface V1Beta1QueryProposalResponse {
   /** Proposal defines the core field members of a governance proposal. */
-  proposal?: Govv1Beta1Proposal;
+  proposal?: V1Beta1Proposal;
 }
 
 /**
@@ -490,7 +436,7 @@ export interface V1Beta1QueryProposalResponse {
 method.
 */
 export interface V1Beta1QueryProposalsResponse {
-  proposals?: Govv1Beta1Proposal[];
+  proposals?: V1Beta1Proposal[];
 
   /** pagination defines the pagination in the response. */
   pagination?: V1Beta1PageResponse;
@@ -501,7 +447,7 @@ export interface V1Beta1QueryProposalsResponse {
  */
 export interface V1Beta1QueryTallyResultResponse {
   /** tally defines the requested tally. */
-  tally?: Govv1Beta1TallyResult;
+  tally?: V1Beta1TallyResult;
 }
 
 /**
@@ -509,7 +455,7 @@ export interface V1Beta1QueryTallyResultResponse {
  */
 export interface V1Beta1QueryVoteResponse {
   /** vote defined the queried vote. */
-  vote?: Govv1Beta1Vote;
+  vote?: V1Beta1Vote;
 }
 
 /**
@@ -517,7 +463,7 @@ export interface V1Beta1QueryVoteResponse {
  */
 export interface V1Beta1QueryVotesResponse {
   /** votes defined the queried votes. */
-  votes?: Govv1Beta1Vote[];
+  votes?: V1Beta1Vote[];
 
   /** pagination defines the pagination in the response. */
   pagination?: V1Beta1PageResponse;
@@ -546,6 +492,36 @@ export interface V1Beta1TallyParams {
    * @format byte
    */
   veto_threshold?: string;
+}
+
+/**
+ * TallyResult defines a standard tally for a governance proposal.
+ */
+export interface V1Beta1TallyResult {
+  yes?: string;
+  abstain?: string;
+  no?: string;
+  no_with_veto?: string;
+}
+
+/**
+* Vote defines a vote on a governance proposal.
+A Vote consists of a proposal ID, the voter, and the vote option.
+*/
+export interface V1Beta1Vote {
+  /** @format uint64 */
+  proposal_id?: string;
+  voter?: string;
+
+  /**
+   * Deprecated: Prefer to use `options` instead. This field is set in queries
+   * if and only if `len(options) == 1` and that option has weight 1. In all
+   * other cases, this field will default to VOTE_OPTION_UNSPECIFIED.
+   */
+  option?: V1Beta1VoteOption;
+
+  /** Since: cosmos-sdk 0.43 */
+  options?: V1Beta1WeightedVoteOption[];
 }
 
 /**
@@ -592,10 +568,11 @@ export interface V1Beta1WeightedVoteOption {
   weight?: string;
 }
 
-export type QueryParamsType = Record<string | number, any>;
-export type ResponseFormat = keyof Omit<Body, "body" | "bodyUsed">;
+import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, ResponseType } from "axios";
 
-export interface FullRequestParams extends Omit<RequestInit, "body"> {
+export type QueryParamsType = Record<string | number, any>;
+
+export interface FullRequestParams extends Omit<AxiosRequestConfig, "data" | "params" | "url" | "responseType"> {
   /** set parameter to `true` for call `securityWorker` for this request */
   secure?: boolean;
   /** request path */
@@ -605,29 +582,20 @@ export interface FullRequestParams extends Omit<RequestInit, "body"> {
   /** query params */
   query?: QueryParamsType;
   /** format of response (i.e. response.json() -> format: "json") */
-  format?: keyof Omit<Body, "body" | "bodyUsed">;
+  format?: ResponseType;
   /** request body */
   body?: unknown;
-  /** base url */
-  baseUrl?: string;
-  /** request cancellation token */
-  cancelToken?: CancelToken;
 }
 
 export type RequestParams = Omit<FullRequestParams, "body" | "method" | "query" | "path">;
 
-export interface ApiConfig<SecurityDataType = unknown> {
-  baseUrl?: string;
-  baseApiParams?: Omit<RequestParams, "baseUrl" | "cancelToken" | "signal">;
-  securityWorker?: (securityData: SecurityDataType) => RequestParams | void;
+export interface ApiConfig<SecurityDataType = unknown> extends Omit<AxiosRequestConfig, "data" | "cancelToken"> {
+  securityWorker?: (
+    securityData: SecurityDataType | null,
+  ) => Promise<AxiosRequestConfig | void> | AxiosRequestConfig | void;
+  secure?: boolean;
+  format?: ResponseType;
 }
-
-export interface HttpResponse<D extends unknown, E extends unknown = unknown> extends Response {
-  data: D;
-  error: E;
-}
-
-type CancelToken = Symbol | string | number;
 
 export enum ContentType {
   Json = "application/json",
@@ -636,149 +604,86 @@ export enum ContentType {
 }
 
 export class HttpClient<SecurityDataType = unknown> {
-  public baseUrl: string = "";
-  private securityData: SecurityDataType = null as any;
-  private securityWorker: null | ApiConfig<SecurityDataType>["securityWorker"] = null;
-  private abortControllers = new Map<CancelToken, AbortController>();
+  public instance: AxiosInstance;
+  private securityData: SecurityDataType | null = null;
+  private securityWorker?: ApiConfig<SecurityDataType>["securityWorker"];
+  private secure?: boolean;
+  private format?: ResponseType;
 
-  private baseApiParams: RequestParams = {
-    credentials: "same-origin",
-    headers: {},
-    redirect: "follow",
-    referrerPolicy: "no-referrer",
-  };
-
-  constructor(apiConfig: ApiConfig<SecurityDataType> = {}) {
-    Object.assign(this, apiConfig);
+  constructor({ securityWorker, secure, format, ...axiosConfig }: ApiConfig<SecurityDataType> = {}) {
+    this.instance = axios.create({ ...axiosConfig, baseURL: axiosConfig.baseURL || "" });
+    this.secure = secure;
+    this.format = format;
+    this.securityWorker = securityWorker;
   }
 
-  public setSecurityData = (data: SecurityDataType) => {
+  public setSecurityData = (data: SecurityDataType | null) => {
     this.securityData = data;
   };
 
-  private addQueryParam(query: QueryParamsType, key: string) {
-    const value = query[key];
-
-    return (
-      encodeURIComponent(key) +
-      "=" +
-      encodeURIComponent(Array.isArray(value) ? value.join(",") : typeof value === "number" ? value : `${value}`)
-    );
-  }
-
-  protected toQueryString(rawQuery?: QueryParamsType): string {
-    const query = rawQuery || {};
-    const keys = Object.keys(query).filter((key) => "undefined" !== typeof query[key]);
-    return keys
-      .map((key) =>
-        typeof query[key] === "object" && !Array.isArray(query[key])
-          ? this.toQueryString(query[key] as QueryParamsType)
-          : this.addQueryParam(query, key),
-      )
-      .join("&");
-  }
-
-  protected addQueryParams(rawQuery?: QueryParamsType): string {
-    const queryString = this.toQueryString(rawQuery);
-    return queryString ? `?${queryString}` : "";
-  }
-
-  private contentFormatters: Record<ContentType, (input: any) => any> = {
-    [ContentType.Json]: (input: any) =>
-      input !== null && (typeof input === "object" || typeof input === "string") ? JSON.stringify(input) : input,
-    [ContentType.FormData]: (input: any) =>
-      Object.keys(input || {}).reduce((data, key) => {
-        data.append(key, input[key]);
-        return data;
-      }, new FormData()),
-    [ContentType.UrlEncoded]: (input: any) => this.toQueryString(input),
-  };
-
-  private mergeRequestParams(params1: RequestParams, params2?: RequestParams): RequestParams {
+  private mergeRequestParams(params1: AxiosRequestConfig, params2?: AxiosRequestConfig): AxiosRequestConfig {
     return {
-      ...this.baseApiParams,
+      ...this.instance.defaults,
       ...params1,
       ...(params2 || {}),
       headers: {
-        ...(this.baseApiParams.headers || {}),
+        ...(this.instance.defaults.headers || {}),
         ...(params1.headers || {}),
         ...((params2 && params2.headers) || {}),
       },
     };
   }
 
-  private createAbortSignal = (cancelToken: CancelToken): AbortSignal | undefined => {
-    if (this.abortControllers.has(cancelToken)) {
-      const abortController = this.abortControllers.get(cancelToken);
-      if (abortController) {
-        return abortController.signal;
-      }
-      return void 0;
-    }
+  private createFormData(input: Record<string, unknown>): FormData {
+    return Object.keys(input || {}).reduce((formData, key) => {
+      const property = input[key];
+      formData.append(
+        key,
+        property instanceof Blob
+          ? property
+          : typeof property === "object" && property !== null
+          ? JSON.stringify(property)
+          : `${property}`,
+      );
+      return formData;
+    }, new FormData());
+  }
 
-    const abortController = new AbortController();
-    this.abortControllers.set(cancelToken, abortController);
-    return abortController.signal;
-  };
-
-  public abortRequest = (cancelToken: CancelToken) => {
-    const abortController = this.abortControllers.get(cancelToken);
-
-    if (abortController) {
-      abortController.abort();
-      this.abortControllers.delete(cancelToken);
-    }
-  };
-
-  public request = <T = any, E = any>({
-    body,
+  public request = async <T = any, _E = any>({
     secure,
     path,
     type,
     query,
-    format = "json",
-    baseUrl,
-    cancelToken,
+    format,
+    body,
     ...params
-  }: FullRequestParams): Promise<HttpResponse<T, E>> => {
-    const secureParams = (secure && this.securityWorker && this.securityWorker(this.securityData)) || {};
+  }: FullRequestParams): Promise<AxiosResponse<T>> => {
+    const secureParams =
+      ((typeof secure === "boolean" ? secure : this.secure) &&
+        this.securityWorker &&
+        (await this.securityWorker(this.securityData))) ||
+      {};
     const requestParams = this.mergeRequestParams(params, secureParams);
-    const queryString = query && this.toQueryString(query);
-    const payloadFormatter = this.contentFormatters[type || ContentType.Json];
+    const responseFormat = (format && this.format) || void 0;
 
-    return fetch(`${baseUrl || this.baseUrl || ""}${path}${queryString ? `?${queryString}` : ""}`, {
+    if (type === ContentType.FormData && body && body !== null && typeof body === "object") {
+      requestParams.headers.common = { Accept: "*/*" };
+      requestParams.headers.post = {};
+      requestParams.headers.put = {};
+
+      body = this.createFormData(body as Record<string, unknown>);
+    }
+
+    return this.instance.request({
       ...requestParams,
       headers: {
         ...(type && type !== ContentType.FormData ? { "Content-Type": type } : {}),
         ...(requestParams.headers || {}),
       },
-      signal: cancelToken ? this.createAbortSignal(cancelToken) : void 0,
-      body: typeof body === "undefined" || body === null ? null : payloadFormatter(body),
-    }).then(async (response) => {
-      const r = response as HttpResponse<T, E>;
-      r.data = (null as unknown) as T;
-      r.error = (null as unknown) as E;
-
-      const data = await response[format]()
-        .then((data) => {
-          if (r.ok) {
-            r.data = data;
-          } else {
-            r.error = data;
-          }
-          return r;
-        })
-        .catch((e) => {
-          r.error = e;
-          return r;
-        });
-
-      if (cancelToken) {
-        this.abortControllers.delete(cancelToken);
-      }
-
-      if (!response.ok) throw data;
-      return data;
+      params: query,
+      responseType: responseFormat,
+      data: body,
+      url: path,
     });
   };
 }
@@ -796,9 +701,9 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @summary Params queries all parameters of the gov module.
    * @request GET:/cosmos/gov/v1beta1/params/{params_type}
    */
-  queryParams = (params_type: string, params: RequestParams = {}) =>
+  queryParams = (paramsType: string, params: RequestParams = {}) =>
     this.request<V1Beta1QueryParamsResponse, RpcStatus>({
-      path: `/cosmos/gov/v1beta1/params/${params_type}`,
+      path: `/cosmos/gov/v1beta1/params/${paramsType}`,
       method: "GET",
       format: "json",
       ...params,
@@ -847,9 +752,9 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @summary Proposal queries proposal details based on ProposalID.
    * @request GET:/cosmos/gov/v1beta1/proposals/{proposal_id}
    */
-  queryProposal = (proposal_id: string, params: RequestParams = {}) =>
+  queryProposal = (proposalId: string, params: RequestParams = {}) =>
     this.request<V1Beta1QueryProposalResponse, RpcStatus>({
-      path: `/cosmos/gov/v1beta1/proposals/${proposal_id}`,
+      path: `/cosmos/gov/v1beta1/proposals/${proposalId}`,
       method: "GET",
       format: "json",
       ...params,
@@ -864,7 +769,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @request GET:/cosmos/gov/v1beta1/proposals/{proposal_id}/deposits
    */
   queryDeposits = (
-    proposal_id: string,
+    proposalId: string,
     query?: {
       "pagination.key"?: string;
       "pagination.offset"?: string;
@@ -875,7 +780,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     params: RequestParams = {},
   ) =>
     this.request<V1Beta1QueryDepositsResponse, RpcStatus>({
-      path: `/cosmos/gov/v1beta1/proposals/${proposal_id}/deposits`,
+      path: `/cosmos/gov/v1beta1/proposals/${proposalId}/deposits`,
       method: "GET",
       query: query,
       format: "json",
@@ -890,9 +795,9 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @summary Deposit queries single deposit information based proposalID, depositAddr.
    * @request GET:/cosmos/gov/v1beta1/proposals/{proposal_id}/deposits/{depositor}
    */
-  queryDeposit = (proposal_id: string, depositor: string, params: RequestParams = {}) =>
+  queryDeposit = (proposalId: string, depositor: string, params: RequestParams = {}) =>
     this.request<V1Beta1QueryDepositResponse, RpcStatus>({
-      path: `/cosmos/gov/v1beta1/proposals/${proposal_id}/deposits/${depositor}`,
+      path: `/cosmos/gov/v1beta1/proposals/${proposalId}/deposits/${depositor}`,
       method: "GET",
       format: "json",
       ...params,
@@ -906,9 +811,9 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @summary TallyResult queries the tally of a proposal vote.
    * @request GET:/cosmos/gov/v1beta1/proposals/{proposal_id}/tally
    */
-  queryTallyResult = (proposal_id: string, params: RequestParams = {}) =>
+  queryTallyResult = (proposalId: string, params: RequestParams = {}) =>
     this.request<V1Beta1QueryTallyResultResponse, RpcStatus>({
-      path: `/cosmos/gov/v1beta1/proposals/${proposal_id}/tally`,
+      path: `/cosmos/gov/v1beta1/proposals/${proposalId}/tally`,
       method: "GET",
       format: "json",
       ...params,
@@ -923,7 +828,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @request GET:/cosmos/gov/v1beta1/proposals/{proposal_id}/votes
    */
   queryVotes = (
-    proposal_id: string,
+    proposalId: string,
     query?: {
       "pagination.key"?: string;
       "pagination.offset"?: string;
@@ -934,7 +839,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     params: RequestParams = {},
   ) =>
     this.request<V1Beta1QueryVotesResponse, RpcStatus>({
-      path: `/cosmos/gov/v1beta1/proposals/${proposal_id}/votes`,
+      path: `/cosmos/gov/v1beta1/proposals/${proposalId}/votes`,
       method: "GET",
       query: query,
       format: "json",
@@ -949,9 +854,9 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @summary Vote queries voted information based on proposalID, voterAddr.
    * @request GET:/cosmos/gov/v1beta1/proposals/{proposal_id}/votes/{voter}
    */
-  queryVote = (proposal_id: string, voter: string, params: RequestParams = {}) =>
+  queryVote = (proposalId: string, voter: string, params: RequestParams = {}) =>
     this.request<V1Beta1QueryVoteResponse, RpcStatus>({
-      path: `/cosmos/gov/v1beta1/proposals/${proposal_id}/votes/${voter}`,
+      path: `/cosmos/gov/v1beta1/proposals/${proposalId}/votes/${voter}`,
       method: "GET",
       format: "json",
       ...params,

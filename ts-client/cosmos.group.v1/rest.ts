@@ -10,201 +10,6 @@
  */
 
 /**
-* Exec defines modes of execution of a proposal on creation or on new vote.
-
- - EXEC_UNSPECIFIED: An empty value means that there should be a separate
-MsgExec request for the proposal to execute.
- - EXEC_TRY: Try to execute the proposal immediately.
-If the proposal is not allowed per the DecisionPolicy,
-the proposal will still be open and could
-be executed at a later point.
-*/
-export enum Groupv1Exec {
-  EXEC_UNSPECIFIED = "EXEC_UNSPECIFIED",
-  EXEC_TRY = "EXEC_TRY",
-}
-
-/**
- * GroupInfo represents the high-level on-chain information for a group.
- */
-export interface Groupv1GroupInfo {
-  /**
-   * id is the unique ID of the group.
-   * @format uint64
-   */
-  id?: string;
-
-  /** admin is the account address of the group's admin. */
-  admin?: string;
-
-  /** metadata is any arbitrary metadata to attached to the group. */
-  metadata?: string;
-
-  /** @format uint64 */
-  version?: string;
-
-  /** total_weight is the sum of the group members' weights. */
-  total_weight?: string;
-
-  /**
-   * created_at is a timestamp specifying when a group was created.
-   * @format date-time
-   */
-  created_at?: string;
-}
-
-/**
- * GroupPolicyInfo represents the high-level on-chain information for a group policy.
- */
-export interface Groupv1GroupPolicyInfo {
-  /** address is the account address of group policy. */
-  address?: string;
-
-  /**
-   * group_id is the unique ID of the group.
-   * @format uint64
-   */
-  group_id?: string;
-
-  /** admin is the account address of the group admin. */
-  admin?: string;
-
-  /** metadata is any arbitrary metadata to attached to the group policy. */
-  metadata?: string;
-
-  /**
-   * version is used to track changes to a group's GroupPolicyInfo structure that
-   * would create a different result on a running proposal.
-   * @format uint64
-   */
-  version?: string;
-
-  /** decision_policy specifies the group policy's decision policy. */
-  decision_policy?: ProtobufAny;
-
-  /**
-   * created_at is a timestamp specifying when a group policy was created.
-   * @format date-time
-   */
-  created_at?: string;
-}
-
-/**
-* Proposal defines a group proposal. Any member of a group can submit a proposal
-for a group policy to decide upon.
-A proposal consists of a set of `sdk.Msg`s that will be executed if the proposal
-passes as well as some optional metadata associated with the proposal.
-*/
-export interface Groupv1Proposal {
-  /**
-   * id is the unique id of the proposal.
-   * @format uint64
-   */
-  id?: string;
-
-  /** group_policy_address is the account address of group policy. */
-  group_policy_address?: string;
-
-  /** metadata is any arbitrary metadata to attached to the proposal. */
-  metadata?: string;
-
-  /** proposers are the account addresses of the proposers. */
-  proposers?: string[];
-
-  /**
-   * submit_time is a timestamp specifying when a proposal was submitted.
-   * @format date-time
-   */
-  submit_time?: string;
-
-  /**
-   * group_version tracks the version of the group at proposal submission.
-   * This field is here for informational purposes only.
-   * @format uint64
-   */
-  group_version?: string;
-
-  /**
-   * group_policy_version tracks the version of the group policy at proposal submission.
-   * When a decision policy is changed, existing proposals from previous policy
-   * versions will become invalid with the `ABORTED` status.
-   * This field is here for informational purposes only.
-   * @format uint64
-   */
-  group_policy_version?: string;
-
-  /** status represents the high level position in the life cycle of the proposal. Initial value is Submitted. */
-  status?: V1ProposalStatus;
-
-  /**
-   * final_tally_result contains the sums of all weighted votes for this
-   * proposal for each vote option. It is empty at submission, and only
-   * populated after tallying, at voting period end or at proposal execution,
-   * whichever happens first.
-   */
-  final_tally_result?: Groupv1TallyResult;
-
-  /**
-   * voting_period_end is the timestamp before which voting must be done.
-   * Unless a successfull MsgExec is called before (to execute a proposal whose
-   * tally is successful before the voting period ends), tallying will be done
-   * at this point, and the `final_tally_result`and `status` fields will be
-   * accordingly updated.
-   * @format date-time
-   */
-  voting_period_end?: string;
-
-  /** executor_result is the final result of the proposal execution. Initial value is NotRun. */
-  executor_result?: V1ProposalExecutorResult;
-
-  /** messages is a list of `sdk.Msg`s that will be executed if the proposal passes. */
-  messages?: ProtobufAny[];
-}
-
-/**
- * TallyResult represents the sum of weighted votes for each vote option.
- */
-export interface Groupv1TallyResult {
-  /** yes_count is the weighted sum of yes votes. */
-  yes_count?: string;
-
-  /** abstain_count is the weighted sum of abstainers. */
-  abstain_count?: string;
-
-  /** no_count is the weighted sum of no votes. */
-  no_count?: string;
-
-  /** no_with_veto_count is the weighted sum of veto. */
-  no_with_veto_count?: string;
-}
-
-/**
- * Vote represents a vote for a proposal.
- */
-export interface Groupv1Vote {
-  /**
-   * proposal is the unique ID of the proposal.
-   * @format uint64
-   */
-  proposal_id?: string;
-
-  /** voter is the account address of the voter. */
-  voter?: string;
-
-  /** option is the voter's choice on the proposal. */
-  option?: V1VoteOption;
-
-  /** metadata is any arbitrary metadata to attached to the vote. */
-  metadata?: string;
-
-  /**
-   * submit_time is the timestamp when the vote was submitted.
-   * @format date-time
-   */
-  submit_time?: string;
-}
-
-/**
 * `Any` contains an arbitrary serialized protocol buffer message along with a
 URL that describes the type of the serialized message.
 
@@ -301,7 +106,6 @@ export interface ProtobufAny {
    * expect it to use in the context of Any. However, for URLs which use the
    * scheme `http`, `https`, or no scheme, one can optionally set up a type
    * server that maps type URLs to message definitions as follows:
-   *
    * * If no scheme is provided, `https` is assumed.
    * * An HTTP GET on the URL must yield a [google.protobuf.Type][]
    *   value in binary format, or produce an error.
@@ -310,11 +114,9 @@ export interface ProtobufAny {
    *   lookup. Therefore, binary compatibility needs to be preserved
    *   on changes to types. (Use versioned type names to manage
    *   breaking changes.)
-   *
    * Note: this functionality is not currently available in the official
    * protobuf release, and it is not used for type URLs beginning with
    * type.googleapis.com.
-   *
    * Schemes other than `http`, `https` (or the empty scheme) might be
    * used with implementation specific semantics.
    */
@@ -329,6 +131,56 @@ export interface RpcStatus {
 }
 
 /**
+* Exec defines modes of execution of a proposal on creation or on new vote.
+
+ - EXEC_UNSPECIFIED: An empty value means that there should be a separate
+MsgExec request for the proposal to execute.
+ - EXEC_TRY: Try to execute the proposal immediately.
+If the proposal is not allowed per the DecisionPolicy,
+the proposal will still be open and could
+be executed at a later point.
+*/
+export enum V1Exec {
+  EXEC_UNSPECIFIED = "EXEC_UNSPECIFIED",
+  EXEC_TRY = "EXEC_TRY",
+}
+
+/**
+ * GroupInfo represents the high-level on-chain information for a group.
+ */
+export interface V1GroupInfo {
+  /**
+   * id is the unique ID of the group.
+   * @format uint64
+   */
+  id?: string;
+
+  /** admin is the account address of the group's admin. */
+  admin?: string;
+
+  /** metadata is any arbitrary metadata to attached to the group. */
+  metadata?: string;
+
+  /**
+   * version is used to track changes to a group's membership structure that
+   * would break existing proposals. Whenever any members weight is changed,
+   * or any member is added or removed this version is incremented and will
+   * cause proposals based on older versions of this group to fail
+   * @format uint64
+   */
+  version?: string;
+
+  /** total_weight is the sum of the group members' weights. */
+  total_weight?: string;
+
+  /**
+   * created_at is a timestamp specifying when a group was created.
+   * @format date-time
+   */
+  created_at?: string;
+}
+
+/**
  * GroupMember represents the relationship between a group and a member.
  */
 export interface V1GroupMember {
@@ -340,6 +192,42 @@ export interface V1GroupMember {
 
   /** member is the member data. */
   member?: V1Member;
+}
+
+/**
+ * GroupPolicyInfo represents the high-level on-chain information for a group policy.
+ */
+export interface V1GroupPolicyInfo {
+  /** address is the account address of group policy. */
+  address?: string;
+
+  /**
+   * group_id is the unique ID of the group.
+   * @format uint64
+   */
+  group_id?: string;
+
+  /** admin is the account address of the group admin. */
+  admin?: string;
+
+  /** metadata is any arbitrary metadata to attached to the group policy. */
+  metadata?: string;
+
+  /**
+   * version is used to track changes to a group's GroupPolicyInfo structure that
+   * would create a different result on a running proposal.
+   * @format uint64
+   */
+  version?: string;
+
+  /** decision_policy specifies the group policy's decision policy. */
+  decision_policy?: ProtobufAny;
+
+  /**
+   * created_at is a timestamp specifying when a group policy was created.
+   * @format date-time
+   */
+  created_at?: string;
 }
 
 /**
@@ -477,6 +365,78 @@ export type V1MsgVoteResponse = object;
 export type V1MsgWithdrawProposalResponse = object;
 
 /**
+* Proposal defines a group proposal. Any member of a group can submit a proposal
+for a group policy to decide upon.
+A proposal consists of a set of `sdk.Msg`s that will be executed if the proposal
+passes as well as some optional metadata associated with the proposal.
+*/
+export interface V1Proposal {
+  /**
+   * id is the unique id of the proposal.
+   * @format uint64
+   */
+  id?: string;
+
+  /** group_policy_address is the account address of group policy. */
+  group_policy_address?: string;
+
+  /** metadata is any arbitrary metadata to attached to the proposal. */
+  metadata?: string;
+
+  /** proposers are the account addresses of the proposers. */
+  proposers?: string[];
+
+  /**
+   * submit_time is a timestamp specifying when a proposal was submitted.
+   * @format date-time
+   */
+  submit_time?: string;
+
+  /**
+   * group_version tracks the version of the group at proposal submission.
+   * This field is here for informational purposes only.
+   * @format uint64
+   */
+  group_version?: string;
+
+  /**
+   * group_policy_version tracks the version of the group policy at proposal submission.
+   * When a decision policy is changed, existing proposals from previous policy
+   * versions will become invalid with the `ABORTED` status.
+   * This field is here for informational purposes only.
+   * @format uint64
+   */
+  group_policy_version?: string;
+
+  /** status represents the high level position in the life cycle of the proposal. Initial value is Submitted. */
+  status?: V1ProposalStatus;
+
+  /**
+   * final_tally_result contains the sums of all weighted votes for this
+   * proposal for each vote option. It is empty at submission, and only
+   * populated after tallying, at voting period end or at proposal execution,
+   * whichever happens first.
+   */
+  final_tally_result?: V1TallyResult;
+
+  /**
+   * voting_period_end is the timestamp before which voting must be done.
+   * Unless a successfull MsgExec is called before (to execute a proposal whose
+   * tally is successful before the voting period ends), tallying will be done
+   * at this point, and the `final_tally_result`and `status` fields will be
+   * accordingly updated.
+   * @format date-time
+   */
+  voting_period_end?: string;
+
+  /** executor_result is the final result of the proposal execution. Initial value is NotRun. */
+  executor_result?: V1ProposalExecutorResult;
+
+  /** messages is a list of `sdk.Msg`s that will be executed if the proposal passes. */
+  messages?: ProtobufAny[];
+}
+
+/**
 * ProposalExecutorResult defines types of proposal executor results.
 
  - PROPOSAL_EXECUTOR_RESULT_UNSPECIFIED: An empty value is not allowed.
@@ -519,7 +479,7 @@ export enum V1ProposalStatus {
  */
 export interface V1QueryGroupInfoResponse {
   /** info is the GroupInfo for the group. */
-  info?: Groupv1GroupInfo;
+  info?: V1GroupInfo;
 }
 
 /**
@@ -538,7 +498,7 @@ export interface V1QueryGroupMembersResponse {
  */
 export interface V1QueryGroupPoliciesByAdminResponse {
   /** group_policies are the group policies info with provided admin. */
-  group_policies?: Groupv1GroupPolicyInfo[];
+  group_policies?: V1GroupPolicyInfo[];
 
   /** pagination defines the pagination in the response. */
   pagination?: V1Beta1PageResponse;
@@ -549,7 +509,7 @@ export interface V1QueryGroupPoliciesByAdminResponse {
  */
 export interface V1QueryGroupPoliciesByGroupResponse {
   /** group_policies are the group policies info associated with the provided group. */
-  group_policies?: Groupv1GroupPolicyInfo[];
+  group_policies?: V1GroupPolicyInfo[];
 
   /** pagination defines the pagination in the response. */
   pagination?: V1Beta1PageResponse;
@@ -560,7 +520,7 @@ export interface V1QueryGroupPoliciesByGroupResponse {
  */
 export interface V1QueryGroupPolicyInfoResponse {
   /** info is the GroupPolicyInfo for the group policy. */
-  info?: Groupv1GroupPolicyInfo;
+  info?: V1GroupPolicyInfo;
 }
 
 /**
@@ -568,7 +528,7 @@ export interface V1QueryGroupPolicyInfoResponse {
  */
 export interface V1QueryGroupsByAdminResponse {
   /** groups are the groups info with the provided admin. */
-  groups?: Groupv1GroupInfo[];
+  groups?: V1GroupInfo[];
 
   /** pagination defines the pagination in the response. */
   pagination?: V1Beta1PageResponse;
@@ -579,20 +539,7 @@ export interface V1QueryGroupsByAdminResponse {
  */
 export interface V1QueryGroupsByMemberResponse {
   /** groups are the groups info with the provided group member. */
-  groups?: Groupv1GroupInfo[];
-
-  /** pagination defines the pagination in the response. */
-  pagination?: V1Beta1PageResponse;
-}
-
-/**
-* QueryGroupsResponse is the Query/Groups response type.
-
-Since: cosmos-sdk 0.47.1
-*/
-export interface V1QueryGroupsResponse {
-  /** `groups` is all the groups present in state. */
-  groups?: Groupv1GroupInfo[];
+  groups?: V1GroupInfo[];
 
   /** pagination defines the pagination in the response. */
   pagination?: V1Beta1PageResponse;
@@ -603,7 +550,7 @@ export interface V1QueryGroupsResponse {
  */
 export interface V1QueryProposalResponse {
   /** proposal is the proposal info. */
-  proposal?: Groupv1Proposal;
+  proposal?: V1Proposal;
 }
 
 /**
@@ -611,7 +558,7 @@ export interface V1QueryProposalResponse {
  */
 export interface V1QueryProposalsByGroupPolicyResponse {
   /** proposals are the proposals with given group policy. */
-  proposals?: Groupv1Proposal[];
+  proposals?: V1Proposal[];
 
   /** pagination defines the pagination in the response. */
   pagination?: V1Beta1PageResponse;
@@ -622,7 +569,7 @@ export interface V1QueryProposalsByGroupPolicyResponse {
  */
 export interface V1QueryTallyResultResponse {
   /** tally defines the requested tally. */
-  tally?: Groupv1TallyResult;
+  tally?: V1TallyResult;
 }
 
 /**
@@ -630,7 +577,7 @@ export interface V1QueryTallyResultResponse {
  */
 export interface V1QueryVoteByProposalVoterResponse {
   /** vote is the vote with given proposal_id and voter. */
-  vote?: Groupv1Vote;
+  vote?: V1Vote;
 }
 
 /**
@@ -638,7 +585,7 @@ export interface V1QueryVoteByProposalVoterResponse {
  */
 export interface V1QueryVotesByProposalResponse {
   /** votes are the list of votes for given proposal_id. */
-  votes?: Groupv1Vote[];
+  votes?: V1Vote[];
 
   /** pagination defines the pagination in the response. */
   pagination?: V1Beta1PageResponse;
@@ -649,10 +596,53 @@ export interface V1QueryVotesByProposalResponse {
  */
 export interface V1QueryVotesByVoterResponse {
   /** votes are the list of votes by given voter. */
-  votes?: Groupv1Vote[];
+  votes?: V1Vote[];
 
   /** pagination defines the pagination in the response. */
   pagination?: V1Beta1PageResponse;
+}
+
+/**
+ * TallyResult represents the sum of weighted votes for each vote option.
+ */
+export interface V1TallyResult {
+  /** yes_count is the weighted sum of yes votes. */
+  yes_count?: string;
+
+  /** abstain_count is the weighted sum of abstainers. */
+  abstain_count?: string;
+
+  /** no_count is the weighted sum of no votes. */
+  no_count?: string;
+
+  /** no_with_veto_count is the weighted sum of veto. */
+  no_with_veto_count?: string;
+}
+
+/**
+ * Vote represents a vote for a proposal.
+ */
+export interface V1Vote {
+  /**
+   * proposal is the unique ID of the proposal.
+   * @format uint64
+   */
+  proposal_id?: string;
+
+  /** voter is the account address of the voter. */
+  voter?: string;
+
+  /** option is the voter's choice on the proposal. */
+  option?: V1VoteOption;
+
+  /** metadata is any arbitrary metadata to attached to the vote. */
+  metadata?: string;
+
+  /**
+   * submit_time is the timestamp when the vote was submitted.
+   * @format date-time
+   */
+  submit_time?: string;
 }
 
 /**
@@ -737,14 +727,19 @@ export interface V1Beta1PageResponse {
    */
   next_key?: string;
 
-  /** @format uint64 */
+  /**
+   * total is total number of results available if PageRequest.count_total
+   * was set, its value is undefined otherwise
+   * @format uint64
+   */
   total?: string;
 }
 
-export type QueryParamsType = Record<string | number, any>;
-export type ResponseFormat = keyof Omit<Body, "body" | "bodyUsed">;
+import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, ResponseType } from "axios";
 
-export interface FullRequestParams extends Omit<RequestInit, "body"> {
+export type QueryParamsType = Record<string | number, any>;
+
+export interface FullRequestParams extends Omit<AxiosRequestConfig, "data" | "params" | "url" | "responseType"> {
   /** set parameter to `true` for call `securityWorker` for this request */
   secure?: boolean;
   /** request path */
@@ -754,29 +749,20 @@ export interface FullRequestParams extends Omit<RequestInit, "body"> {
   /** query params */
   query?: QueryParamsType;
   /** format of response (i.e. response.json() -> format: "json") */
-  format?: keyof Omit<Body, "body" | "bodyUsed">;
+  format?: ResponseType;
   /** request body */
   body?: unknown;
-  /** base url */
-  baseUrl?: string;
-  /** request cancellation token */
-  cancelToken?: CancelToken;
 }
 
 export type RequestParams = Omit<FullRequestParams, "body" | "method" | "query" | "path">;
 
-export interface ApiConfig<SecurityDataType = unknown> {
-  baseUrl?: string;
-  baseApiParams?: Omit<RequestParams, "baseUrl" | "cancelToken" | "signal">;
-  securityWorker?: (securityData: SecurityDataType) => RequestParams | void;
+export interface ApiConfig<SecurityDataType = unknown> extends Omit<AxiosRequestConfig, "data" | "cancelToken"> {
+  securityWorker?: (
+    securityData: SecurityDataType | null,
+  ) => Promise<AxiosRequestConfig | void> | AxiosRequestConfig | void;
+  secure?: boolean;
+  format?: ResponseType;
 }
-
-export interface HttpResponse<D extends unknown, E extends unknown = unknown> extends Response {
-  data: D;
-  error: E;
-}
-
-type CancelToken = Symbol | string | number;
 
 export enum ContentType {
   Json = "application/json",
@@ -785,149 +771,86 @@ export enum ContentType {
 }
 
 export class HttpClient<SecurityDataType = unknown> {
-  public baseUrl: string = "";
-  private securityData: SecurityDataType = null as any;
-  private securityWorker: null | ApiConfig<SecurityDataType>["securityWorker"] = null;
-  private abortControllers = new Map<CancelToken, AbortController>();
+  public instance: AxiosInstance;
+  private securityData: SecurityDataType | null = null;
+  private securityWorker?: ApiConfig<SecurityDataType>["securityWorker"];
+  private secure?: boolean;
+  private format?: ResponseType;
 
-  private baseApiParams: RequestParams = {
-    credentials: "same-origin",
-    headers: {},
-    redirect: "follow",
-    referrerPolicy: "no-referrer",
-  };
-
-  constructor(apiConfig: ApiConfig<SecurityDataType> = {}) {
-    Object.assign(this, apiConfig);
+  constructor({ securityWorker, secure, format, ...axiosConfig }: ApiConfig<SecurityDataType> = {}) {
+    this.instance = axios.create({ ...axiosConfig, baseURL: axiosConfig.baseURL || "" });
+    this.secure = secure;
+    this.format = format;
+    this.securityWorker = securityWorker;
   }
 
-  public setSecurityData = (data: SecurityDataType) => {
+  public setSecurityData = (data: SecurityDataType | null) => {
     this.securityData = data;
   };
 
-  private addQueryParam(query: QueryParamsType, key: string) {
-    const value = query[key];
-
-    return (
-      encodeURIComponent(key) +
-      "=" +
-      encodeURIComponent(Array.isArray(value) ? value.join(",") : typeof value === "number" ? value : `${value}`)
-    );
-  }
-
-  protected toQueryString(rawQuery?: QueryParamsType): string {
-    const query = rawQuery || {};
-    const keys = Object.keys(query).filter((key) => "undefined" !== typeof query[key]);
-    return keys
-      .map((key) =>
-        typeof query[key] === "object" && !Array.isArray(query[key])
-          ? this.toQueryString(query[key] as QueryParamsType)
-          : this.addQueryParam(query, key),
-      )
-      .join("&");
-  }
-
-  protected addQueryParams(rawQuery?: QueryParamsType): string {
-    const queryString = this.toQueryString(rawQuery);
-    return queryString ? `?${queryString}` : "";
-  }
-
-  private contentFormatters: Record<ContentType, (input: any) => any> = {
-    [ContentType.Json]: (input: any) =>
-      input !== null && (typeof input === "object" || typeof input === "string") ? JSON.stringify(input) : input,
-    [ContentType.FormData]: (input: any) =>
-      Object.keys(input || {}).reduce((data, key) => {
-        data.append(key, input[key]);
-        return data;
-      }, new FormData()),
-    [ContentType.UrlEncoded]: (input: any) => this.toQueryString(input),
-  };
-
-  private mergeRequestParams(params1: RequestParams, params2?: RequestParams): RequestParams {
+  private mergeRequestParams(params1: AxiosRequestConfig, params2?: AxiosRequestConfig): AxiosRequestConfig {
     return {
-      ...this.baseApiParams,
+      ...this.instance.defaults,
       ...params1,
       ...(params2 || {}),
       headers: {
-        ...(this.baseApiParams.headers || {}),
+        ...(this.instance.defaults.headers || {}),
         ...(params1.headers || {}),
         ...((params2 && params2.headers) || {}),
       },
     };
   }
 
-  private createAbortSignal = (cancelToken: CancelToken): AbortSignal | undefined => {
-    if (this.abortControllers.has(cancelToken)) {
-      const abortController = this.abortControllers.get(cancelToken);
-      if (abortController) {
-        return abortController.signal;
-      }
-      return void 0;
-    }
+  private createFormData(input: Record<string, unknown>): FormData {
+    return Object.keys(input || {}).reduce((formData, key) => {
+      const property = input[key];
+      formData.append(
+        key,
+        property instanceof Blob
+          ? property
+          : typeof property === "object" && property !== null
+          ? JSON.stringify(property)
+          : `${property}`,
+      );
+      return formData;
+    }, new FormData());
+  }
 
-    const abortController = new AbortController();
-    this.abortControllers.set(cancelToken, abortController);
-    return abortController.signal;
-  };
-
-  public abortRequest = (cancelToken: CancelToken) => {
-    const abortController = this.abortControllers.get(cancelToken);
-
-    if (abortController) {
-      abortController.abort();
-      this.abortControllers.delete(cancelToken);
-    }
-  };
-
-  public request = <T = any, E = any>({
-    body,
+  public request = async <T = any, _E = any>({
     secure,
     path,
     type,
     query,
-    format = "json",
-    baseUrl,
-    cancelToken,
+    format,
+    body,
     ...params
-  }: FullRequestParams): Promise<HttpResponse<T, E>> => {
-    const secureParams = (secure && this.securityWorker && this.securityWorker(this.securityData)) || {};
+  }: FullRequestParams): Promise<AxiosResponse<T>> => {
+    const secureParams =
+      ((typeof secure === "boolean" ? secure : this.secure) &&
+        this.securityWorker &&
+        (await this.securityWorker(this.securityData))) ||
+      {};
     const requestParams = this.mergeRequestParams(params, secureParams);
-    const queryString = query && this.toQueryString(query);
-    const payloadFormatter = this.contentFormatters[type || ContentType.Json];
+    const responseFormat = (format && this.format) || void 0;
 
-    return fetch(`${baseUrl || this.baseUrl || ""}${path}${queryString ? `?${queryString}` : ""}`, {
+    if (type === ContentType.FormData && body && body !== null && typeof body === "object") {
+      requestParams.headers.common = { Accept: "*/*" };
+      requestParams.headers.post = {};
+      requestParams.headers.put = {};
+
+      body = this.createFormData(body as Record<string, unknown>);
+    }
+
+    return this.instance.request({
       ...requestParams,
       headers: {
         ...(type && type !== ContentType.FormData ? { "Content-Type": type } : {}),
         ...(requestParams.headers || {}),
       },
-      signal: cancelToken ? this.createAbortSignal(cancelToken) : void 0,
-      body: typeof body === "undefined" || body === null ? null : payloadFormatter(body),
-    }).then(async (response) => {
-      const r = response as HttpResponse<T, E>;
-      r.data = (null as unknown) as T;
-      r.error = (null as unknown) as E;
-
-      const data = await response[format]()
-        .then((data) => {
-          if (r.ok) {
-            r.data = data;
-          } else {
-            r.error = data;
-          }
-          return r;
-        })
-        .catch((e) => {
-          r.error = e;
-          return r;
-        });
-
-      if (cancelToken) {
-        this.abortControllers.delete(cancelToken);
-      }
-
-      if (!response.ok) throw data;
-      return data;
+      params: query,
+      responseType: responseFormat,
+      data: body,
+      url: path,
     });
   };
 }
@@ -945,9 +868,9 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @summary GroupInfo queries group info based on group id.
    * @request GET:/cosmos/group/v1/group_info/{group_id}
    */
-  queryGroupInfo = (group_id: string, params: RequestParams = {}) =>
+  queryGroupInfo = (groupId: string, params: RequestParams = {}) =>
     this.request<V1QueryGroupInfoResponse, RpcStatus>({
-      path: `/cosmos/group/v1/group_info/${group_id}`,
+      path: `/cosmos/group/v1/group_info/${groupId}`,
       method: "GET",
       format: "json",
       ...params,
@@ -962,7 +885,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @request GET:/cosmos/group/v1/group_members/{group_id}
    */
   queryGroupMembers = (
-    group_id: string,
+    groupId: string,
     query?: {
       "pagination.key"?: string;
       "pagination.offset"?: string;
@@ -973,7 +896,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     params: RequestParams = {},
   ) =>
     this.request<V1QueryGroupMembersResponse, RpcStatus>({
-      path: `/cosmos/group/v1/group_members/${group_id}`,
+      path: `/cosmos/group/v1/group_members/${groupId}`,
       method: "GET",
       query: query,
       format: "json",
@@ -1016,7 +939,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @request GET:/cosmos/group/v1/group_policies_by_group/{group_id}
    */
   queryGroupPoliciesByGroup = (
-    group_id: string,
+    groupId: string,
     query?: {
       "pagination.key"?: string;
       "pagination.offset"?: string;
@@ -1027,7 +950,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     params: RequestParams = {},
   ) =>
     this.request<V1QueryGroupPoliciesByGroupResponse, RpcStatus>({
-      path: `/cosmos/group/v1/group_policies_by_group/${group_id}`,
+      path: `/cosmos/group/v1/group_policies_by_group/${groupId}`,
       method: "GET",
       query: query,
       format: "json",
@@ -1046,32 +969,6 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     this.request<V1QueryGroupPolicyInfoResponse, RpcStatus>({
       path: `/cosmos/group/v1/group_policy_info/${address}`,
       method: "GET",
-      format: "json",
-      ...params,
-    });
-
-  /**
-   * @description Since: cosmos-sdk 0.47.1
-   *
-   * @tags Query
-   * @name QueryGroups
-   * @summary Groups queries all groups in state.
-   * @request GET:/cosmos/group/v1/groups
-   */
-  queryGroups = (
-    query?: {
-      "pagination.key"?: string;
-      "pagination.offset"?: string;
-      "pagination.limit"?: string;
-      "pagination.count_total"?: boolean;
-      "pagination.reverse"?: boolean;
-    },
-    params: RequestParams = {},
-  ) =>
-    this.request<V1QueryGroupsResponse, RpcStatus>({
-      path: `/cosmos/group/v1/groups`,
-      method: "GET",
-      query: query,
       format: "json",
       ...params,
     });
@@ -1138,9 +1035,9 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @summary Proposal queries a proposal based on proposal id.
    * @request GET:/cosmos/group/v1/proposal/{proposal_id}
    */
-  queryProposal = (proposal_id: string, params: RequestParams = {}) =>
+  queryProposal = (proposalId: string, params: RequestParams = {}) =>
     this.request<V1QueryProposalResponse, RpcStatus>({
-      path: `/cosmos/group/v1/proposal/${proposal_id}`,
+      path: `/cosmos/group/v1/proposal/${proposalId}`,
       method: "GET",
       format: "json",
       ...params,
@@ -1158,9 +1055,9 @@ then it simply returns the `final_tally_result` state stored in the
 proposal itself.
  * @request GET:/cosmos/group/v1/proposals/{proposal_id}/tally
  */
-  queryTallyResult = (proposal_id: string, params: RequestParams = {}) =>
+  queryTallyResult = (proposalId: string, params: RequestParams = {}) =>
     this.request<V1QueryTallyResultResponse, RpcStatus>({
-      path: `/cosmos/group/v1/proposals/${proposal_id}/tally`,
+      path: `/cosmos/group/v1/proposals/${proposalId}/tally`,
       method: "GET",
       format: "json",
       ...params,
@@ -1201,9 +1098,9 @@ proposal itself.
    * @summary VoteByProposalVoter queries a vote by proposal id and voter.
    * @request GET:/cosmos/group/v1/vote_by_proposal_voter/{proposal_id}/{voter}
    */
-  queryVoteByProposalVoter = (proposal_id: string, voter: string, params: RequestParams = {}) =>
+  queryVoteByProposalVoter = (proposalId: string, voter: string, params: RequestParams = {}) =>
     this.request<V1QueryVoteByProposalVoterResponse, RpcStatus>({
-      path: `/cosmos/group/v1/vote_by_proposal_voter/${proposal_id}/${voter}`,
+      path: `/cosmos/group/v1/vote_by_proposal_voter/${proposalId}/${voter}`,
       method: "GET",
       format: "json",
       ...params,
@@ -1218,7 +1115,7 @@ proposal itself.
    * @request GET:/cosmos/group/v1/votes_by_proposal/{proposal_id}
    */
   queryVotesByProposal = (
-    proposal_id: string,
+    proposalId: string,
     query?: {
       "pagination.key"?: string;
       "pagination.offset"?: string;
@@ -1229,7 +1126,7 @@ proposal itself.
     params: RequestParams = {},
   ) =>
     this.request<V1QueryVotesByProposalResponse, RpcStatus>({
-      path: `/cosmos/group/v1/votes_by_proposal/${proposal_id}`,
+      path: `/cosmos/group/v1/votes_by_proposal/${proposalId}`,
       method: "GET",
       query: query,
       format: "json",
