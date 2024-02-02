@@ -4,7 +4,7 @@ import ArkeoLogo from '@assets/arkeo-symbol-grey.svg'
 import { useConnect } from '../ConnectContext'
 import { ConnectedAccount } from './ConnectedAccount'
 import { useChain } from '@cosmos-kit/react'
-import { useClaim } from '@hooks/useClaim'
+import { useGetClaim } from '@hooks/useGetClaim'
 
 type Props = {}
 
@@ -25,7 +25,7 @@ export const Arkeo: React.FC<Props> = ({}) => {
     isWalletConnected,
   } = useChain('arkeonetworktestnet')
 
-  const { claimRecord, error } = useClaim({
+  const { claimRecord, error } = useGetClaim({
     address: address ?? '',
   })
 

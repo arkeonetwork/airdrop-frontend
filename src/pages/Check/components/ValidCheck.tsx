@@ -3,18 +3,22 @@ import { Panel } from '@components/Panel'
 import React from 'react'
 import { Account } from '@components/Account'
 import { useNavigate, useParams } from 'react-router-dom'
+import { useGetClaim } from '@hooks/useGetClaim'
 
 type ValidCheckParams = {
   address?: string
-  amount?: string
 }
 
 export const ValidCheck = () => {
   const navigate = useNavigate()
-  const { address, amount }: ValidCheckParams = useParams()
+  const { address }: ValidCheckParams = useParams()
 
-  // redirect on invalid info
-  if (!address || !amount) {
+  const { claimRecord } = useGetClaim({
+    address: address ?? '',
+  })
+  const amount = claimRecord?.amount_claim?.amount ?? '0'
+
+  if (!address || !amount || amount === '0') {
     navigate('/check')
     return null
   }

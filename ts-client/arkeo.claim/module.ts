@@ -84,7 +84,7 @@ interface TxClientOptions {
 	signer?: OfflineSigner
 }
 
-export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "http://localhost:26657", prefix: "cosmos" }) => {
+export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "http://localhost:26657", prefix: "tarkeo" }) => {
 
   return {
 		
@@ -121,6 +121,7 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 					throw new Error('TxClient:sendMsgClaimArkeo: Unable to sign Tx. Signer is not present.')
 			}
 			try {			
+				console.log("SIGNER", signer)
 				const { address } = (await signer.getAccounts())[0]; 
 				console.log("SIGNER ADDRESS", address)
 				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});

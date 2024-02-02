@@ -5,7 +5,7 @@ import { useConnect } from '../ConnectContext'
 import { ConnectedAccount } from './ConnectedAccount'
 import { useWeb3Modal } from '@web3modal/wagmi/react'
 import { useSignMessage, useDisconnect, useAccount } from 'wagmi'
-import { useClaim } from '@hooks/useClaim'
+import { useGetClaim } from '@hooks/useGetClaim'
 
 type Props = {}
 
@@ -22,7 +22,7 @@ export const Eth: React.FC<Props> = ({}) => {
   const { address } = useAccount()
   const { disconnect } = useDisconnect()
 
-  const { claimRecord, error } = useClaim({
+  const { claimRecord, error } = useGetClaim({
     address: address ?? '',
   })
 

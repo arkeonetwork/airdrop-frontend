@@ -1,76 +1,60 @@
-import axios from 'axios'
-import { ethers } from 'ethers'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { bech32 } from 'bech32'
-
-const arkeoEndpoint = import.meta.env.VITE_ARKEO_ENDPOINT
-
-enum ChainEnum {
-  INVALID = -1,
-  ARKEO = 0,
-  ETHEREUM = 1,
-}
+import { Client } from 'ts-client'
 
 type UseClaim = {
   address: string
 }
 
 export const useClaim = ({ address }: UseClaim) => {
-  const [claimRecord, setClaimRecord] = useState<any>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<Error | unknown>(null)
-  const validCosmosPrefix = ['cosmos', 'tarkeo', 'arkeo']
 
-  const calculateClaimAmount = (claimRecord: any) => {
-    const parseAmount = (amount: string) => parseInt(amount, 10) ?? 0
+  const claimRecord = async () => {
+    console.log('CLAIM RECORD')
 
-    const amountClaim = parseAmount(claimRecord?.amount_claim?.amount)
-    const amountDelegate = parseAmount(claimRecord?.amount_delegate?.amount)
-    const amountVote = parseAmount(claimRecord?.amount_vote?.amount)
-
-    return amountClaim + amountDelegate + amountVote
-  }
-
-  const getChainType = (address: string) => {
-    if (ethers.isAddress(address)) {
-      return ChainEnum.ETHEREUM
-    } else if (validCosmosPrefix.includes(bech32.decode(address).prefix)) {
-      return ChainEnum.ARKEO
-    }
-    return ChainEnum.INVALID
-  }
-
-  const buildUrl = (path: string, address: string) => {
-    return arkeoEndpoint + path + '/' + address
-  }
-
-  const fetchData = async () => {
     try {
-      const chain = getChainType(address)
-      console.log({ chain })
-      if (chain !== ChainEnum.INVALID) {
-        setIsLoading(true)
-        setError(null)
-        const params = { chain }
-        const url = buildUrl('/arkeo/claim/claimrecord', address)
-        const { data } = await axios.get(url, { params })
-        setClaimRecord({
-          ...data.claim_record,
-          total: calculateClaimAmount(data.claim_record),
-        })
-      }
+      const client = new Client({
+        apiURL: 'http://localhost:1317',
+        rpcURL: 'http://localhost:26657',
+        prefix: 'tarkeo',
+      })
+
+      await client.useKeplr({
+        chainName: 'arkeo-testnet-v2',
+        rpc: 'http://localhost:26657',
+        rest: 'http://localhost:1317',
+        // stakeCurrency: {
+        //   coinDenom: 'tarkeo',
+        //   coinMinimalDenom: 'uarkeo',
+        //   coinDecimals: '8',
+        // },
+      })
+
+      console.log('client connected', client)
+
+      // Get Balance of tarkeo
+      // const {
+      //   data: { balance },
+      // } = await client.CosmosBankV1Beta1.query.queryBalance(
+      //   address,
+      //   { denom: 'uarkeo' },
+      // )
+      // console.log({ balance })
+
+      const result = await client.ArkeoClaim.tx.sendMsgClaimArkeo({
+        value: {
+          creator: bech32.fromWords(bech32.decode(address).words),
+        } as any,
+        memo: '',
+      })
+
+      console.log({ result })
     } catch (error) {
-      console.error(error)
       setError(error)
-      setClaimRecord(null)
-    } finally {
-      setIsLoading(false)
+      console.error('Error claiming record:', error)
     }
   }
-
-  useEffect(() => {
-    fetchData()
-  }, [arkeoEndpoint, address])
 
   return { claimRecord, isLoading, error }
 }

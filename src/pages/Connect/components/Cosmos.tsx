@@ -5,7 +5,7 @@ import { useConnect } from '../ConnectContext'
 import { ConnectedAccount } from './ConnectedAccount'
 import { useChain } from '@cosmos-kit/react'
 import { StdFee } from '@cosmjs/stargate'
-import { useClaim } from '@hooks/useClaim'
+import { useGetClaim } from '@hooks/useGetClaim'
 
 type Props = {}
 
@@ -26,7 +26,7 @@ export const Cosmos: React.FC<Props> = ({}) => {
     isWalletConnected,
   } = useChain('cosmoshub')
 
-  const { claimRecord, error } = useClaim({
+  const { claimRecord, error } = useGetClaim({
     address: address ?? '',
   })
 
@@ -35,7 +35,6 @@ export const Cosmos: React.FC<Props> = ({}) => {
   useEffect(() => {
     dispatch({ type: 'SET_COSMOS_ACCOUNT', payload: address })
   }, [address])
-
 
   const handleClick = () => {
     if (cosmosAccount) {
