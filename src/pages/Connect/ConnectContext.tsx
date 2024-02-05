@@ -2,10 +2,9 @@ import { createContext, useContext, useReducer } from 'react'
 
 interface StateProps {
   step: number
-  totalAmount: number
-  claimAmount: number
-  delegateAmount: number
-  voteAmount: number
+  totalClaimAmount: number
+  totalDelegateAmount: number
+  totalVoteAmount: number
   cosmosAccount?: string
   arkeoAccount?: string
   ethAccount?: string
@@ -18,10 +17,9 @@ export interface DispatchProps {
 
 export const initialState = {
   step: 1,
-  totalAmount: 0,
-  claimAmount: 0,
-  delegateAmount: 0,
-  voteAmount: 0,
+  totalClaimAmount: 0,
+  totalDelegateAmount: 0,
+  totalVoteAmount: 0,
 }
 
 const connectReducer = (state: StateProps, action: DispatchProps) => {
@@ -48,18 +46,20 @@ const connectReducer = (state: StateProps, action: DispatchProps) => {
         ethAccount: payload,
       }
     case 'ADD_TOTAL_AMOUNTS':
+      console.log("state.totalClaimAmount", state.totalClaimAmount)
+      console.log("payload.claimAmount", payload.amountClaim)
       return {
         ...state,
-        totalClaimAmount: state.claimAmount += payload.claimAmount,
-        totalDelegateAmount: state.delegateAmount += payload.delegateAmount,
-        totalVoteAmount: state.voteAmount += payload.voteAmount,
+        totalClaimAmount: state.totalClaimAmount += payload.amountClaim,
+        totalDelegateAmount: state.totalDelegateAmount += payload.amountDelegate,
+        totalVoteAmount: state.totalVoteAmount += payload.amountVote,
       }
     case 'SUB_TOTAL_AMOUNTS':
       return {
         ...state,
-        totalClaimAmount: state.claimAmount -= payload.claimAmount,
-        totalDelegateAmount: state.delegateAmount -= payload.delegateAmount,
-        totalVoteAmount: state.voteAmount -= payload.voteAmount,
+        totalClaimAmount: state.totalClaimAmount -= payload.amountClaim,
+        totalDelegateAmount: state.totalDelegateAmount -= payload.amountDelegate,
+        totalVoteAmount: state.totalVoteAmount -= payload.amountVote,
       }
     default:
       return state

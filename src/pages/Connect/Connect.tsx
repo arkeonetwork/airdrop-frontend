@@ -3,13 +3,15 @@ import { Box, Flex, Image, Text } from '@chakra-ui/react'
 import { Panel } from '@components/Panel'
 import Symbol from '@assets/arkeo-symbol.svg'
 import { CircleNumber } from '@components/CircleNumber'
+import { MiddleEllipsis } from '@components/MiddleEllipsis'
+import { toDecimal } from '@utils/functions'
+
 import { Learn } from './components/Learn'
 import { Cosmos } from './components/Cosmos'
 import { Arkeo } from './components/Arkeo'
 import { Eth } from './components/Eth'
 import { Claim } from './components/Claim'
 import { useConnect } from './ConnectContext'
-import { MiddleEllipsis } from '@components/MiddleEllipsis'
 import { Congrats } from './components/Congrats'
 
 export const Connect = () => {
@@ -21,7 +23,7 @@ export const Connect = () => {
     'Claim',
   ]
   const {
-    state: { step, cosmosAccount, arkeoAccount, ethAccount, totalAmount },
+    state: { step, cosmosAccount, arkeoAccount, ethAccount, totalClaimAmount },
   } = useConnect()
 
   const displayStep = () => {
@@ -39,7 +41,7 @@ export const Connect = () => {
       case 6:
         return <Congrats />
       default:
-        console.log('finished')
+        console.error('Invalid Step')
     }
   }
 
@@ -110,7 +112,7 @@ export const Connect = () => {
             <Flex flexDir="row" alignItems="center">
               <Image w="24px" h="24px" src={Symbol} />
               <Text fontSize="24px" fontWeight="900" pl="5px">
-                {totalAmount} ARKEO
+                {toDecimal(totalClaimAmount)} ARKEO
               </Text>
             </Flex>
           </Box>

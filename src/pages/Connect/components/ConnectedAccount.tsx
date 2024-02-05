@@ -11,6 +11,7 @@ import { MiddleEllipsis } from '../../../components/MiddleEllipsis'
 import Symbol from '@assets/arkeo-symbol.svg'
 import { ChevronDownIcon } from '@chakra-ui/icons'
 import { useConnect } from '../ConnectContext'
+import { toDecimal } from '@utils/functions'
 
 type Props = {
   amount: string
@@ -70,7 +71,7 @@ export const ConnectedAccount: React.FC<Props> = ({
         <Flex flexDir="row" alignItems="center" gap={2}>
           <Image w="24px" h="24px" src={Symbol} />
           <Text fontSize="24px" fontWeight="900" textAlign="center">
-            {amount} ARKEO
+            {toDecimal(amount)} ARKEO
           </Text>
         </Flex>
         <Button onClick={disconnect} mt="16px" variant="outline">

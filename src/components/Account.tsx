@@ -2,6 +2,7 @@ import React from 'react';
 import { Button, Flex, Container, Text, Image, BoxProps } from '@chakra-ui/react';
 import { MiddleEllipsis } from './MiddleEllipsis';
 import Symbol from '@assets/arkeo-symbol.svg';
+import { toDecimal } from '@utils/functions';
 
 type Props = {
   amount: string;
@@ -26,7 +27,7 @@ export const Account: React.FC<Props> = ({ amount, account, ...rest }) => (
       <Flex flexDir="row" alignItems="center" gap={2}>
         <Image w="40px" h="40px" src={Symbol} />
         <Text fontSize="24px" fontWeight="900" textAlign="center">
-          {amount} ARKEO
+          {toDecimal(amount)} ARKEO
         </Text>
       </Flex>
     </Container>

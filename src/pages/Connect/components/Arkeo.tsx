@@ -46,7 +46,7 @@ export const Arkeo: React.FC<Props> = ({}) => {
       return (
         <ConnectedAccount
           width="100%"
-          amount={claimRecord?.total ?? '0'}
+          amount={claimRecord?.amountClaim ?? '0'}
           account={arkeoAccount}
           name={username}
           disconnect={disconnect}

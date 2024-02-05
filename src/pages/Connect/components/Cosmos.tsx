@@ -4,28 +4,17 @@ import CosmosLogo from '@assets/cosmos-atom-logo.svg'
 import { useConnect } from '../ConnectContext'
 import { ConnectedAccount } from './ConnectedAccount'
 import { useChain } from '@cosmos-kit/react'
-import { StdFee } from '@cosmjs/stargate'
 import { useGetClaim } from '@hooks/useGetClaim'
 
 type Props = {}
 
 export const Cosmos: React.FC<Props> = ({}) => {
   const {
-    state: { step, cosmosAccount, claimAmount },
+    state: { step, cosmosAccount },
     dispatch,
   } = useConnect()
-  const {
-    status,
-    username,
-    address,
-    message,
-    connect,
-    disconnect,
-    openView,
-    sign,
-    isWalletConnected,
-  } = useChain('cosmoshub')
-  console.log({ claimAmount })
+  const { username, address, disconnect, openView, isWalletConnected } =
+    useChain('cosmoshub')
 
   const { claimRecord, error } = useGetClaim({
     address: address ?? '',
@@ -37,10 +26,8 @@ export const Cosmos: React.FC<Props> = ({}) => {
 
   useEffect(() => {
     if (!claimRecord) return
-    console.log('isWalletConnected', isWalletConnected)
     if (isWalletConnected)
       dispatch({ type: 'ADD_TOTAL_AMOUNTS', payload: claimRecord })
-    else dispatch({ type: 'SUB_TOTAL_AMOUNTS', payload: claimRecord })
   }, [isWalletConnected, claimRecord])
 
   const handleClick = () => {
@@ -56,10 +43,13 @@ export const Cosmos: React.FC<Props> = ({}) => {
       return (
         <ConnectedAccount
           width="100%"
-          amount={claimRecord?.total ?? '0'}
+          amount={claimRecord?.amountClaim ?? '0'}
           account={cosmosAccount}
           name={username}
-          disconnect={disconnect}
+          disconnect={() => {
+            dispatch({ type: 'SUB_TOTAL_AMOUNTS', payload: claimRecord })
+            disconnect()
+          }}
         />
       )
     }

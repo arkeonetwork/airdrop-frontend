@@ -2,12 +2,13 @@ import React from 'react'
 import { Button, Box, Text, Image, Flex } from '@chakra-ui/react'
 import ArkeoLogo from '@assets/arkeo-symbol.svg'
 import { useConnect } from '../ConnectContext'
+import { toDecimal } from '@utils/functions'
 
 type Props = {}
 
 export const Claim: React.FC<Props> = ({}) => {
   const {
-    state: { step },
+    state: { step, totalClaimAmount },
     dispatch,
   } = useConnect()
 
@@ -33,7 +34,7 @@ export const Claim: React.FC<Props> = ({}) => {
         <Flex textAlign="center" flexDir="column" alignItems="center">
           <Image w="64px" h="64px" src={ArkeoLogo} />
           <Text pt="8px" fontSize="24px" lineHeight="normal" fontWeight={900}>
-            300 ARKEO
+            {toDecimal(totalClaimAmount)} ARKEO
           </Text>
           <Text color="grey.50" lineHeight="normal" fontWeight={400}>
             Available to Claim

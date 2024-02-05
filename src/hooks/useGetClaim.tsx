@@ -38,13 +38,15 @@ export const useGetClaim = ({ address }: UseGetClaim) => {
   }
 
   const getChainType = (address: string) => {
-    const prefix = bech32.decode(address).prefix
     if (ethers.isAddress(address)) {
       return { chain: ChainEnum.ETHEREUM, address }
-    } else if (validCosmosPrefix.includes(prefix)) {
-      const updatedAddress = arkeoPrefix === prefix
-        ? address
-        : bech32.encode(arkeoPrefix, bech32.decode(address).words)
+    }
+    const prefix = bech32.decode(address).prefix
+    if (validCosmosPrefix.includes(prefix)) {
+      const updatedAddress =
+        arkeoPrefix === prefix
+          ? address
+          : bech32.encode(arkeoPrefix, bech32.decode(address).words)
       return { chain: ChainEnum.ARKEO, address: updatedAddress }
     }
     return { chain: ChainEnum.INVALID, address }
