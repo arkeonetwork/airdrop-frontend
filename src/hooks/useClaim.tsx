@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { bech32 } from 'bech32'
-import { Client } from 'ts-client'
+import { Client } from '../../ts-client'
 
 type UseClaim = {
   address: string
@@ -45,7 +45,7 @@ export const useClaim = ({ address }: UseClaim) => {
       const result = await client.ArkeoClaim.tx.sendMsgClaimArkeo({
         value: {
           creator: bech32.fromWords(bech32.decode(address).words),
-        } as any,
+        },
         memo: '',
       })
 

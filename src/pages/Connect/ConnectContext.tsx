@@ -3,6 +3,9 @@ import { createContext, useContext, useReducer } from 'react'
 interface StateProps {
   step: number
   totalAmount: number
+  claimAmount: number
+  delegateAmount: number
+  voteAmount: number
   cosmosAccount?: string
   arkeoAccount?: string
   ethAccount?: string
@@ -16,6 +19,9 @@ export interface DispatchProps {
 export const initialState = {
   step: 1,
   totalAmount: 0,
+  claimAmount: 0,
+  delegateAmount: 0,
+  voteAmount: 0,
 }
 
 const connectReducer = (state: StateProps, action: DispatchProps) => {
@@ -41,10 +47,19 @@ const connectReducer = (state: StateProps, action: DispatchProps) => {
         ...state,
         ethAccount: payload,
       }
-    case 'SET_TOTAL_AMOUNT':
+    case 'ADD_TOTAL_AMOUNTS':
       return {
         ...state,
-        totalAmount: payload,
+        totalClaimAmount: state.claimAmount += payload.claimAmount,
+        totalDelegateAmount: state.delegateAmount += payload.delegateAmount,
+        totalVoteAmount: state.voteAmount += payload.voteAmount,
+      }
+    case 'SUB_TOTAL_AMOUNTS':
+      return {
+        ...state,
+        totalClaimAmount: state.claimAmount -= payload.claimAmount,
+        totalDelegateAmount: state.delegateAmount -= payload.delegateAmount,
+        totalVoteAmount: state.voteAmount -= payload.voteAmount,
       }
     default:
       return state
@@ -54,7 +69,7 @@ interface ContextProps {
   state: StateProps
   dispatch: React.Dispatch<DispatchProps>
 }
-const ConnectContext = createContext<ContextProps>({
+const ClaimContext = createContext<ContextProps>({
   state: initialState,
   dispatch: () => null,
 })
@@ -67,14 +82,14 @@ export const ConnectProvider = ({
   const [state, dispatch] = useReducer(connectReducer, initialState)
 
   return (
-    <ConnectContext.Provider value={{ state, dispatch }}>
+    <ClaimContext.Provider value={{ state, dispatch }}>
       {children}
-    </ConnectContext.Provider>
+    </ClaimContext.Provider>
   )
 }
 
 export const useConnect = (): ContextProps => {
-  const context = useContext(ConnectContext)
+  const context = useContext(ClaimContext)
   if (!context) {
     throw new Error('useConnect must be used within an ConnectProvider')
   }

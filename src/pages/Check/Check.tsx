@@ -3,15 +3,6 @@ import { Link as ReactRouterLink, useNavigate } from 'react-router-dom'
 import { Panel } from '@components/Panel'
 import React, { useEffect, useState } from 'react'
 import { useGetClaim } from '@hooks/useGetClaim'
-import axios from 'axios'
-import { useChain, useWalletClient } from '@cosmos-kit/react'
-import { SigningStargateClient, StdFee } from '@cosmjs/stargate'
-import { Client } from '../../../ts-client'
-import { DirectSecp256k1HdWallet, encodePubkey } from '@cosmjs/proto-signing'
-import { bech32 } from 'bech32'
-import { rpc } from 'viem/utils'
-
-const arkeoEndpoint = import.meta.env.VITE_ARKEO_ENDPOINT
 
 export const Check = () => {
   const [address, setAddress] = useState('')

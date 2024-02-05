@@ -1,19 +1,32 @@
-import React from 'react';
-import { Button, Flex, Container, Text, Image, BoxProps } from '@chakra-ui/react';
-import { MiddleEllipsis } from '../../../components/MiddleEllipsis';
-import Symbol from '@assets/arkeo-symbol.svg';
-import { ChevronDownIcon } from '@chakra-ui/icons';
-import { useConnect } from '../ConnectContext';
+import React from 'react'
+import {
+  Button,
+  Flex,
+  Container,
+  Text,
+  Image,
+  BoxProps,
+} from '@chakra-ui/react'
+import { MiddleEllipsis } from '../../../components/MiddleEllipsis'
+import Symbol from '@assets/arkeo-symbol.svg'
+import { ChevronDownIcon } from '@chakra-ui/icons'
+import { useConnect } from '../ConnectContext'
 
 type Props = {
-  amount: string;
-  account: string;
-  disconnect: () => void;
-  name?: string;
-} & BoxProps;
+  amount: string
+  account: string
+  disconnect: () => void
+  name?: string
+} & BoxProps
 
-export const ConnectedAccount: React.FC<Props> = ({ amount, account, name, disconnect, ...rest }) => {
-  const { dispatch } = useConnect();
+export const ConnectedAccount: React.FC<Props> = ({
+  amount,
+  account,
+  name,
+  disconnect,
+  ...rest
+}) => {
+  const { dispatch } = useConnect()
 
   return (
     <Flex width="100%" flex="1" flexDir="column" {...rest}>
@@ -31,13 +44,26 @@ export const ConnectedAccount: React.FC<Props> = ({ amount, account, name, disco
       >
         <Flex justifyContent="space-between" alignItems="flex-start">
           <Flex>
-            <MiddleEllipsis text={account} maxLength={10} fontSize="16px" fontWeight={400} pb="16px" />
+            <MiddleEllipsis
+              text={account}
+              maxLength={10}
+              fontSize="16px"
+              fontWeight={400}
+              pb="16px"
+            />
             <Text pl="4px">will receive</Text>
           </Flex>
           {name && (
             <Flex alignItems="center" gap={2}>
               <Text>{name}</Text>
-              <ChevronDownIcon width="24px" height="24px" backgroundColor="grey.100" borderRadius="4px" padding="4px" color="grey.50" />
+              {/* <ChevronDownIcon
+                width="24px"
+                height="24px"
+                backgroundColor="grey.100"
+                borderRadius="4px"
+                padding="4px"
+                color="grey.50"
+              /> */}
             </Flex>
           )}
         </Flex>
@@ -52,5 +78,5 @@ export const ConnectedAccount: React.FC<Props> = ({ amount, account, name, disco
         </Button>
       </Container>
     </Flex>
-  );
-};
+  )
+}
