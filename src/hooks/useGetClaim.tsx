@@ -18,7 +18,7 @@ type UseGetClaim = {
 
 export const useGetClaim = ({ address }: UseGetClaim) => {
   const [claimRecord, setClaimRecord] = useState<any>(null)
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<Error | unknown>(null)
   const arkeoPrefix = isTestnet ? 'tarkeo' : 'arkeo'
   const validCosmosPrefix = ['cosmos', 'juno', arkeoPrefix]

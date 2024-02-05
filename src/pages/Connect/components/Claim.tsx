@@ -1,16 +1,40 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Button, Box, Text, Image, Flex } from '@chakra-ui/react'
 import ArkeoLogo from '@assets/arkeo-symbol.svg'
 import { useConnect } from '../ConnectContext'
 import { toDecimal } from '@utils/functions'
+import { useClaim } from '@hooks/useClaim'
 
 type Props = {}
 
 export const Claim: React.FC<Props> = ({}) => {
   const {
-    state: { step, totalClaimAmount },
-    dispatch,
+    state: { step, totalClaimAmount, arkeoAccount, ethAccount },
   } = useConnect()
+  const [errorMessage, setErrorMessage] = useState<string>('')
+
+  const { claimRecord, isLoading, error } = useClaim()
+  console.log('error', error)
+  useEffect(() => {
+    if (!error) {
+      setErrorMessage('')
+      return
+    }
+    const errorString = error.toString()
+    if (errorString.includes('no claimable amount')) {
+      setErrorMessage('You are not eligible for the Arkeo airdrop')
+    } else if(errorString.includes('expired')) {
+      setErrorMessage('Airdrop is over')
+    }
+  }, [error])
+
+  const claimArkeo = () => {
+    if (!arkeoAccount) {
+      console.error('No arkeo account')
+      return
+    }
+    claimRecord(arkeoAccount)
+  }
 
   return (
     <>
@@ -31,7 +55,12 @@ export const Claim: React.FC<Props> = ({}) => {
             claim your Arkeo airdrop tokens.
           </Text>
         </Box>
-        <Flex textAlign="center" flexDir="column" alignItems="center">
+        <Flex
+          // mt={'32px'}
+          textAlign="center"
+          flexDir="column"
+          alignItems="center"
+        >
           <Image w="64px" h="64px" src={ArkeoLogo} />
           <Text pt="8px" fontSize="24px" lineHeight="normal" fontWeight={900}>
             {toDecimal(totalClaimAmount)} ARKEO
@@ -40,11 +69,14 @@ export const Claim: React.FC<Props> = ({}) => {
             Available to Claim
           </Text>
         </Flex>
-        <Button
-          onClick={() => dispatch({ type: 'SET_STEP', payload: step + 1 })}
-        >
-          Claim
-        </Button>
+        <Box w="100%">
+          <Text height="16px" mb={'20px'} color="red.500">
+            {errorMessage}
+          </Text>
+          <Button isLoading={isLoading} onClick={claimArkeo}>
+            Claim
+          </Button>
+        </Box>
       </Flex>
     </>
   )
