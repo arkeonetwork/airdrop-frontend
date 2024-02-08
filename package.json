@@ -12,10 +12,13 @@
   "dependencies": {
     "@chakra-ui/icons": "^2.1.1",
     "@chakra-ui/react": "^2.8.2",
-    "@cosmjs/cosmwasm-stargate": "^0.32.0",
-    "@cosmjs/crypto": "^0.32.0",
-    "@cosmjs/encoding": "^0.32.0",
-    "@cosmjs/stargate": "^0.32.0",
+    "@cosmjs/cosmwasm-stargate": "0.27.0",
+    "@cosmjs/crypto": "0.27.0",
+    "@cosmjs/encoding": "0.27.0",
+    "@cosmjs/launchpad": "0.27.0",
+    "@cosmjs/proto-signing": "0.27.0",
+    "@cosmjs/stargate": "0.27.0",
+    "@cosmjs/tendermint-rpc": "0.27.0",
     "@cosmos-kit/core": "^2.7.7",
     "@cosmos-kit/keplr": "^2.4.12",
     "@cosmos-kit/react": "^2.9.11",
@@ -25,6 +28,7 @@
     "@web3modal/wagmi": "^3.3.2",
     "axios": "^1.6.5",
     "bech32": "^2.0.0",
+    "bignumber.js": "^9.1.2",
     "chain-registry": "^1.20.0",
     "cosmjs-types": "^0.9.0",
     "ethers": "^6.9.1",
@@ -50,6 +54,7 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.4",
     "prettier": "^3.1.0",
+    "ts-proto": "^1.167.2",
     "vite": "^5.0.0"
   }
 }

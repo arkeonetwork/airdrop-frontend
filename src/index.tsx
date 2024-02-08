@@ -1,45 +1,93 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import App from './App.tsx';
-import { ChakraProvider } from '@chakra-ui/provider';
-import { theme } from './theme.ts';
-import 'react-responsive-carousel/lib/styles/carousel.min.css';
-import { createWeb3Modal, defaultWagmiConfig } from '@web3modal/wagmi/react';
-import { WagmiConfig } from 'wagmi';
-import { mainnet } from 'viem/chains';
-import { ChainProvider } from '@cosmos-kit/react';
-import { chains, assets } from 'chain-registry';
-import { wallets } from '@cosmos-kit/keplr';
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import App from './App.tsx'
+import { ChakraProvider } from '@chakra-ui/provider'
+import { theme } from './theme.ts'
+import 'react-responsive-carousel/lib/styles/carousel.min.css'
+import { createWeb3Modal, defaultWagmiConfig } from '@web3modal/wagmi/react'
+import { WagmiConfig } from 'wagmi'
+import { mainnet } from 'viem/chains'
+import { ChainProvider } from '@cosmos-kit/react'
+import { chains, assets } from 'chain-registry'
+import { wallets } from '@cosmos-kit/keplr-extension'
+import { Chain, AssetList } from '@chain-registry/types'
 
-import '@interchain-ui/react/styles';
+import '@interchain-ui/react/styles'
+import { SignerOptions } from '@cosmos-kit/core'
+import { AminoTypes, GasPrice } from '@cosmjs/stargate'
 
-const projectId = import.meta.env.VITE_WALLET_CONNECT_ID;
+const projectId = import.meta.env.VITE_WALLET_CONNECT_ID
 
 const metadata = {
   name: 'Arkeo',
   description: 'Arkeo Airdrop',
   url: 'https://arkeo.network',
   icons: ['https://avatars.githubusercontent.com/u/37784886'], // TODO: update to arkeo
-};
+}
 
-const evmChains = [mainnet];
-const wagmiConfig = defaultWagmiConfig({ chains: evmChains, projectId, metadata });
+const evmChains = [mainnet]
+const wagmiConfig = defaultWagmiConfig({
+  chains: evmChains,
+  projectId,
+  metadata,
+})
 
-createWeb3Modal({ wagmiConfig, projectId, chains: evmChains });
+createWeb3Modal({ wagmiConfig, projectId, chains: evmChains })
 
-let root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
-console.log({ chains });
+let root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
+console.log({ chains, assets })
+
+const localArkeo: Chain = {
+  chain_name: 'localarkeo',
+  status: 'live',
+  network_type: 'testnet',
+  chain_id: 'arkeo',
+  pretty_name: 'Arkeo',
+  bech32_prefix: 'tarkeo',
+  slip44: 118,
+}
+const localArkeoAssets: AssetList = {
+  chain_name: 'localarkeo',
+  assets: [
+    {
+      name: 'Arkeo',
+      symbol: 'arkeo',
+      denom_units: [{ denom: 'uarkeo', exponent: 18 }],
+      base: 'uarkeo',
+      display: 'arkeo',
+    },
+  ],
+} // with chain_name: 'localosmosis'
+
+// const signerOptions: SignerOptions = {
+//   signingCosmwasm: (chain: Chain) => {
+//     switch (chain.chain_name) {
+//       case 'localarkeo':
+//         return {
+//           gasPrice: GasPrice.fromString('0.0025uarkeo'),
+//         }
+//     }
+//   },
+// }
+
 root.render(
   <ChakraProvider theme={theme}>
     <WagmiConfig config={wagmiConfig}>
       <ChainProvider
-        chains={chains} // supported chains
-        assetLists={assets} // supported asset lists
-        wallets={wallets} // supported wallets
-        // walletConnectOptions={...} // required if `wallets` contains mobile wallets
+        chains={[...chains, localArkeo]}
+        assetLists={[...assets, localArkeoAssets]}
+        wallets={wallets}
+        endpointOptions={{
+          endpoints: {
+            localarkeo: {
+              rpc: ['http://localhost:26657'],
+              rest: ['http://localhost:1317'],
+            },
+          },
+        }}
       >
         <App />
       </ChainProvider>
     </WagmiConfig>
-  </ChakraProvider>
-);
+  </ChakraProvider>,
+)

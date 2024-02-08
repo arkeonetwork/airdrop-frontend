@@ -1,2 +1,2 @@
 export * from "./Check";
-export * from "./components/ValidCheck";
+export * from "./components/AddressCheck";

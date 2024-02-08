@@ -18,8 +18,10 @@
     "paths": {
       "@components/*": ["src/components/*"],
       "@assets/*": ["src/assets/*"],
-      "@hooks/*": ["src/hooks/*"]
+      "@hooks/*": ["src/hooks/*"],
+      "@utils/*": ["src/utils/*"],
+      "@src/*": ["src/*"],
     }
   },
-  "include": ["src"]
+  "include": ["src", "ts-client"]
 }

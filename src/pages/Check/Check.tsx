@@ -2,7 +2,7 @@ import { Box, Input, Link, Text } from '@chakra-ui/react'
 import { Link as ReactRouterLink, useNavigate } from 'react-router-dom'
 import { Panel } from '@components/Panel'
 import React, { useEffect, useState } from 'react'
-import { useClaim } from '@hooks/useClaim'
+import { useGetClaim } from '@hooks/useGetClaim'
 
 export const Check = () => {
   const [address, setAddress] = useState('')
@@ -10,36 +10,25 @@ export const Check = () => {
 
   const navigate = useNavigate()
 
-  const { claimRecord, error } = useClaim({
-    path: '/claim/claimrecord',
-    address,
+  const { claimRecord } = useGetClaim({
+    address: address,
   })
 
   useEffect(() => {
     if (claimRecord) {
-      const amount = calculateClaimAmount()
-      if (amount > 0) {
-        console.log('NAV')
-        navigate('/check/valid/' + address + '/' + amount)
+      const claimAmount = parseInt(claimRecord?.amount_claim?.amount, 10)
+      if (claimAmount > 0) {
+        navigate('/check/' + address)
       } else {
         setErrorMessage('You are not eligible for the Arkeo airdrop')
       }
     }
-  }, [claimRecord])
+  }, [claimRecord?.amount_claim?.amount])
   console.log('claimRecord', claimRecord)
-  console.log('error', error)
-
-  const calculateClaimAmount = () => {
-    const parseAmount = (amount: string) => parseInt(amount, 10) ?? 0
-
-    const amountClaim = parseAmount(claimRecord?.amount_claim?.amount)
-    const amountDelegate = parseAmount(claimRecord?.amount_delegate?.amount)
-    const amountVote = parseAmount(claimRecord?.amount_vote?.amount)
-
-    return amountClaim + amountDelegate + amountVote
-  }
+  console.log('check address', address)
 
   const changeAddress = (event: any) => {
+    console.log('event.target.value', event.target.value)
     setAddress(event.target.value)
     if (errorMessage) setErrorMessage('')
   }
@@ -50,7 +39,7 @@ export const Check = () => {
       desc="Paste your Arkeo, Cosmos, or Ethereum address to check eligibility"
     >
       <Box p="32px">
-        <Box mt="32px">
+        <Box>
           <Input
             variant="filled"
             onChange={changeAddress}
@@ -62,9 +51,7 @@ export const Check = () => {
           {errorMessage}
         </Text>
 
-        <Link as={ReactRouterLink}>
-          Learn more about Arkeo
-        </Link>
+        <Link as={ReactRouterLink}>Learn more about Arkeo</Link>
       </Box>
     </Panel>
   )

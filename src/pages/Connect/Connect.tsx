@@ -1,55 +1,63 @@
-import React from 'react';
-import { Box, Flex, Image, Text } from '@chakra-ui/react';
-import { Panel } from '@components/Panel';
-import Symbol from '@assets/arkeo-symbol.svg';
-import { CircleNumber } from '@components/CircleNumber';
-import { Learn } from './components/Learn';
-import { Cosmos } from './components/Cosmos';
-import { Arkeo } from './components/Arkeo';
-import { Eth } from './components/Eth';
-import { Claim } from './components/Claim';
-import { useConnect } from './ConnectContext';
-import { MiddleEllipsis } from '@components/MiddleEllipsis';
-import { Congrats } from './components/Congrats';
+import React from 'react'
+import { Box, Flex, Image, Text } from '@chakra-ui/react'
+import { Panel } from '@components/Panel'
+import Symbol from '@assets/arkeo-symbol.svg'
+import { CircleNumber } from '@components/CircleNumber'
+import { MiddleEllipsis } from '@components/MiddleEllipsis'
+import { toDecimal } from '@utils/functions'
+
+import { Learn } from './components/Learn'
+import { Cosmos } from './components/Cosmos'
+import { Arkeo } from './components/Arkeo'
+import { Eth } from './components/Eth'
+import { Claim } from './components/Claim'
+import { useConnect } from './ConnectContext'
+import { Congrats } from './components/Congrats'
 
 export const Connect = () => {
-  const items = ['Learn About Arkeo', 'Connect Cosmos Account', 'Connect Arkeo Account', 'Connect ETH Account', 'Claim'];
+  const items = [
+    'Learn About Arkeo',
+    'Connect Cosmos Account',
+    'Connect Arkeo Account',
+    'Connect ETH Account',
+    'Claim',
+  ]
   const {
-    state: { step, cosmosAccount, arkeoAccount, ethAccount },
-  } = useConnect();
+    state: { step, cosmosAccount, arkeoAccount, ethAccount, totalClaimAmount },
+  } = useConnect()
 
   const displayStep = () => {
     switch (step) {
       case 1:
-        return <Learn />;
+        return <Learn />
       case 2:
-        return <Cosmos />;
+        return <Cosmos />
       case 3:
-        return <Arkeo />;
+        return <Arkeo />
       case 4:
-        return <Eth />;
+        return <Eth />
       case 5:
-        return <Claim />;
+        return <Claim />
       case 6:
-        return <Congrats />;
+        return <Congrats />
       default:
-        console.log('finished');
+        console.error('Invalid Step')
     }
-  };
+  }
 
   const renderListItem = () => {
     return items.map((item, index) => {
-      let subText;
+      let subText
       switch (index + 1) {
         case 2:
-          subText = cosmosAccount;
-          break;
+          subText = cosmosAccount
+          break
         case 3:
-          subText = arkeoAccount;
-          break;
+          subText = arkeoAccount
+          break
         case 4:
-          subText = ethAccount;
-          break;
+          subText = ethAccount
+          break
       }
       return (
         <Box position="relative" key={index}>
@@ -66,7 +74,11 @@ export const Connect = () => {
               borderBottomRightRadius="5px"
             />
             <CircleNumber number={index + 1} step={step} />
-            <Text fontWeight={500} lineHeight="24px" color={index + 1 === step ? 'white' : 'grey.50'}>
+            <Text
+              fontWeight={500}
+              lineHeight="24px"
+              color={index + 1 === step ? 'white' : 'grey.50'}
+            >
               {item}
             </Text>
           </Flex>
@@ -83,9 +95,9 @@ export const Connect = () => {
             backgroundColor="teal.300"
           />
         </Box>
-      );
-    });
-  };
+      )
+    })
+  }
 
   return (
     <Panel width="800px">
@@ -100,7 +112,7 @@ export const Connect = () => {
             <Flex flexDir="row" alignItems="center">
               <Image w="24px" h="24px" src={Symbol} />
               <Text fontSize="24px" fontWeight="900" pl="5px">
-                0.0 ARKEO
+                {toDecimal(totalClaimAmount)} ARKEO
               </Text>
             </Flex>
           </Box>
@@ -110,5 +122,5 @@ export const Connect = () => {
         </Flex>
       </Flex>
     </Panel>
-  );
-};
+  )
+}
