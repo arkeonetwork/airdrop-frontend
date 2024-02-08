@@ -11,22 +11,24 @@ export const Check = () => {
   const navigate = useNavigate()
 
   const { claimRecord } = useGetClaim({
-    address: address ?? '',
+    address: address,
   })
 
   useEffect(() => {
     if (claimRecord) {
       const claimAmount = parseInt(claimRecord?.amount_claim?.amount, 10)
       if (claimAmount > 0) {
-        navigate('/check/valid/' + address)
+        navigate('/check/' + address)
       } else {
         setErrorMessage('You are not eligible for the Arkeo airdrop')
       }
     }
   }, [claimRecord?.amount_claim?.amount])
   console.log('claimRecord', claimRecord)
+  console.log('check address', address)
 
   const changeAddress = (event: any) => {
+    console.log('event.target.value', event.target.value)
     setAddress(event.target.value)
     if (errorMessage) setErrorMessage('')
   }
@@ -37,7 +39,7 @@ export const Check = () => {
       desc="Paste your Arkeo, Cosmos, or Ethereum address to check eligibility"
     >
       <Box p="32px">
-        <Box mt="32px">
+        <Box>
           <Input
             variant="filled"
             onChange={changeAddress}

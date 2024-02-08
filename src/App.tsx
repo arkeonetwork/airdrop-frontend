@@ -4,7 +4,7 @@ import { Flex, Image } from '@chakra-ui/react';
 import BackgroundImage from './assets/planet.jpeg';
 import Logo from './assets/arkeo-logo.svg';
 import { Section } from './components/Section';
-import { Check, ValidCheck } from './pages/Check';
+import { Check, AddressCheck } from './pages/Check';
 import { ConnectWrapper } from './pages/Connect';
 
 function App() {
@@ -16,7 +16,7 @@ function App() {
         <BrowserRouter>
           <Routes>
             <Route path="/check" element={<Check />} />
-            <Route path="/check/valid/:address" element={<ValidCheck />} />
+            <Route path="/check/:address" element={<AddressCheck />} />
             <Route path="/claim" element={<ConnectWrapper />} />
             <Route path="*" element={<Navigate to="/check" />} />
           </Routes>

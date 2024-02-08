@@ -35,7 +35,7 @@ export const useGetClaim = ({ address }: UseGetClaim) => {
       amountClaim,
       amountDelegate,
       amountVote,
-      totalAmount
+      totalAmount,
     }
   }
 
@@ -43,6 +43,7 @@ export const useGetClaim = ({ address }: UseGetClaim) => {
     if (ethers.isAddress(address)) {
       return { chain: ChainEnum.ETHEREUM, address }
     }
+    console.log({ address })
     const prefix = bech32.decode(address).prefix
     if (validCosmosPrefix.includes(prefix)) {
       const updatedAddress =
@@ -61,7 +62,7 @@ export const useGetClaim = ({ address }: UseGetClaim) => {
   const getClaimRecord = async () => {
     try {
       const { chain, address: convertedAddress } = getChainType(address)
-      console.log({ chain, convertedAddress })
+
       if (chain !== ChainEnum.INVALID) {
         setIsLoading(true)
         setError(null)
@@ -75,7 +76,6 @@ export const useGetClaim = ({ address }: UseGetClaim) => {
         })
       }
     } catch (error) {
-      console.error(error)
       setError(error)
       setClaimRecord(null)
     } finally {
