@@ -14,7 +14,7 @@ export const Claim: React.FC<Props> = ({}) => {
   const [errorMessage, setErrorMessage] = useState<string>('')
 
   const { claimRecord, isLoading, error } = useClaim()
-  console.log('error', error)
+
   useEffect(() => {
     if (!error) {
       setErrorMessage('')

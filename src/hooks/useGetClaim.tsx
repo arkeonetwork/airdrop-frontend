@@ -29,11 +29,13 @@ export const useGetClaim = ({ address }: UseGetClaim) => {
     const amountClaim = parseAmount(claimRecord?.amount_claim?.amount)
     const amountDelegate = parseAmount(claimRecord?.amount_delegate?.amount)
     const amountVote = parseAmount(claimRecord?.amount_vote?.amount)
+    const totalAmount = (amountClaim + amountDelegate + amountVote).toString()
 
     return {
       amountClaim,
       amountDelegate,
       amountVote,
+      totalAmount
     }
   }
 

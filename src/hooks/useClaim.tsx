@@ -16,8 +16,8 @@ export const useClaim = () => {
       ethInfo: { account: ethAccount, amount: ethAmount, signature },
     },
   } = useConnect()
+  
   const claimRecord = async () => {
-    console.log('CLAIM RECORD')
     if (!arkeoAccount) {
       return
     }

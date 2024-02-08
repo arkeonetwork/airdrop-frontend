@@ -22,14 +22,14 @@ interface ClaimRecord {
 
 type DispatchProps  =
 | { type: 'SET_STEP'; payload: number }
-| { type: 'SET_COSMOS_ACCOUNT'; payload: string }
+| { type: 'SET_COSMOS_ACCOUNT'; payload: string | undefined }
 | { type: 'SET_COSMOS_AMOUNT'; payload: number }
 | { type: 'SET_ARKEO_ACCOUNT'; payload: string }
 | { type: 'SET_ARKEO_AMOUNT'; payload: number }
 | { type: 'SET_ETH_ACCOUNT'; payload: string }
 | { type: 'SET_ETH_AMOUNT'; payload: number }
-| { type: 'SET_ETH_SIGNATURE'; payload: string }
-| { type: 'RESET_ETH'; payload: undefined }
+| { type: 'SET_ETH_SIGNATURE'; payload: string | undefined }
+| { type: 'RESET_ETH'; payload?: undefined }
 | { type: 'ADD_TOTAL_AMOUNTS'; payload: ClaimRecord }
 | { type: 'SUB_TOTAL_AMOUNTS'; payload: ClaimRecord }
 

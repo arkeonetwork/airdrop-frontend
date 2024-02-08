@@ -6,7 +6,6 @@ import { ConnectedAccount } from './ConnectedAccount'
 import { useWeb3Modal } from '@web3modal/wagmi/react'
 import { useSignTypedData, useDisconnect, useAccount } from 'wagmi'
 import { useGetClaim } from '@hooks/useGetClaim'
-import { keccak256 } from 'viem'
 
 type Props = {}
 
@@ -14,10 +13,8 @@ export const Eth: React.FC<Props> = ({}) => {
   const {
     state: {
       step,
-      totalClaimAmount,
       ethInfo: { account: ethAccount },
       arkeoInfo: { account: arkeoAccount },
-      cosmosInfo: { account: cosmosAccount },
     },
     dispatch,
   } = useConnect()
@@ -54,8 +51,7 @@ export const Eth: React.FC<Props> = ({}) => {
       dispatch({ type: 'SET_STEP', payload: step + 1 })
     } else {
       if (address && arkeoAccount) {
-        //signMessage()
-        const dataToSign = {
+        signTypedData({
           types: {
             Claim: [
               { name: 'address', type: 'address' },
@@ -68,21 +64,18 @@ export const Eth: React.FC<Props> = ({}) => {
               { name: 'version', type: 'string' },
             ],
           },
-          primaryType: 'Claim' as any,
+          primaryType: 'Claim',
           domain: {
             name: 'ArkdropClaim' as any,
             version: '1' as any,
             chainId: 1 as any,
           },
           message: {
-            address: '0x92E14917A0508Eb56C90C90619f5F9Adbf49f47d',
+            address,
             arkeoAddress: arkeoAccount,
-            amount: '1800000',
+            amount: claimRecord?.totalAmount,
           },
-        }
-        const hash = keccak256(JSON.stringify(dataToSign) as any)
-        console.log({ hash })
-        signTypedData(dataToSign)
+        })
       } else {
         open()
       }
