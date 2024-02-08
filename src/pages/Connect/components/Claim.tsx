@@ -10,10 +10,11 @@ type Props = {}
 export const Claim: React.FC<Props> = ({}) => {
   const {
     state: { step, totalClaimAmount },
+    dispatch,
   } = useConnect()
   const [errorMessage, setErrorMessage] = useState<string>('')
 
-  const { claimRecord, isLoading, error } = useClaim()
+  const { claimRecord, isLoading, isSucceeded, error } = useClaim()
 
   useEffect(() => {
     if (!error) {
@@ -27,10 +28,18 @@ export const Claim: React.FC<Props> = ({}) => {
       setErrorMessage('Airdrop Has Ended')
     } else if (errorString.includes('failed to validate signature')) {
       setErrorMessage('Invalid Ethereum Signature')
+    } else if (errorString.includes('No signature')) {
+      setErrorMessage('No Ethereum Signature Found')
     } else {
       setErrorMessage('Something Went Wrong')
     }
   }, [error])
+
+  useEffect(() => {
+    if (isSucceeded) {
+      dispatch({ type: 'SET_STEP', payload: step + 1 })
+    }
+  }, [isSucceeded])
 
   const claimArkeo = () => {
     claimRecord()
@@ -55,11 +64,7 @@ export const Claim: React.FC<Props> = ({}) => {
             claim your Arkeo airdrop tokens.
           </Text>
         </Box>
-        <Flex
-          textAlign="center"
-          flexDir="column"
-          alignItems="center"
-        >
+        <Flex textAlign="center" flexDir="column" alignItems="center">
           <Image w="64px" h="64px" src={ArkeoLogo} />
           <Text pt="8px" fontSize="24px" lineHeight="normal" fontWeight={900}>
             {toDecimal(totalClaimAmount)} ARKEO
@@ -72,8 +77,12 @@ export const Claim: React.FC<Props> = ({}) => {
           <Text height="16px" mb={'20px'} color="red.500">
             {errorMessage}
           </Text>
-          <Button isLoading={isLoading} onClick={claimArkeo}>
-            Claim
+          <Button
+            isLoading={isLoading}
+            isDisabled={totalClaimAmount == 0}
+            onClick={claimArkeo}
+          >
+            {totalClaimAmount > 0 ? 'Claim' : 'Nothing to Claim'}
           </Button>
         </Box>
       </Flex>

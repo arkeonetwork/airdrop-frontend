@@ -8,6 +8,7 @@ const arkeoEndpointRest = import.meta.env.VITE_ARKEO_ENDPOINT_REST
 const arkeoEndpointRpc = import.meta.env.VITE_ARKEO_ENDPOINT_RPC
 
 export const useClaim = () => {
+  const [isSucceeded, setIsSucceeded] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<Error | unknown>()
   const {
@@ -16,7 +17,7 @@ export const useClaim = () => {
       ethInfo: { account: ethAccount, amount: ethAmount, signature },
     },
   } = useConnect()
-  
+
   const claimRecord = async () => {
     if (!arkeoAccount) {
       return
@@ -24,6 +25,7 @@ export const useClaim = () => {
     try {
       setIsLoading(true)
       setError(null)
+      setIsSucceeded(false)
       const client = new Client({
         apiURL: arkeoEndpointRest,
         rpcURL: arkeoEndpointRpc,
@@ -63,6 +65,8 @@ export const useClaim = () => {
       if (result.code !== 0) {
         // TODO better error handling
         throw new Error(result.rawLog)
+      } else {
+        setIsSucceeded(true)
       }
     } catch (error) {
       setError(error)
@@ -72,5 +76,5 @@ export const useClaim = () => {
     }
   }
 
-  return { claimRecord, isLoading, error }
+  return { claimRecord, isLoading, isSucceeded, error }
 }
