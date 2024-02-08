@@ -1,25 +1,46 @@
 import { createContext, useContext, useReducer } from 'react'
 
+interface Info {
+  amount: number
+  account?: string
+}
 interface StateProps {
   step: number
   totalClaimAmount: number
   totalDelegateAmount: number
   totalVoteAmount: number
-  cosmosAccount?: string
-  arkeoAccount?: string
-  ethAccount?: string
+  cosmosInfo: Info
+  arkeoInfo: Info
+  ethInfo: Info & { signature?: string }
 }
 
-export interface DispatchProps {
-  type: string
-  payload: any
+interface ClaimRecord {
+  amountClaim: number
+  amountDelegate: number
+  amountVote: number
 }
 
-export const initialState = {
+type DispatchProps  =
+| { type: 'SET_STEP'; payload: number }
+| { type: 'SET_COSMOS_ACCOUNT'; payload: string }
+| { type: 'SET_COSMOS_AMOUNT'; payload: number }
+| { type: 'SET_ARKEO_ACCOUNT'; payload: string }
+| { type: 'SET_ARKEO_AMOUNT'; payload: number }
+| { type: 'SET_ETH_ACCOUNT'; payload: string }
+| { type: 'SET_ETH_AMOUNT'; payload: number }
+| { type: 'SET_ETH_SIGNATURE'; payload: string }
+| { type: 'RESET_ETH'; payload: undefined }
+| { type: 'ADD_TOTAL_AMOUNTS'; payload: ClaimRecord }
+| { type: 'SUB_TOTAL_AMOUNTS'; payload: ClaimRecord }
+
+const initialState = {
   step: 1,
   totalClaimAmount: 0,
   totalDelegateAmount: 0,
   totalVoteAmount: 0,
+  cosmosInfo: { amount: 0 },
+  arkeoInfo: { amount: 0 },
+  ethInfo: { amount: 0 },
 }
 
 const connectReducer = (state: StateProps, action: DispatchProps) => {
@@ -33,33 +54,81 @@ const connectReducer = (state: StateProps, action: DispatchProps) => {
     case 'SET_COSMOS_ACCOUNT':
       return {
         ...state,
-        cosmosAccount: payload,
+        cosmosInfo: {
+          ...state.cosmosInfo,
+          account: payload,
+        },
+      }
+    case 'SET_COSMOS_AMOUNT':
+      return {
+        ...state,
+        cosmosInfo: {
+          ...state.cosmosInfo,
+          amount: payload,
+        },
       }
     case 'SET_ARKEO_ACCOUNT':
       return {
         ...state,
-        arkeoAccount: payload,
+        arkeoInfo: {
+          ...state.arkeoInfo,
+          account: payload,
+        },
+      }
+    case 'SET_ARKEO_AMOUNT':
+      return {
+        ...state,
+        arkeoInfo: {
+          ...state.arkeoInfo,
+          amount: payload,
+        },
       }
     case 'SET_ETH_ACCOUNT':
       return {
         ...state,
-        ethAccount: payload,
+        ethInfo: {
+          ...state.ethInfo,
+          account: payload,
+        },
       }
-    case 'ADD_TOTAL_AMOUNTS':
-      console.log("state.totalClaimAmount", state.totalClaimAmount)
-      console.log("payload.claimAmount", payload.amountClaim)
+    case 'SET_ETH_AMOUNT':
       return {
         ...state,
-        totalClaimAmount: state.totalClaimAmount += payload.amountClaim,
-        totalDelegateAmount: state.totalDelegateAmount += payload.amountDelegate,
-        totalVoteAmount: state.totalVoteAmount += payload.amountVote,
+        ethInfo: {
+          ...state.ethInfo,
+          amount: payload,
+        },
+      }
+    case 'SET_ETH_SIGNATURE':
+      return {
+        ...state,
+        ethInfo: {
+          ...state.ethInfo,
+          signature: payload,
+        },
+      }
+    case 'RESET_ETH':
+      return {
+        ...state,
+        ethInfo: {
+          amount: 0,
+        },
+      }
+    case 'ADD_TOTAL_AMOUNTS':
+      return {
+        ...state,
+        totalClaimAmount: (state.totalClaimAmount += payload?.amountClaim),
+        totalDelegateAmount: (state.totalDelegateAmount +=
+          payload?.amountDelegate),
+        totalVoteAmount: (state.totalVoteAmount += payload?.amountVote),
       }
     case 'SUB_TOTAL_AMOUNTS':
       return {
         ...state,
-        totalClaimAmount: state.totalClaimAmount -= payload.amountClaim,
-        totalDelegateAmount: state.totalDelegateAmount -= payload.amountDelegate,
-        totalVoteAmount: state.totalVoteAmount -= payload.amountVote,
+        totalClaimAmount: (state.totalClaimAmount -= payload.amountClaim),
+        totalDelegateAmount: (state.totalDelegateAmount -=
+          payload.amountDelegate),
+        totalVoteAmount: (state.totalVoteAmount -= payload.amountVote),
       }
     default:
       return state

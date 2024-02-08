@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { bech32 } from 'bech32'
 import { Client } from '../../ts-client'
-import { useChain } from '@cosmos-kit/react'
+import { useConnect } from '@src/pages/Connect/ConnectContext'
 
 const isTestnet = import.meta.env.VITE_IS_TESTNET
 const arkeoEndpointRest = import.meta.env.VITE_ARKEO_ENDPOINT_REST
@@ -10,10 +10,15 @@ const arkeoEndpointRpc = import.meta.env.VITE_ARKEO_ENDPOINT_RPC
 export const useClaim = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<Error | unknown>()
-
-  const claimRecord = async (address: string) => {
-    console.log('CLAIM RECORD', address)
-    if (!address) {
+  const {
+    state: {
+      arkeoInfo: { account: arkeoAccount },
+      ethInfo: { account: ethAccount, amount: ethAmount, signature },
+    },
+  } = useConnect()
+  const claimRecord = async () => {
+    console.log('CLAIM RECORD')
+    if (!arkeoAccount) {
       return
     }
     try {
@@ -29,18 +34,34 @@ export const useClaim = () => {
         rpc: arkeoEndpointRpc,
         rest: arkeoEndpointRest,
       })
-
-      const result = await client.ArkeoClaim.tx.sendMsgClaimArkeo({
-        value: {
-          creator: Uint8Array.from(
-            bech32.fromWords(bech32.decode(address).words),
-          ),
-        },
-        memo: '',
-      })
+      const creator = Uint8Array.from(
+        bech32.fromWords(bech32.decode(arkeoAccount).words),
+      )
+      let result
+      if (ethAccount && ethAmount > 0) {
+        if (!signature) {
+          throw new Error('No signature')
+        }
+        result = await client.ArkeoClaim.tx.sendMsgClaimEth({
+          value: {
+            ethAddress: ethAccount,
+            signature,
+            creator,
+          },
+          memo: '',
+        })
+      } else {
+        result = await client.ArkeoClaim.tx.sendMsgClaimArkeo({
+          value: {
+            creator,
+          },
+          memo: '',
+        })
+      }
 
       console.log({ result })
       if (result.code !== 0) {
+        // TODO better error handling
         throw new Error(result.rawLog)
       }
     } catch (error) {

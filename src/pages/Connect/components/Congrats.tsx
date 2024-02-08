@@ -3,7 +3,7 @@ import { Box, Text, Image, Flex } from '@chakra-ui/react'
 import { useConnect } from '../ConnectContext'
 import Success from '@assets/success.svg'
 import { ArrowForwardIcon } from '@chakra-ui/icons'
-import { toDecimal } from '@utils'
+import { toDecimal } from '@utils/functions'
 
 type Props = {}
 

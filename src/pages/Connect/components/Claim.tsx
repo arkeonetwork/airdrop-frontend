@@ -9,7 +9,7 @@ type Props = {}
 
 export const Claim: React.FC<Props> = ({}) => {
   const {
-    state: { step, totalClaimAmount, arkeoAccount, ethAccount },
+    state: { step, totalClaimAmount },
   } = useConnect()
   const [errorMessage, setErrorMessage] = useState<string>('')
 
@@ -23,17 +23,17 @@ export const Claim: React.FC<Props> = ({}) => {
     const errorString = error.toString()
     if (errorString.includes('no claimable amount')) {
       setErrorMessage('You are not eligible for the Arkeo airdrop')
-    } else if(errorString.includes('expired')) {
-      setErrorMessage('Airdrop is over')
+    } else if (errorString.includes('Airdrop has ended')) {
+      setErrorMessage('Airdrop Has Ended')
+    } else if (errorString.includes('failed to validate signature')) {
+      setErrorMessage('Invalid Ethereum Signature')
+    } else {
+      setErrorMessage('Something Went Wrong')
     }
   }, [error])
 
   const claimArkeo = () => {
-    if (!arkeoAccount) {
-      console.error('No arkeo account')
-      return
-    }
-    claimRecord(arkeoAccount)
+    claimRecord()
   }
 
   return (
@@ -56,7 +56,6 @@ export const Claim: React.FC<Props> = ({}) => {
           </Text>
         </Box>
         <Flex
-          // mt={'32px'}
           textAlign="center"
           flexDir="column"
           alignItems="center"

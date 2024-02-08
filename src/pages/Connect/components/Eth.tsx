@@ -4,46 +4,85 @@ import CosmosLogo from '@assets/cosmos-atom-logo.svg'
 import { useConnect } from '../ConnectContext'
 import { ConnectedAccount } from './ConnectedAccount'
 import { useWeb3Modal } from '@web3modal/wagmi/react'
-import { useSignMessage, useDisconnect, useAccount } from 'wagmi'
+import { useSignTypedData, useDisconnect, useAccount } from 'wagmi'
 import { useGetClaim } from '@hooks/useGetClaim'
+import { keccak256 } from 'viem'
 
 type Props = {}
 
 export const Eth: React.FC<Props> = ({}) => {
   const {
-    state: { step, ethAccount },
+    state: {
+      step,
+      totalClaimAmount,
+      ethInfo: { account: ethAccount },
+      arkeoInfo: { account: arkeoAccount },
+      cosmosInfo: { account: cosmosAccount },
+    },
     dispatch,
   } = useConnect()
   const { open } = useWeb3Modal()
-  const { data, isError, isLoading, isSuccess, signMessage, status, reset } =
-    useSignMessage({
-      message: 'ETH airdrop eligibility check',
-    })
   const { address } = useAccount()
   const { disconnect } = useDisconnect()
-
   const { claimRecord, error } = useGetClaim({
     address: address ?? '',
   })
 
+  const { data, isError, isLoading, isSuccess, signTypedData, status, reset } =
+    useSignTypedData()
+
+  useEffect(() => {
+    dispatch({ type: 'SET_ETH_SIGNATURE', payload: data })
+  }, [data])
+
   useEffect(() => {
     if (!claimRecord) return
-    if (status === 'success')
+    if (status === 'success') {
       dispatch({ type: 'ADD_TOTAL_AMOUNTS', payload: claimRecord })
+      dispatch({ type: 'SET_ETH_AMOUNT', payload: claimRecord.amountClaim })
+    }
   }, [status, claimRecord])
 
   useEffect(() => {
     if (isSuccess && address) {
       dispatch({ type: 'SET_ETH_ACCOUNT', payload: address })
     }
-  }, [data, isError, isLoading, isSuccess])
+  }, [isError, isLoading, isSuccess])
 
   const handleClick = () => {
     if (ethAccount) {
       dispatch({ type: 'SET_STEP', payload: step + 1 })
     } else {
-      if (address) {
-        signMessage()
+      if (address && arkeoAccount) {
+        //signMessage()
+        const dataToSign = {
+          types: {
+            Claim: [
+              { name: 'address', type: 'address' },
+              { name: 'arkeoAddress', type: 'string' },
+              { name: 'amount', type: 'string' },
+            ],
+            EIP712Domain: [
+              { name: 'name', type: 'string' },
+              { name: 'chainId', type: 'uint256' },
+              { name: 'version', type: 'string' },
+            ],
+          },
+          primaryType: 'Claim' as any,
+          domain: {
+            name: 'ArkdropClaim' as any,
+            version: '1' as any,
+            chainId: 1 as any,
+          },
+          message: {
+            address: '0x92E14917A0508Eb56C90C90619f5F9Adbf49f47d',
+            arkeoAddress: arkeoAccount,
+            amount: '1800000',
+          },
+        }
+        const hash = keccak256(JSON.stringify(dataToSign) as any)
+        console.log({ hash })
+        signTypedData(dataToSign)
       } else {
         open()
       }
@@ -58,9 +97,9 @@ export const Eth: React.FC<Props> = ({}) => {
           amount={claimRecord?.amountClaim ?? '0'}
           account={ethAccount}
           disconnect={() => {
-            dispatch({ type: 'SUB_TOTAL_AMOUNTS', payload: claimRecord })
             disconnect()
-            dispatch({ type: 'SET_ETH_ACCOUNT', payload: undefined })
+            dispatch({ type: 'SUB_TOTAL_AMOUNTS', payload: claimRecord })
+            dispatch({ type: 'RESET_ETH' })
             reset()
           }}
         />

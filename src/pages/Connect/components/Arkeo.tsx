@@ -12,15 +12,14 @@ const isTestnet = import.meta.env.VITE_IS_TESTNET
 export const Arkeo: React.FC<Props> = ({}) => {
   const chain = isTestnet ? 'arkeonetworktestnet' : 'arkeonetwork'
   const {
-    state: { step, arkeoAccount, cosmosAccount },
+    state: {
+      step,
+      arkeoInfo: { account: arkeoAccount },
+      cosmosInfo: { account: cosmosAccount },
+    },
     dispatch,
   } = useConnect()
-  const {
-    username,
-    address,
-    disconnect,
-    openView,
-  } = useChain(chain)
+  const { username, address, disconnect, openView } = useChain(chain)
 
   const { claimRecord, error } = useGetClaim({
     address: address ?? '',

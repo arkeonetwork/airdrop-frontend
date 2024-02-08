@@ -10,13 +10,16 @@ type Props = {}
 
 export const Cosmos: React.FC<Props> = ({}) => {
   const {
-    state: { step, cosmosAccount },
+    state: {
+      step,
+      cosmosInfo: { account: cosmosAccount },
+    },
     dispatch,
   } = useConnect()
   const { username, address, disconnect, openView, isWalletConnected } =
     useChain('cosmoshub')
 
-  const { claimRecord, error } = useGetClaim({
+  const { claimRecord } = useGetClaim({
     address: address ?? '',
   })
 
@@ -26,8 +29,10 @@ export const Cosmos: React.FC<Props> = ({}) => {
 
   useEffect(() => {
     if (!claimRecord) return
-    if (isWalletConnected)
+    if (isWalletConnected) {
+      dispatch({ type: 'SET_COSMOS_AMOUNT', payload: claimRecord.amountClaim })
       dispatch({ type: 'ADD_TOTAL_AMOUNTS', payload: claimRecord })
+    }
   }, [isWalletConnected, claimRecord])
 
   const handleClick = () => {
