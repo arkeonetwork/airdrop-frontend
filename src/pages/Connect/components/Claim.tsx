@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react'
-import { Button, Box, Text, Image, Flex } from '@chakra-ui/react'
+import { Button, Box, Text, Image, Flex, Link } from '@chakra-ui/react'
 import ArkeoLogo from '@assets/arkeo-symbol.svg'
 import { useConnect } from '../ConnectContext'
 import { toDecimal } from '@utils/functions'
 import { useClaim } from '@hooks/useClaim'
+import { Link as ReactRouterLink } from 'react-router-dom'
 
 type Props = {}
 
@@ -45,6 +46,8 @@ export const Claim: React.FC<Props> = ({}) => {
     claimRecord()
   }
 
+  const nothingToClaim = totalClaimAmount == 0
+
   return (
     <>
       <Flex
@@ -73,18 +76,29 @@ export const Claim: React.FC<Props> = ({}) => {
             Available to Claim
           </Text>
         </Flex>
-        <Box w="100%">
+        <Flex w="100%" alignItems="center" flexDirection="column">
           <Text height="16px" mb={'20px'} color="red.500">
             {errorMessage}
           </Text>
           <Button
             isLoading={isLoading}
-            isDisabled={totalClaimAmount == 0}
+            isDisabled={nothingToClaim}
             onClick={claimArkeo}
           >
             {totalClaimAmount > 0 ? 'Claim' : 'Nothing to Claim'}
           </Button>
-        </Box>
+          {nothingToClaim && (
+            <Link
+              pl="6px"
+              pt='2px'
+              as={ReactRouterLink}
+              to="/claim"
+              onClick={() => dispatch({ type: 'SET_STEP', payload: 1 })}
+            >
+              Try Again
+            </Link>
+          )}
+        </Flex>
       </Flex>
     </>
   )

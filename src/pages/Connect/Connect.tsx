@@ -23,7 +23,13 @@ export const Connect = () => {
     'Claim',
   ]
   const {
-    state: { step, cosmosAccount, arkeoAccount, ethAccount, totalClaimAmount },
+    state: {
+      step,
+      cosmosInfo: { account: cosmosAccount },
+      arkeoInfo: { account: arkeoAccount },
+      ethInfo: { account: ethAccount },
+      totalClaimAmount,
+    },
   } = useConnect()
 
   const displayStep = () => {

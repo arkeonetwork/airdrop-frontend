@@ -43,7 +43,6 @@ export const useGetClaim = ({ address }: UseGetClaim) => {
     if (ethers.isAddress(address)) {
       return { chain: ChainEnum.ETHEREUM, address }
     }
-    console.log({ address })
     const prefix = bech32.decode(address).prefix
     if (validCosmosPrefix.includes(prefix)) {
       const updatedAddress =
@@ -70,6 +69,7 @@ export const useGetClaim = ({ address }: UseGetClaim) => {
         const url = buildUrl('/arkeo/claim/claimrecord', convertedAddress)
         const { data } = await axios.get(url, { params })
         const claimAmounts = calculateClaimAmount(data.claim_record)
+        console.log({ data })
         setClaimRecord({
           ...data.claim_record,
           ...claimAmounts,
