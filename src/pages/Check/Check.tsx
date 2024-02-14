@@ -7,7 +7,6 @@ import { useGetClaim } from '@hooks/useGetClaim'
 export const Check = () => {
   const [address, setAddress] = useState('')
   const [errorMessage, setErrorMessage] = useState<string>('')
-
   const navigate = useNavigate()
 
   const { claimRecord } = useGetClaim({
@@ -24,11 +23,8 @@ export const Check = () => {
       }
     }
   }, [claimRecord?.amount_claim?.amount])
-  console.log('claimRecord', claimRecord)
-  console.log('check address', address)
 
   const changeAddress = (event: any) => {
-    console.log('event.target.value', event.target.value)
     setAddress(event.target.value)
     if (errorMessage) setErrorMessage('')
   }

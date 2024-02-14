@@ -13,8 +13,6 @@ import { wallets } from '@cosmos-kit/keplr-extension'
 import { Chain, AssetList } from '@chain-registry/types'
 
 import '@interchain-ui/react/styles'
-import { SignerOptions } from '@cosmos-kit/core'
-import { AminoTypes, GasPrice } from '@cosmjs/stargate'
 
 const projectId = import.meta.env.VITE_WALLET_CONNECT_ID
 
@@ -35,7 +33,6 @@ const wagmiConfig = defaultWagmiConfig({
 createWeb3Modal({ wagmiConfig, projectId, chains: evmChains })
 
 let root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
-console.log({ chains, assets })
 
 const localArkeo: Chain = {
   chain_name: 'localarkeo',
@@ -57,18 +54,7 @@ const localArkeoAssets: AssetList = {
       display: 'arkeo',
     },
   ],
-} // with chain_name: 'localosmosis'
-
-// const signerOptions: SignerOptions = {
-//   signingCosmwasm: (chain: Chain) => {
-//     switch (chain.chain_name) {
-//       case 'localarkeo':
-//         return {
-//           gasPrice: GasPrice.fromString('0.0025uarkeo'),
-//         }
-//     }
-//   },
-// }
+}
 
 root.render(
   <ChakraProvider theme={theme}>
