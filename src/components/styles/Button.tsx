@@ -6,6 +6,9 @@ export const Button = defineStyleConfig({
     backgroundColor: 'teal.50',
     width: '100%',
     borderRadius: '8px',
+    _hover: {
+      backgroundColor: 'teal.100'
+    }
   },
   variants: {
     solid: {

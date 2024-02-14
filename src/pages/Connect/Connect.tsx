@@ -18,7 +18,6 @@ export const Connect = () => {
   const items = [
     'Learn About Arkeo',
     'Connect Cosmos Account',
-    'Connect Arkeo Account',
     'Connect ETH Account',
     'Claim',
   ]
@@ -26,7 +25,6 @@ export const Connect = () => {
     state: {
       step,
       cosmosInfo: { account: cosmosAccount },
-      arkeoInfo: { account: arkeoAccount },
       ethInfo: { account: ethAccount },
       totalClaimAmount,
     },
@@ -39,12 +37,10 @@ export const Connect = () => {
       case 2:
         return <Cosmos />
       case 3:
-        return <Arkeo />
-      case 4:
         return <Eth />
-      case 5:
+      case 4:
         return <Claim />
-      case 6:
+      case 5:
         return <Congrats />
       default:
         console.error('Invalid Step')
@@ -59,9 +55,6 @@ export const Connect = () => {
           subText = cosmosAccount
           break
         case 3:
-          subText = arkeoAccount
-          break
-        case 4:
           subText = ethAccount
           break
       }

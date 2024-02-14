@@ -1,5 +1,5 @@
 import React from 'react'
-import { Box, Text, Image, Flex } from '@chakra-ui/react'
+import { Box, Text, Image, Flex, Button } from '@chakra-ui/react'
 import { useConnect } from '../ConnectContext'
 import Success from '@assets/success.svg'
 import { ArrowForwardIcon } from '@chakra-ui/icons'
@@ -10,6 +10,7 @@ type Props = {}
 export const Congrats: React.FC<Props> = ({}) => {
   const {
     state: { totalDelegateAmount, totalVoteAmount, totalClaimAmount },
+    dispatch,
   } = useConnect()
 
   return (
@@ -62,6 +63,9 @@ export const Congrats: React.FC<Props> = ({}) => {
               />
             </Flex>
           </Flex>
+          <Button mt={6} onClick={() => dispatch({ type: 'RESET' })}>
+            Claim Again
+          </Button>
         </Box>
       </Flex>
     </>

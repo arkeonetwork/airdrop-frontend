@@ -90,10 +90,9 @@ export const Claim: React.FC<Props> = ({}) => {
           {nothingToClaim && (
             <Link
               pl="6px"
-              pt='2px'
+              pt="6px"
               as={ReactRouterLink}
-              to="/claim"
-              onClick={() => dispatch({ type: 'SET_STEP', payload: 1 })}
+              onClick={() => dispatch({ type: 'RESET' })}
             >
               Try Again
             </Link>

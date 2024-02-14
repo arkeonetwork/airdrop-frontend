@@ -5,8 +5,11 @@ import { useConnect } from '../ConnectContext'
 import { ConnectedAccount } from './ConnectedAccount'
 import { useChain } from '@cosmos-kit/react'
 import { useGetClaim } from '@hooks/useGetClaim'
+import { bech32 } from 'bech32'
 
 type Props = {}
+
+const isTestnet = import.meta.env.VITE_IS_TESTNET
 
 export const Cosmos: React.FC<Props> = ({}) => {
   const {
@@ -24,7 +27,12 @@ export const Cosmos: React.FC<Props> = ({}) => {
   })
 
   useEffect(() => {
+    if (!address) return
+    const prefix = isTestnet ? 'tarkeo' : 'arkeo'
+    const words = bech32.decode(address).words
+    const arkeoAccount = bech32.encode(prefix, words)
     dispatch({ type: 'SET_COSMOS_ACCOUNT', payload: address })
+    dispatch({ type: 'SET_ARKEO_ACCOUNT', payload: arkeoAccount })
   }, [address])
 
   useEffect(() => {

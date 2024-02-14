@@ -19,9 +19,6 @@ export const useClaim = () => {
   } = useConnect()
 
   const claimRecord = async () => {
-    if (!arkeoAccount) {
-      return
-    }
     try {
       setIsLoading(true)
       setError(null)

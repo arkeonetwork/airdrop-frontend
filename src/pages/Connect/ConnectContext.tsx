@@ -20,18 +20,19 @@ interface ClaimRecord {
   amountVote: number
 }
 
-type DispatchProps  =
-| { type: 'SET_STEP'; payload: number }
-| { type: 'SET_COSMOS_ACCOUNT'; payload: string | undefined }
-| { type: 'SET_COSMOS_AMOUNT'; payload: number }
-| { type: 'SET_ARKEO_ACCOUNT'; payload: string }
-| { type: 'SET_ARKEO_AMOUNT'; payload: number }
-| { type: 'SET_ETH_ACCOUNT'; payload: string }
-| { type: 'SET_ETH_AMOUNT'; payload: number }
-| { type: 'SET_ETH_SIGNATURE'; payload: string | undefined }
-| { type: 'RESET_ETH'; payload?: undefined }
-| { type: 'ADD_TOTAL_AMOUNTS'; payload: ClaimRecord }
-| { type: 'SUB_TOTAL_AMOUNTS'; payload: ClaimRecord }
+type DispatchProps =
+  | { type: 'SET_STEP'; payload: number }
+  | { type: 'SET_COSMOS_ACCOUNT'; payload: string | undefined }
+  | { type: 'SET_COSMOS_AMOUNT'; payload: number }
+  | { type: 'SET_ARKEO_ACCOUNT'; payload: string }
+  | { type: 'SET_ARKEO_AMOUNT'; payload: number }
+  | { type: 'SET_ETH_ACCOUNT'; payload: string }
+  | { type: 'SET_ETH_AMOUNT'; payload: number }
+  | { type: 'SET_ETH_SIGNATURE'; payload: string | undefined }
+  | { type: 'RESET_ETH'; payload?: undefined }
+  | { type: 'ADD_TOTAL_AMOUNTS'; payload: ClaimRecord }
+  | { type: 'SUB_TOTAL_AMOUNTS'; payload: ClaimRecord }
+  | { type: 'RESET'; payload?: undefined }
 
 const initialState = {
   step: 1,
@@ -129,6 +130,10 @@ const connectReducer = (state: StateProps, action: DispatchProps) => {
         totalDelegateAmount: (state.totalDelegateAmount -=
           payload.amountDelegate),
         totalVoteAmount: (state.totalVoteAmount -= payload.amountVote),
+      }
+    case 'RESET':
+      return {
+        ...initialState,
       }
     default:
       return state
