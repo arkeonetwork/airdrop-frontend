@@ -1,17 +1,22 @@
-import React, { useEffect } from 'react'
-import { Button, Box, Text, Image, Flex } from '@chakra-ui/react'
+import React, { useEffect, useState } from 'react'
+import { Button, Box, Text, Image, Flex, useRadioGroup } from '@chakra-ui/react'
 import CosmosLogo from '@assets/cosmos-atom-logo.svg'
 import { useConnect } from '../ConnectContext'
 import { ConnectedAccount } from './ConnectedAccount'
 import { useChain } from '@cosmos-kit/react'
 import { useGetClaim } from '@hooks/useGetClaim'
 import { bech32 } from 'bech32'
+import { RadioCard } from '@components/RadioCard'
 
 type Props = {}
 
 const isTestnet = import.meta.env.VITE_IS_TESTNET
+enum ChainOptions {
+  Cosmos = 'Cosmos',
+  Thorchain = 'Thorchain',
+}
 
-export const Cosmos: React.FC<Props> = ({}) => {
+export const Cosmos: React.FC<Props> = () => {
   const {
     state: {
       step,
@@ -19,11 +24,21 @@ export const Cosmos: React.FC<Props> = ({}) => {
     },
     dispatch,
   } = useConnect()
+  const [currentChain, setCurrentChain] = useState<ChainOptions>(
+    ChainOptions.Cosmos,
+  )
   const { username, address, disconnect, openView, isWalletConnected } =
     useChain('cosmoshub')
 
   const { claimRecord } = useGetClaim({
     address: address ?? '',
+  })
+
+  const { getRadioProps } = useRadioGroup({
+    defaultValue: 'Cosmos',
+    onChange: (value: string) => {
+      setCurrentChain(ChainOptions[value as keyof typeof ChainOptions])
+    },
   })
 
   useEffect(() => {
@@ -56,6 +71,7 @@ export const Cosmos: React.FC<Props> = ({}) => {
       return (
         <ConnectedAccount
           width="100%"
+          my={0}
           amount={claimRecord?.amountClaim ?? '0'}
           account={cosmosAccount}
           name={username}
@@ -68,6 +84,10 @@ export const Cosmos: React.FC<Props> = ({}) => {
     }
     return <Image w="150px" h="150px" src={CosmosLogo} />
   }
+
+  const chainOptionsString = Object.values(ChainOptions).filter(
+    (value) => typeof value === 'string',
+  )
 
   return (
     <>
@@ -85,6 +105,17 @@ export const Cosmos: React.FC<Props> = ({}) => {
             Connect your Cosmos wallet to check for eligibility.
           </Text>
         </Box>
+        <Flex width="70%" justifyContent="space-around">
+          {chainOptionsString.map((value) => {
+            const radio = getRadioProps({ value })
+            console.log({ radio })
+            return (
+              <RadioCard key={value} {...radio}>
+                {value}
+              </RadioCard>
+            )
+          })}
+        </Flex>
         {renderWallet()}
         <Button onClick={handleClick}>
           {cosmosAccount ? 'Next' : 'Connect Wallet'}

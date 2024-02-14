@@ -25,7 +25,7 @@ export const ConnectedAccount: React.FC<Props> = ({
   disconnect,
   ...rest
 }) => (
-  <Flex width="100%" flex="1" flexDir="column" {...rest}>
+  <Flex width="100%" flex="1" my="32px" flexDir="column" {...rest}>
     <Container
       borderRadius="24px"
       border="1px solid"
@@ -34,7 +34,7 @@ export const ConnectedAccount: React.FC<Props> = ({
       backgroundColor="grey.300"
       backdropFilter="blur(50px)"
       textAlign="left"
-      my="32px"
+      
       p="16px"
       color="white"
     >

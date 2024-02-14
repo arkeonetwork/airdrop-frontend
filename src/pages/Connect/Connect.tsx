@@ -17,8 +17,8 @@ import { Congrats } from './components/Congrats'
 export const Connect = () => {
   const items = [
     'Learn About Arkeo',
-    'Connect Cosmos Account',
-    'Connect ETH Account',
+    'Cosmos/Thorchain Account',
+    'ETH Account',
     'Claim',
   ]
   const {

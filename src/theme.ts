@@ -1,7 +1,7 @@
 import { extendTheme } from '@chakra-ui/react'
-import { Input } from './components/styles/Input'
-import { Link } from './components/styles/Link'
-import { Button } from './components/styles/Button'
+import { Input } from './styles/Input'
+import { Link } from './styles/Link'
+import { Button } from './styles/Button'
 
 export const theme = extendTheme({
   styles: {
@@ -18,7 +18,7 @@ export const theme = extendTheme({
     },
   },
   colors: {
-    teal: { 50: '#3BE0FF', 100: '#2CA9D7', 300: 'rgba(59, 224, 255, 0.11)' },
+    teal: { 50: '#3BE0FF', 100: '#2CA9D7', 200: '#1F9FD7', 300: 'rgba(59, 224, 255, 0.11)' },
     grey: {
       50: 'rgba(255, 255, 255, 0.36)',
       100: 'rgba(255, 255, 255, 0.1)',
