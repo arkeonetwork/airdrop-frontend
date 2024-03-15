@@ -11,6 +11,7 @@ interface StateProps {
   totalVoteAmount: number
   cosmosInfo: Info
   arkeoInfo: Info
+  thorchainInfo: { account?: string }
   ethInfo: Info & { signature?: string }
 }
 
@@ -24,11 +25,12 @@ type DispatchProps =
   | { type: 'SET_STEP'; payload: number }
   | { type: 'SET_COSMOS_ACCOUNT'; payload: string | undefined }
   | { type: 'SET_COSMOS_AMOUNT'; payload: number }
+  | { type: 'SET_THORCHAIN_ACCOUNT'; payload: string | undefined }
   | { type: 'SET_ARKEO_ACCOUNT'; payload: string }
   | { type: 'SET_ARKEO_AMOUNT'; payload: number }
   | { type: 'SET_ETH_ACCOUNT'; payload: string }
   | { type: 'SET_ETH_AMOUNT'; payload: number }
-  | { type: 'SET_ETH_SIGNATURE'; payload: string | undefined }
+  | { type: 'SET_ETH_SIGNATURE'; payload?: string | undefined }
   | { type: 'RESET_ETH'; payload?: undefined }
   | { type: 'ADD_TOTAL_AMOUNTS'; payload: ClaimRecord }
   | { type: 'SUB_TOTAL_AMOUNTS'; payload: ClaimRecord }
@@ -42,6 +44,7 @@ const initialState = {
   cosmosInfo: { amount: 0 },
   arkeoInfo: { amount: 0 },
   ethInfo: { amount: 0 },
+  thorchainInfo: {},
 }
 
 const connectReducer = (state: StateProps, action: DispatchProps) => {
@@ -73,6 +76,13 @@ const connectReducer = (state: StateProps, action: DispatchProps) => {
         ...state,
         arkeoInfo: {
           ...state.arkeoInfo,
+          account: payload,
+        },
+      }
+    case 'SET_THORCHAIN_ACCOUNT':
+      return {
+        ...state,
+        thorchainInfo: {
           account: payload,
         },
       }

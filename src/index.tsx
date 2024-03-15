@@ -41,7 +41,7 @@ const localArkeo: Chain = {
   chain_id: 'arkeo',
   pretty_name: 'Arkeo',
   bech32_prefix: 'tarkeo',
-  slip44: 118,
+  slip44: 931,
 }
 const localArkeoAssets: AssetList = {
   chain_name: 'localarkeo',
@@ -49,13 +49,13 @@ const localArkeoAssets: AssetList = {
     {
       name: 'Arkeo',
       symbol: 'arkeo',
-      denom_units: [{ denom: 'uarkeo', exponent: 18 }],
-      base: 'uarkeo',
+      denom_units: [{ denom: 'arkeo', exponent: 8 }],
+      base: 'arkeo',
       display: 'arkeo',
     },
   ],
 }
-
+console.log({ chains })
 root.render(
   <ChakraProvider theme={theme}>
     <WagmiConfig config={wagmiConfig}>

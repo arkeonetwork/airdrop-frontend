@@ -13,11 +13,13 @@ import { Eth } from './components/Eth'
 import { Claim } from './components/Claim'
 import { useConnect } from './ConnectContext'
 import { Congrats } from './components/Congrats'
+import { Thorchain } from './components/Thorchain'
 
 export const Connect = () => {
   const items = [
     'Learn About Arkeo',
-    'Cosmos/Thorchain Account',
+    'Thorchain Account',
+    'Cosmos Account',
     'ETH Account',
     'Claim',
   ]
@@ -28,6 +30,7 @@ export const Connect = () => {
       ethInfo: { account: ethAccount },
       totalClaimAmount,
     },
+    dispatch
   } = useConnect()
 
   const displayStep = () => {
@@ -35,12 +38,14 @@ export const Connect = () => {
       case 1:
         return <Learn />
       case 2:
-        return <Cosmos />
+        return <Thorchain />
       case 3:
-        return <Eth />
+        return <Cosmos />
       case 4:
-        return <Claim />
+        return <Eth />
       case 5:
+        return <Claim />
+      case 6:
         return <Congrats />
       default:
         console.error('Invalid Step')

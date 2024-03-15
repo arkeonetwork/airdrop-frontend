@@ -17,7 +17,7 @@ export const MiddleEllipsis: React.FC<Props> = ({
     return <Text {...rest}>{text}</Text>
   }
 
-  const firstHalf = text.slice(0, maxLength / 2 + 5)
+  const firstHalf = text.slice(0, maxLength / 2 + 7)
   const secondHalf = text.slice(-maxLength / 2)
 
   return (

@@ -34,7 +34,6 @@ export const ConnectedAccount: React.FC<Props> = ({
       backgroundColor="grey.300"
       backdropFilter="blur(50px)"
       textAlign="left"
-      
       p="16px"
       color="white"
     >
@@ -48,6 +47,9 @@ export const ConnectedAccount: React.FC<Props> = ({
             pb="16px"
           />
           <Text pl="4px">will receive</Text>
+          {
+            // TODO: update text so it shows arkeo address will receive and which address has a claim record
+          }
         </Flex>
       </Flex>
       <Flex flexDir="row" alignItems="center" gap={2}>

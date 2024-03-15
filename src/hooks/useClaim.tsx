@@ -20,6 +20,8 @@ export const useClaim = () => {
 
   const claimRecord = async () => {
     try {
+      if (!arkeoAccount) return
+
       setIsLoading(true)
       setError(null)
       setIsSucceeded(false)

@@ -6,7 +6,6 @@ import { ConnectedAccount } from './ConnectedAccount'
 import { useChain } from '@cosmos-kit/react'
 import { useGetClaim } from '@hooks/useGetClaim'
 import { bech32 } from 'bech32'
-import { RadioCard } from '@components/RadioCard'
 import { Client } from '../../../../ts-client'
 
 type Props = {}
@@ -16,12 +15,12 @@ const arkeoEndpointRest = import.meta.env.VITE_ARKEO_ENDPOINT_REST
 const arkeoEndpointRpc = import.meta.env.VITE_ARKEO_ENDPOINT_RPC
 
 
-export const Cosmos: React.FC<Props> = () => {
+export const Thorchain: React.FC<Props> = () => {
   const chainArkeo = isTestnet ? 'arkeonetworktestnet' : 'arkeonetwork'
   const {
     state: {
       step,
-      cosmosInfo: { account: cosmosAccount },
+      thorchainInfo: { account: thorchainAccount },
     },
     dispatch,
   } = useConnect()
@@ -41,7 +40,7 @@ export const Cosmos: React.FC<Props> = () => {
     const prefix = isTestnet ? 'tarkeo' : 'arkeo'
     const words = bech32.decode(address).words
     const arkeoAccount = bech32.encode(prefix, words)
-    dispatch({ type: 'SET_COSMOS_ACCOUNT', payload: address })
+    dispatch({ type: 'SET_THORCHAIN_ACCOUNT', payload: address })
     dispatch({ type: 'SET_ARKEO_ACCOUNT', payload: arkeoAccount })
   }, [address])
 
@@ -52,6 +51,7 @@ export const Cosmos: React.FC<Props> = () => {
       dispatch({ type: 'ADD_TOTAL_AMOUNTS', payload: claimRecord })
     }
   }, [isWalletConnected, claimRecord])
+  console.log({claimRecord})
 
   const testBip = async () => {
     const client = new Client({
@@ -73,7 +73,7 @@ export const Cosmos: React.FC<Props> = () => {
 
   const handleClick = () => {
     testBip()
-    if (cosmosAccount) {
+    if (thorchainAccount) {
       dispatch({ type: 'SET_STEP', payload: step + 1 })
     } else {
       openView()
@@ -81,13 +81,13 @@ export const Cosmos: React.FC<Props> = () => {
   }
 
   const renderWallet = () => {
-    if (cosmosAccount) {
+    if (thorchainAccount) {
       return (
         <ConnectedAccount
           width="100%"
           my={0}
           amount={claimRecord?.amountClaim ?? '0'}
-          account={cosmosAccount}
+          account={thorchainAccount}
           name={username}
           disconnect={() => {
             dispatch({ type: 'SUB_TOTAL_AMOUNTS', payload: claimRecord })
@@ -110,14 +110,14 @@ export const Cosmos: React.FC<Props> = () => {
         justifyContent="space-between"
       >
         <Box>
-          <Text fontWeight={900}>Connect Cosmos Account</Text>
+          <Text fontWeight={900}>Connect Thorchain Account</Text>
           <Text fontWeight={500} color="grey.50">
-            Connect your Cosmos wallet to check for eligibility.
+            Connect your Thorchain wallet to check for eligibility.
           </Text>
         </Box>
         {renderWallet()}
         <Button onClick={handleClick}>
-          {cosmosAccount ? 'Next' : 'Connect Wallet'}
+          {thorchainAccount ? 'Next' : 'Connect Wallet'}
         </Button>
       </Flex>
     </>

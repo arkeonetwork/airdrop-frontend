@@ -92,18 +92,21 @@ export class IgniteClient extends EventEmitter {
       const bankqc = bankQueryClient({ addr: this.env.apiURL });
       const tokens = await (await bankqc.queryTotalSupply()).data;
       const addrPrefix = this.env.prefix ?? "tarkeo";
-      console.log("addrPrefix", addrPrefix)
       const rpc = this.env.rpcURL;
       const rest = this.env.apiURL;
       let stakeCurrency = {
         coinDenom: staking.params?.bond_denom?.toUpperCase() ?? "",
         coinMinimalDenom: staking.params?.bond_denom ?? "",
-        coinDecimals: 0,
+        coinDecimals: 8,
       };
 
       let bip44 = {
-        coinType: 118,
+        coinType: 931,
       };
+
+      let alternativeBIP44s = [{
+        coinType: 118,
+      }]
 
       let bech32Config = {
         bech32PrefixAccAddr: addrPrefix,
@@ -134,7 +137,7 @@ export class IgniteClient extends EventEmitter {
           return y;
         }) ?? [];
 
-      let coinType = 118;
+      let coinType = 931;
 
       if (chainId) {
         const suggestOptions: ChainInfo = {
@@ -144,6 +147,7 @@ export class IgniteClient extends EventEmitter {
           rest,
           stakeCurrency,
           bip44,
+          alternativeBIP44s,
           bech32Config,
           currencies,
           feeCurrencies,

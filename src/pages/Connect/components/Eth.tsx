@@ -4,7 +4,12 @@ import CosmosLogo from '@assets/cosmos-atom-logo.svg'
 import { useConnect } from '../ConnectContext'
 import { ConnectedAccount } from './ConnectedAccount'
 import { useWeb3Modal } from '@web3modal/wagmi/react'
-import { useSignTypedData, useDisconnect, useAccount } from 'wagmi'
+import {
+  useSignTypedData,
+  useDisconnect,
+  useAccount,
+  ConnectorData,
+} from 'wagmi'
 import { useGetClaim } from '@hooks/useGetClaim'
 
 type Props = {}
@@ -13,13 +18,13 @@ export const Eth: React.FC<Props> = ({}) => {
   const {
     state: {
       step,
-      ethInfo: { account: ethAccount },
+      ethInfo: { account: ethAccount, signature: ethSignature },
       arkeoInfo: { account: arkeoAccount },
     },
     dispatch,
   } = useConnect()
   const { open } = useWeb3Modal()
-  const { address } = useAccount()
+  const { address, connector: activeConnector } = useAccount()
   const { disconnect } = useDisconnect()
   const { claimRecord, error } = useGetClaim({
     address: address ?? '',
@@ -27,6 +32,26 @@ export const Eth: React.FC<Props> = ({}) => {
 
   const { data, isError, isLoading, isSuccess, signTypedData, status, reset } =
     useSignTypedData()
+
+  useEffect(() => {
+    const handleConnectorUpdate = ({ account, chain }: ConnectorData) => {
+      if (account) {
+        dispatch({ type: 'SET_ETH_ACCOUNT', payload: account })
+        dispatch({ type: 'SET_ETH_SIGNATURE' })
+        reset()
+      } else if (chain) {
+        console.log('new chain', chain)
+      }
+    }
+
+    if (activeConnector) {
+      activeConnector.on('change', handleConnectorUpdate)
+    }
+
+    return () => {
+      activeConnector?.off('change', handleConnectorUpdate)
+    }
+  }, [activeConnector])
 
   useEffect(() => {
     dispatch({ type: 'SET_ETH_SIGNATURE', payload: data })
@@ -47,7 +72,7 @@ export const Eth: React.FC<Props> = ({}) => {
   }, [isError, isLoading, isSuccess])
 
   const handleClick = () => {
-    if (ethAccount) {
+    if (ethAccount && ethSignature) {
       dispatch({ type: 'SET_STEP', payload: step + 1 })
     } else {
       if (address && arkeoAccount) {
@@ -100,12 +125,13 @@ export const Eth: React.FC<Props> = ({}) => {
     }
     return <Image w="150px" h="150px" src={CosmosLogo} />
   }
-  const buttonText = ethAccount
-    ? 'Next'
-    : address
-      ? 'Sign With Wallet'
-      : 'Connect Wallet'
-  console.log({ status, isSuccess, data })
+  const buttonText =
+    ethAccount && ethSignature
+      ? 'Next'
+      : address
+        ? 'Sign With Wallet'
+        : 'Connect Wallet'
+
   return (
     <>
       <Flex
