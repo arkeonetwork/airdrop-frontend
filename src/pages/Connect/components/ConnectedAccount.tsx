@@ -14,7 +14,7 @@ import { toDecimal } from '@utils/functions'
 type Props = {
   amount: string
   account: string
-  disconnect: () => void
+  disconnect?: () => void
   name?: string
 } & BoxProps
 
@@ -58,9 +58,11 @@ export const ConnectedAccount: React.FC<Props> = ({
           {toDecimal(amount)} ARKEO
         </Text>
       </Flex>
-      <Button onClick={disconnect} mt="16px" variant="outline">
-        Disconnect
-      </Button>
+      {disconnect && (
+        <Button onClick={disconnect} mt="16px" variant="outline">
+          Disconnect
+        </Button>
+      )}
     </Container>
   </Flex>
 )

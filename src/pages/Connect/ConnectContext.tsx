@@ -4,14 +4,18 @@ interface Info {
   amount: number
   account?: string
 }
+
+interface InfoWithArkeo extends Info {
+  arkeoAccount?: string
+}
 interface StateProps {
   step: number
   totalClaimAmount: number
   totalDelegateAmount: number
   totalVoteAmount: number
-  cosmosInfo: Info
+  cosmosInfo: InfoWithArkeo
   arkeoInfo: Info
-  thorchainInfo: { account?: string }
+  thorchainInfo: InfoWithArkeo
   ethInfo: Info & { signature?: string }
 }
 
@@ -26,6 +30,7 @@ type DispatchProps =
   | { type: 'SET_COSMOS_ACCOUNT'; payload: string | undefined }
   | { type: 'SET_COSMOS_AMOUNT'; payload: number }
   | { type: 'SET_THORCHAIN_ACCOUNT'; payload: string | undefined }
+  | { type: 'SET_THORCHAIN_AMOUNT'; payload: string | undefined }
   | { type: 'SET_ARKEO_ACCOUNT'; payload: string }
   | { type: 'SET_ARKEO_AMOUNT'; payload: number }
   | { type: 'SET_ETH_ACCOUNT'; payload: string }

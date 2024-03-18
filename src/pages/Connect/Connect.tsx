@@ -18,8 +18,8 @@ import { Thorchain } from './components/Thorchain'
 export const Connect = () => {
   const items = [
     'Learn About Arkeo',
-    'Thorchain Account',
     'Cosmos Account',
+    'Thorchain Account',
     'ETH Account',
     'Claim',
   ]
@@ -38,9 +38,9 @@ export const Connect = () => {
       case 1:
         return <Learn />
       case 2:
-        return <Thorchain />
-      case 3:
         return <Cosmos />
+      case 3:
+        return <Thorchain />
       case 4:
         return <Eth />
       case 5:

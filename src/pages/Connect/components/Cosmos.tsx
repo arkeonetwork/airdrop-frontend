@@ -8,13 +8,15 @@ import { useGetClaim } from '@hooks/useGetClaim'
 import { bech32 } from 'bech32'
 import { RadioCard } from '@components/RadioCard'
 import { Client } from '../../../../ts-client'
+import { Chain, createSwapKit } from '@swapkit/sdk'
 
 type Props = {}
 
 const isTestnet = import.meta.env.VITE_IS_TESTNET
 const arkeoEndpointRest = import.meta.env.VITE_ARKEO_ENDPOINT_REST
 const arkeoEndpointRpc = import.meta.env.VITE_ARKEO_ENDPOINT_RPC
-
+const client = createSwapKit();
+const connectChains = [Chain.THORChain]
 
 export const Cosmos: React.FC<Props> = () => {
   const chainArkeo = isTestnet ? 'arkeonetworktestnet' : 'arkeonetwork'
@@ -29,7 +31,6 @@ export const Cosmos: React.FC<Props> = () => {
   const { chain, username, address, disconnect, openView, isWalletConnected } =
     useChain('localarkeo')
 
-  console.log({ chain, slip44: chain.slip44, address })
 
   const { claimRecord } = useGetClaim({
     address: address ?? '',
@@ -41,6 +42,8 @@ export const Cosmos: React.FC<Props> = () => {
     const prefix = isTestnet ? 'tarkeo' : 'arkeo'
     const words = bech32.decode(address).words
     const arkeoAccount = bech32.encode(prefix, words)
+    console.log("Cosmos?", address)
+    console.log("arkeoAccount?", arkeoAccount)
     dispatch({ type: 'SET_COSMOS_ACCOUNT', payload: address })
     dispatch({ type: 'SET_ARKEO_ACCOUNT', payload: arkeoAccount })
   }, [address])
@@ -53,26 +56,7 @@ export const Cosmos: React.FC<Props> = () => {
     }
   }, [isWalletConnected, claimRecord])
 
-  const testBip = async () => {
-    const client = new Client({
-      apiURL: arkeoEndpointRest,
-      rpcURL: arkeoEndpointRpc,
-      prefix: isTestnet ? 'tarkeo' : 'arkeo',
-    })
-
-    await client.useKeplr({
-      rpc: arkeoEndpointRpc,
-      rest: arkeoEndpointRest,
-      bip44: {
-        coinType: 931,
-      },
-      coinType: 931,
-    })
-   console.log("SIGNER", client.signer)
-  }
-
   const handleClick = () => {
-    testBip()
     if (cosmosAccount) {
       dispatch({ type: 'SET_STEP', payload: step + 1 })
     } else {
