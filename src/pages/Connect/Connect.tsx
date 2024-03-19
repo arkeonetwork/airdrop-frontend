@@ -18,19 +18,20 @@ import { Thorchain } from './components/Thorchain'
 export const Connect = () => {
   const items = [
     'Learn About Arkeo',
-    'Cosmos Account',
+    'Arkeo Account',
+    'Eth Account',
     'Thorchain Account',
-    'ETH Account',
     'Claim',
   ]
   const {
     state: {
       step,
-      cosmosInfo: { account: cosmosAccount },
+      arkeoInfo: { account: arkeoAccount },
+      thorInfo: { account: thorAccount },
       ethInfo: { account: ethAccount },
       totalClaimAmount,
     },
-    dispatch
+    dispatch,
   } = useConnect()
 
   const displayStep = () => {
@@ -40,9 +41,9 @@ export const Connect = () => {
       case 2:
         return <Cosmos />
       case 3:
-        return <Thorchain />
-      case 4:
         return <Eth />
+      case 4:
+        return <Thorchain />
       case 5:
         return <Claim />
       case 6:
@@ -57,10 +58,13 @@ export const Connect = () => {
       let subText
       switch (index + 1) {
         case 2:
-          subText = cosmosAccount
+          subText = arkeoAccount
           break
         case 3:
           subText = ethAccount
+          break
+        case 4:
+          subText = thorAccount
           break
       }
       return (
@@ -116,7 +120,7 @@ export const Connect = () => {
             <Flex flexDir="row" alignItems="center">
               <Image w="24px" h="24px" src={Symbol} />
               <Text fontSize="24px" fontWeight="900" pl="5px">
-                {toDecimal(totalClaimAmount)} ARKEO
+                {toDecimal(totalClaimAmount)}
               </Text>
             </Flex>
           </Box>

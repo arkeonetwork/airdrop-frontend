@@ -9,12 +9,11 @@ import { Link as ReactRouterLink } from 'react-router-dom'
 type Props = {}
 
 export const Claim: React.FC<Props> = ({}) => {
+  const [errorMessage, setErrorMessage] = useState<string>('')
   const {
     state: { step, totalClaimAmount },
     dispatch,
   } = useConnect()
-  const [errorMessage, setErrorMessage] = useState<string>('')
-
   const { claimRecord, isLoading, isSucceeded, error } = useClaim()
 
   useEffect(() => {

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Button, Box, Text, Image, Flex } from '@chakra-ui/react'
 import CosmosLogo from '@assets/cosmos-atom-logo.svg'
 import { useConnect } from '../ConnectContext'
@@ -23,15 +23,24 @@ export const Eth: React.FC<Props> = ({}) => {
     },
     dispatch,
   } = useConnect()
+  const [errorMessage, setErrorMessage] = useState<string>('')
   const { open } = useWeb3Modal()
   const { address, connector: activeConnector } = useAccount()
   const { disconnect } = useDisconnect()
-  const { claimRecord, error } = useGetClaim({
+  const { claimRecord } = useGetClaim({
     address: address ?? '',
   })
 
-  const { data, isError, isLoading, isSuccess, signTypedData, status, reset } =
-    useSignTypedData()
+  const {
+    data,
+    isError,
+    isLoading,
+    isSuccess,
+    signTypedData,
+    status,
+    reset,
+    error,
+  } = useSignTypedData()
 
   useEffect(() => {
     const handleConnectorUpdate = ({ account, chain }: ConnectorData) => {
@@ -58,6 +67,12 @@ export const Eth: React.FC<Props> = ({}) => {
   }, [data])
 
   useEffect(() => {
+    if (error?.name.includes('ChainMismatchError')) {
+      setErrorMessage('Please switch to Ethereum network')
+    }
+  }, [error])
+
+  useEffect(() => {
     if (!claimRecord) return
     if (status === 'success') {
       dispatch({ type: 'ADD_TOTAL_AMOUNTS', payload: claimRecord })
@@ -66,12 +81,13 @@ export const Eth: React.FC<Props> = ({}) => {
   }, [status, claimRecord])
 
   useEffect(() => {
-    if (isSuccess && address) {
+    if (address) {
       dispatch({ type: 'SET_ETH_ACCOUNT', payload: address })
     }
-  }, [isError, isLoading, isSuccess])
+  }, [address])
 
   const handleClick = () => {
+    setErrorMessage('')
     if (ethAccount && ethSignature) {
       dispatch({ type: 'SET_STEP', payload: step + 1 })
     } else {
@@ -102,12 +118,13 @@ export const Eth: React.FC<Props> = ({}) => {
           },
         })
       } else {
-        open()
+        open({ view: 'Connect' })
       }
     }
   }
 
   const renderWallet = () => {
+    console.log({ address })
     if (ethAccount) {
       return (
         <ConnectedAccount
@@ -149,6 +166,9 @@ export const Eth: React.FC<Props> = ({}) => {
           </Text>
         </Box>
         {renderWallet()}
+        <Text my="8px" height="16px" color="red.500">
+          {errorMessage}
+        </Text>
         <Button onClick={handleClick}>{buttonText}</Button>
       </Flex>
     </>

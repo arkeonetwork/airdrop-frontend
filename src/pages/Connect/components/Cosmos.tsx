@@ -5,59 +5,52 @@ import { useConnect } from '../ConnectContext'
 import { ConnectedAccount } from './ConnectedAccount'
 import { useChain } from '@cosmos-kit/react'
 import { useGetClaim } from '@hooks/useGetClaim'
-import { bech32 } from 'bech32'
-import { RadioCard } from '@components/RadioCard'
-import { Client } from '../../../../ts-client'
-import { Chain, createSwapKit } from '@swapkit/sdk'
 
 type Props = {}
 
 const isTestnet = import.meta.env.VITE_IS_TESTNET
 const arkeoEndpointRest = import.meta.env.VITE_ARKEO_ENDPOINT_REST
 const arkeoEndpointRpc = import.meta.env.VITE_ARKEO_ENDPOINT_RPC
-const client = createSwapKit();
-const connectChains = [Chain.THORChain]
 
 export const Cosmos: React.FC<Props> = () => {
   const chainArkeo = isTestnet ? 'arkeonetworktestnet' : 'arkeonetwork'
+  const [errorMessage, setErrorMessage] = useState<string>('')
   const {
     state: {
       step,
-      cosmosInfo: { account: cosmosAccount },
+      arkeoInfo: { account: arkeoAccount },
     },
     dispatch,
   } = useConnect()
 
   const { chain, username, address, disconnect, openView, isWalletConnected } =
     useChain('localarkeo')
-
+  console.log({ isWalletConnected, arkeoAccount })
 
   const { claimRecord } = useGetClaim({
     address: address ?? '',
   })
 
-
   useEffect(() => {
     if (!address) return
-    const prefix = isTestnet ? 'tarkeo' : 'arkeo'
-    const words = bech32.decode(address).words
-    const arkeoAccount = bech32.encode(prefix, words)
-    console.log("Cosmos?", address)
-    console.log("arkeoAccount?", arkeoAccount)
-    dispatch({ type: 'SET_COSMOS_ACCOUNT', payload: address })
-    dispatch({ type: 'SET_ARKEO_ACCOUNT', payload: arkeoAccount })
+    // const prefix = isTestnet ? 'tarkeo' : 'arkeo'
+    // const words = bech32.decode(address).words
+    // const arkeoAccount = bech32.encode(prefix, words)
+    // console.log("Cosmos?", address)
+    // console.log("arkeoAccount?", arkeoAccount)
+    dispatch({ type: 'SET_ARKEO_ACCOUNT', payload: address })
   }, [address])
 
   useEffect(() => {
     if (!claimRecord) return
     if (isWalletConnected) {
-      dispatch({ type: 'SET_COSMOS_AMOUNT', payload: claimRecord.amountClaim })
+      dispatch({ type: 'SET_ARKEO_AMOUNT', payload: claimRecord.amountClaim })
       dispatch({ type: 'ADD_TOTAL_AMOUNTS', payload: claimRecord })
     }
   }, [isWalletConnected, claimRecord])
 
   const handleClick = () => {
-    if (cosmosAccount) {
+    if (arkeoAccount) {
       dispatch({ type: 'SET_STEP', payload: step + 1 })
     } else {
       openView()
@@ -65,22 +58,23 @@ export const Cosmos: React.FC<Props> = () => {
   }
 
   const renderWallet = () => {
-    if (cosmosAccount) {
+    if (arkeoAccount) {
       return (
         <ConnectedAccount
           width="100%"
           my={0}
           amount={claimRecord?.amountClaim ?? '0'}
-          account={cosmosAccount}
+          account={arkeoAccount}
           name={username}
           disconnect={() => {
+            dispatch({ type: 'RESET_ARKEO' })
             dispatch({ type: 'SUB_TOTAL_AMOUNTS', payload: claimRecord })
-            disconnect()
+            disconnect?.()
           }}
         />
       )
     }
-    return <Image w="150px" h="150px" src={CosmosLogo} />
+    return <Image w="180px" h="180px" src={CosmosLogo} />
   }
 
   return (
@@ -94,14 +88,17 @@ export const Cosmos: React.FC<Props> = () => {
         justifyContent="space-between"
       >
         <Box>
-          <Text fontWeight={900}>Connect Cosmos Account</Text>
+          <Text fontWeight={900}>Connect Arkeo Account</Text>
           <Text fontWeight={500} color="grey.50">
-            Connect your Cosmos wallet to check for eligibility.
+            Connect your Arkeo wallet to check for eligibility.
           </Text>
         </Box>
         {renderWallet()}
+        <Text my="8px" height="16px" color="red.500">
+          {errorMessage}
+        </Text>
         <Button onClick={handleClick}>
-          {cosmosAccount ? 'Next' : 'Connect Wallet'}
+          {arkeoAccount ? 'Next' : 'Connect Wallet'}
         </Button>
       </Flex>
     </>

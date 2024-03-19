@@ -9,18 +9,19 @@ import { WagmiConfig } from 'wagmi'
 import { mainnet } from 'viem/chains'
 import { ChainProvider } from '@cosmos-kit/react'
 import { chains, assets } from 'chain-registry'
-import { wallets } from '@cosmos-kit/keplr-extension'
+import { wallets } from '@cosmos-kit/keplr'
 import { Chain, AssetList } from '@chain-registry/types'
 
 import '@interchain-ui/react/styles'
 
 const projectId = import.meta.env.VITE_WALLET_CONNECT_ID
+const arkeoEndpointRest = import.meta.env.VITE_ARKEO_ENDPOINT_REST
+const arkeoEndpointRpc = import.meta.env.VITE_ARKEO_ENDPOINT_RPC
 
 const metadata = {
   name: 'Arkeo',
   description: 'Arkeo Airdrop',
   url: 'https://arkeo.network',
-  icons: ['https://avatars.githubusercontent.com/u/37784886'], // TODO: update to arkeo
 }
 
 const evmChains = [mainnet]
@@ -29,8 +30,13 @@ const wagmiConfig = defaultWagmiConfig({
   projectId,
   metadata,
 })
-
-createWeb3Modal({ wagmiConfig, projectId, chains: evmChains })
+wagmiConfig.args.autoConnect = false
+console.log({ wagmiConfig })
+createWeb3Modal({
+  wagmiConfig,
+  projectId,
+  chains: evmChains,
+})
 
 let root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
 
@@ -55,7 +61,7 @@ const localArkeoAssets: AssetList = {
     },
   ],
 }
-console.log({ chains })
+
 root.render(
   <ChakraProvider theme={theme}>
     <WagmiConfig config={wagmiConfig}>
@@ -66,8 +72,8 @@ root.render(
         endpointOptions={{
           endpoints: {
             localarkeo: {
-              rpc: ['http://localhost:26657'],
-              rest: ['http://localhost:1317'],
+              rpc: [arkeoEndpointRpc],
+              rest: [arkeoEndpointRest],
             },
           },
         }}
