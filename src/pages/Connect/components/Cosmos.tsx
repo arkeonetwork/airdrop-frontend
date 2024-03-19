@@ -25,7 +25,6 @@ export const Cosmos: React.FC<Props> = () => {
 
   const { chain, username, address, disconnect, openView, isWalletConnected } =
     useChain('localarkeo')
-  console.log({ isWalletConnected, arkeoAccount })
 
   const { claimRecord } = useGetClaim({
     address: address ?? '',

@@ -60,7 +60,7 @@ export const useClaim = () => {
         })
       }
 
-      console.log({ result })
+      console.info({ result })
       if (result.code !== 0) {
         // TODO better error handling
         throw new Error(result.rawLog)

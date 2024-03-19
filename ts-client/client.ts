@@ -101,12 +101,8 @@ export class IgniteClient extends EventEmitter {
       };
 
       let bip44 = {
-        coinType: 931,
-      };
-
-      let alternativeBIP44s = [{
         coinType: 118,
-      }]
+      };
 
       let bech32Config = {
         bech32PrefixAccAddr: addrPrefix,
@@ -137,7 +133,7 @@ export class IgniteClient extends EventEmitter {
           return y;
         }) ?? [];
 
-      let coinType = 931;
+      let coinType = 118;
 
       if (chainId) {
         const suggestOptions: ChainInfo = {
@@ -147,7 +143,6 @@ export class IgniteClient extends EventEmitter {
           rest,
           stakeCurrency,
           bip44,
-          alternativeBIP44s,
           bech32Config,
           currencies,
           feeCurrencies,

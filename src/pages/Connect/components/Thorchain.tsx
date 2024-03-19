@@ -92,8 +92,6 @@ export const Thorchain: React.FC<Props> = () => {
     dispatch({ type: 'RESET_THOR' })
   }
 
-  console.log(thorDelegateTx)
-
   const renderWallet = () => {
     if (thorAccount) {
       return (

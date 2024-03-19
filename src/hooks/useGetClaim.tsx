@@ -69,7 +69,7 @@ export const useGetClaim = ({ address }: UseGetClaim) => {
         const url = buildUrl('/arkeo/claim/claimrecord', convertedAddress)
         const { data } = await axios.get(url, { params })
         const claimAmounts = calculateClaimAmount(data.claim_record)
-        console.log({ data })
+
         setClaimRecord({
           ...data.claim_record,
           ...claimAmounts,

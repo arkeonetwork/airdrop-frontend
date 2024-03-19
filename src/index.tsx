@@ -31,7 +31,7 @@ const wagmiConfig = defaultWagmiConfig({
   metadata,
 })
 wagmiConfig.args.autoConnect = false
-console.log({ wagmiConfig })
+
 createWeb3Modal({
   wagmiConfig,
   projectId,
