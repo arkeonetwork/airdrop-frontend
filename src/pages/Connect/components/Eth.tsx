@@ -123,6 +123,11 @@ export const Eth: React.FC<Props> = ({}) => {
     }
   }
 
+  const skipClick = () => {
+    dispatch({ type: 'SET_STEP', payload: step + 1 })
+    dispatch({ type: 'RESET_ETH' })
+  }
+
   const renderWallet = () => {
     console.log({ address })
     if (ethAccount) {
@@ -169,7 +174,12 @@ export const Eth: React.FC<Props> = ({}) => {
         <Text my="8px" height="16px" color="red.500">
           {errorMessage}
         </Text>
-        <Button onClick={handleClick}>{buttonText}</Button>
+        <Box w="100%">
+          <Button onClick={handleClick}>{buttonText}</Button>
+          <Button onClick={skipClick} variant="outline" mt={2}>
+            Skip
+          </Button>
+        </Box>
       </Flex>
     </>
   )

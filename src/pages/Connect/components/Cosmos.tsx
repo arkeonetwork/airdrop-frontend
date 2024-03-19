@@ -33,17 +33,13 @@ export const Cosmos: React.FC<Props> = () => {
 
   useEffect(() => {
     if (!address) return
-    // const prefix = isTestnet ? 'tarkeo' : 'arkeo'
-    // const words = bech32.decode(address).words
-    // const arkeoAccount = bech32.encode(prefix, words)
-    // console.log("Cosmos?", address)
-    // console.log("arkeoAccount?", arkeoAccount)
     dispatch({ type: 'SET_ARKEO_ACCOUNT', payload: address })
   }, [address])
 
   useEffect(() => {
     if (!claimRecord) return
     if (isWalletConnected) {
+      console.log("OK")
       dispatch({ type: 'SET_ARKEO_AMOUNT', payload: claimRecord.amountClaim })
       dispatch({ type: 'ADD_TOTAL_AMOUNTS', payload: claimRecord })
     }
@@ -94,12 +90,15 @@ export const Cosmos: React.FC<Props> = () => {
           </Text>
         </Box>
         {renderWallet()}
-        <Text my="8px" height="16px" color="red.500">
-          {errorMessage}
-        </Text>
-        <Button onClick={handleClick}>
-          {arkeoAccount ? 'Next' : 'Connect Wallet'}
-        </Button>
+        <Box width="100%">
+          <Text my="8px" height="16px" color="red.500">
+            {errorMessage}
+          </Text>
+
+          <Button onClick={handleClick}>
+            {arkeoAccount ? 'Next' : 'Connect Wallet'}
+          </Button>
+        </Box>
       </Flex>
     </>
   )

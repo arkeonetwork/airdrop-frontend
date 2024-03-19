@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Flex } from '@chakra-ui/react';
 
-export const CircleNumber: React.FC<{ number: number; step: number }> = ({ number, step }) => {
+export const CircleNumber: React.FC<{ number: number; step: number, skipped: boolean }> = ({ number, step, skipped }) => {
   return (
     <Flex alignItems="flex-start">
       <Box
@@ -10,7 +10,7 @@ export const CircleNumber: React.FC<{ number: number; step: number }> = ({ numbe
         borderRadius="50%"
         width="24px"
         height="24px"
-        backgroundColor={number > step ? 'grey.100' : 'teal.50'}
+        backgroundColor={skipped || number > step ? 'grey.100' : 'teal.50'}
         mr="8px"
         textAlign="center"
       >

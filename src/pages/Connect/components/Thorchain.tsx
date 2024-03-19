@@ -80,6 +80,11 @@ export const Thorchain: React.FC<Props> = () => {
     }
   }
 
+  const skipClick = async () => {
+    dispatch({ type: 'SET_STEP', payload: step + 1 })
+    dispatch({ type: 'RESET_THOR' })
+  }
+
   const renderWallet = () => {
     if (thorAccount) {
       return (
@@ -119,9 +124,14 @@ export const Thorchain: React.FC<Props> = () => {
         <Text my="8px" height="16px" color="red.500">
           {errorMessage}
         </Text>
-        <Button onClick={handleClick}>
-          {thorAccount ? 'Broadcast Transaction' : 'Connect Wallet'}
-        </Button>
+        <Box w="100%">
+          <Button onClick={handleClick}>
+            {thorAccount ? 'Broadcast Transaction' : 'Connect Wallet'}
+          </Button>{' '}
+          <Button onClick={skipClick} variant="outline" mt={2}>
+            Skip
+          </Button>
+        </Box>
       </Flex>
     </>
   )

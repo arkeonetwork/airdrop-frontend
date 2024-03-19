@@ -8,7 +8,6 @@ import { toDecimal } from '@utils/functions'
 
 import { Learn } from './components/Learn'
 import { Cosmos } from './components/Cosmos'
-import { Arkeo } from './components/Arkeo'
 import { Eth } from './components/Eth'
 import { Claim } from './components/Claim'
 import { useConnect } from './ConnectContext'
@@ -67,8 +66,14 @@ export const Connect = () => {
           subText = thorAccount
           break
       }
+      const skipped = !subText && index > 1 && step > index + 1
       return (
-        <Box position="relative" key={index}>
+        <Box
+          position="relative"
+          key={index}
+          onClick={() => dispatch({ type: 'SET_STEP', payload: index + 1 })}
+          cursor={step > index + 1 ? 'pointer' : 'default'}
+        >
           <Flex pb="8px">
             <Box
               display={index + 1 === step ? 'block' : 'none'}
@@ -81,11 +86,12 @@ export const Connect = () => {
               borderTopRightRadius="5px"
               borderBottomRightRadius="5px"
             />
-            <CircleNumber number={index + 1} step={step} />
+            <CircleNumber number={index + 1} step={step} skipped={skipped} />
             <Text
               fontWeight={500}
               lineHeight="24px"
               color={index + 1 === step ? 'white' : 'grey.50'}
+              as={skipped ? 's' : 'span'}
             >
               {item}
             </Text>
