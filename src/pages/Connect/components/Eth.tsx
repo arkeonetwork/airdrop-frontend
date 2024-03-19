@@ -30,21 +30,13 @@ export const Eth: React.FC<Props> = ({}) => {
   const { claimRecord } = useGetClaim({
     address: address ?? '',
   })
-
-  const {
-    data,
-    isError,
-    isLoading,
-    isSuccess,
-    signTypedData,
-    status,
-    reset,
-    error,
-  } = useSignTypedData()
+  console.log({ ethAccount, ethSignature })
+  const { data, signTypedData, status, reset, error } = useSignTypedData()
 
   useEffect(() => {
     const handleConnectorUpdate = ({ account, chain }: ConnectorData) => {
       if (account) {
+        console.log('eeyy')
         dispatch({ type: 'SET_ETH_ACCOUNT', payload: account })
         dispatch({ type: 'SET_ETH_SIGNATURE' })
         reset()
@@ -63,7 +55,8 @@ export const Eth: React.FC<Props> = ({}) => {
   }, [activeConnector])
 
   useEffect(() => {
-    dispatch({ type: 'SET_ETH_SIGNATURE', payload: data })
+    console.log('DATA', data)
+    if (data) dispatch({ type: 'SET_ETH_SIGNATURE', payload: data })
   }, [data])
 
   useEffect(() => {

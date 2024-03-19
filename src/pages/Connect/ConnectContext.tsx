@@ -7,7 +7,7 @@ interface Info extends ClaimRecord {
 interface StateProps {
   step: number
   arkeoInfo: Info
-  thorInfo: Info
+  thorInfo: Info & { delegateTx?: string }
   ethInfo: Info & { signature?: string }
 }
 
@@ -21,6 +21,7 @@ type DispatchProps =
   | { type: 'SET_STEP'; payload: number }
   | { type: 'SET_THORCHAIN_ACCOUNT'; payload: string | undefined }
   | { type: 'SET_THORCHAIN_AMOUNT'; payload: ClaimRecord }
+  | { type: 'SET_THORCHAIN_DELEGATE_TX'; payload: string }
   | { type: 'SET_ARKEO_ACCOUNT'; payload: string | undefined }
   | { type: 'SET_ARKEO_AMOUNTS'; payload: ClaimRecord }
   | { type: 'SET_ETH_ACCOUNT'; payload: string }
@@ -80,6 +81,14 @@ const connectReducer = (state: StateProps, action: DispatchProps) => {
           amountClaim: payload.amountClaim,
           amountVote: payload.amountVote,
           amountDelegate: payload.amountDelegate,
+        },
+      }
+    case 'SET_THORCHAIN_DELEGATE_TX':
+      return {
+        ...state,
+        thorInfo: {
+          ...state.thorInfo,
+          delegateTx: payload,
         },
       }
     case 'SET_ETH_ACCOUNT':

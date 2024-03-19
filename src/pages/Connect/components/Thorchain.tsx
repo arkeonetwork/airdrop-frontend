@@ -7,12 +7,10 @@ import { bech32 } from 'bech32'
 import { AssetValue, Chain, createSwapKit } from '@swapkit/sdk'
 import { xdefiWallet } from '@swapkit/wallet-xdefi'
 import { ConnectedAccount } from './ConnectedAccount'
-
+// example tx FA2768AEB52AE0A378372B48B10C5B374B25E8B2005C702AAD441B813ED2F174
 type Props = {}
 
 const isTestnet = import.meta.env.VITE_IS_TESTNET
-const arkeoEndpointRest = import.meta.env.VITE_ARKEO_ENDPOINT_REST
-const arkeoEndpointRpc = import.meta.env.VITE_ARKEO_ENDPOINT_RPC
 
 export const Thorchain: React.FC<Props> = () => {
   const [errorMessage, setErrorMessage] = useState<string>('')
@@ -28,7 +26,11 @@ export const Thorchain: React.FC<Props> = () => {
     state: {
       step,
       arkeoInfo: { account: arkeoAccount },
-      thorInfo: { account: thorAccount },
+      thorInfo: {
+        account: thorAccount,
+        delegateTx: thorDelegateTx,
+        amountClaim: thorAmountClaim,
+      },
     },
     dispatch,
   } = useConnect()
@@ -62,20 +64,26 @@ export const Thorchain: React.FC<Props> = () => {
       setErrorMessage('No wallet found, please install xDefi')
       return
     }
-    if (thorAccount) {
+    if (thorDelegateTx) {
+      dispatch({ type: 'SET_STEP', payload: step + 1 })
+    } else if (thorAccount) {
       const wallet = client.getWallet(Chain.THORChain)
       const assetValue = AssetValue.fromStringSync('THOR.RUNE')
-      console.log({ assetValue, wallet })
-      const message = await wallet.deposit({
-        // recipient: client.getAddress(Chain.THORChain),
+      const tx = await wallet.deposit({
         assetValue,
         memo: `delegate:arkeo:${arkeoAccount}`,
       })
-      console.log({ message })
+      console.log({ tx })
+      dispatch({ type: 'SET_THORCHAIN_DELEGATE_TX', payload: tx })
       dispatch({ type: 'SET_STEP', payload: step + 1 })
     } else {
       const address = client.getAddress(Chain.THORChain)
       dispatch({ type: 'SET_THORCHAIN_ACCOUNT', payload: address })
+      dispatch({
+        type: 'SET_THORCHAIN_DELEGATE_TX',
+        payload:
+          'FA2768AEB52AE0A378372B48B10C5B374B25E8B2005C702AAD441B813ED2F174',
+      }) // TODO REMOVE
     }
   }
 
@@ -83,6 +91,8 @@ export const Thorchain: React.FC<Props> = () => {
     dispatch({ type: 'SET_STEP', payload: step + 1 })
     dispatch({ type: 'RESET_THOR' })
   }
+
+  console.log(thorDelegateTx)
 
   const renderWallet = () => {
     if (thorAccount) {
@@ -93,15 +103,24 @@ export const Thorchain: React.FC<Props> = () => {
           amount={claimRecord?.amountClaim ?? '0'}
           account={thorAccount}
           name={'Thorchain'}
-          disconnect={() => {
-            dispatch({ type: 'RESET_THOR' })
-          }}
+          disconnect={
+            !thorDelegateTx
+              ? () => {
+                  dispatch({ type: 'RESET_THOR' })
+                }
+              : undefined
+          }
         />
       )
     }
     return <Image w="150px" h="150px" src={CosmosLogo} />
   }
 
+  const buttonText = thorDelegateTx
+    ? 'Next'
+    : thorAccount
+      ? 'Broadcast Transaction'
+      : 'Connect Wallet'
   return (
     <>
       <Flex
@@ -123,12 +142,17 @@ export const Thorchain: React.FC<Props> = () => {
           {errorMessage}
         </Text>
         <Box w="100%">
-          <Button onClick={handleClick}>
-            {thorAccount ? 'Broadcast Transaction' : 'Connect Wallet'}
-          </Button>{' '}
-          <Button onClick={skipClick} variant="outline" mt={2}>
-            Skip
+          <Button
+            disabled={!!thorAccount && thorAmountClaim === 0}
+            onClick={handleClick}
+          >
+            {buttonText}
           </Button>
+          {!thorDelegateTx && (
+            <Button onClick={skipClick} variant="outline" mt={2}>
+              Skip
+            </Button>
+          )}
         </Box>
       </Flex>
     </>
