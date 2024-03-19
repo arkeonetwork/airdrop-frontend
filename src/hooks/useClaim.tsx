@@ -14,7 +14,7 @@ export const useClaim = () => {
   const {
     state: {
       arkeoInfo: { account: arkeoAccount },
-      ethInfo: { account: ethAccount, amount: ethAmount, signature },
+      ethInfo: { account: ethAccount, amountClaim: ethAmount, signature },
     },
   } = useConnect()
 

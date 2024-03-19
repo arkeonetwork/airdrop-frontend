@@ -25,10 +25,9 @@ export const Connect = () => {
   const {
     state: {
       step,
-      arkeoInfo: { account: arkeoAccount },
-      thorInfo: { account: thorAccount },
-      ethInfo: { account: ethAccount },
-      totalClaimAmount,
+      arkeoInfo: { account: arkeoAccount, amountClaim: arkeoAmountClaim },
+      thorInfo: { account: thorAccount, amountClaim: thorAmountClaim },
+      ethInfo: { account: ethAccount, amountClaim: ethAmountClaim },
     },
     dispatch,
   } = useConnect()
@@ -67,12 +66,15 @@ export const Connect = () => {
           break
       }
       const skipped = !subText && index > 1 && step > index + 1
+      const previousStep = step > index + 1
       return (
         <Box
           position="relative"
           key={index}
-          onClick={() => dispatch({ type: 'SET_STEP', payload: index + 1 })}
-          cursor={step > index + 1 ? 'pointer' : 'default'}
+          onClick={() =>
+            previousStep && dispatch({ type: 'SET_STEP', payload: index + 1 })
+          }
+          cursor={previousStep ? 'pointer' : 'default'}
         >
           <Flex pb="8px">
             <Box
@@ -112,6 +114,7 @@ export const Connect = () => {
       )
     })
   }
+  const totalClaimAmount = arkeoAmountClaim + thorAmountClaim + ethAmountClaim
 
   return (
     <Panel width="800px">

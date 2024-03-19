@@ -9,10 +9,30 @@ type Props = {}
 
 export const Congrats: React.FC<Props> = ({}) => {
   const {
-    state: { totalDelegateAmount, totalVoteAmount, totalClaimAmount },
+    state: {
+      arkeoInfo: {
+        amountClaim: arkeoAmountClaim,
+        amountDelegate: arkeoAmountDelegate,
+        amountVote: arkeoAmountVote,
+      },
+      thorInfo: {
+        amountClaim: thorAmountClaim,
+        amountDelegate: thorAmountDelegate,
+        amountVote: thorAmountVote,
+      },
+      ethInfo: {
+        amountClaim: ethAmountClaim,
+        amountDelegate: ethAmountDelegate,
+        amountVote: ethAmountVote,
+      },
+    },
     dispatch,
   } = useConnect()
-
+  const totalClaimAmount = arkeoAmountClaim + thorAmountClaim + ethAmountClaim
+  const totalDelegateAmount =
+    arkeoAmountDelegate + thorAmountDelegate + ethAmountDelegate
+  const totalVoteAmount = arkeoAmountVote + thorAmountVote + ethAmountVote
+  
   return (
     <>
       <Flex flexDir="column" flex="1 0 0" justifyContent="space-between">

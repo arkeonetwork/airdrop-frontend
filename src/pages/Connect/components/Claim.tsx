@@ -11,7 +11,12 @@ type Props = {}
 export const Claim: React.FC<Props> = ({}) => {
   const [errorMessage, setErrorMessage] = useState<string>('')
   const {
-    state: { step, totalClaimAmount },
+    state: {
+      step,
+      arkeoInfo: { amountClaim: arkeoAmountClaim },
+      thorInfo: { amountClaim: thorAmountClaim },
+      ethInfo: { amountClaim: ethAmountClaim },
+    },
     dispatch,
   } = useConnect()
   const { claimRecord, isLoading, isSucceeded, error } = useClaim()
@@ -44,8 +49,8 @@ export const Claim: React.FC<Props> = ({}) => {
   const claimArkeo = () => {
     claimRecord()
   }
-
-  const nothingToClaim = totalClaimAmount == 0
+  const totalClaimAmount = arkeoAmountClaim + thorAmountClaim + ethAmountClaim
+  const nothingToClaim = totalClaimAmount === 0
 
   return (
     <>

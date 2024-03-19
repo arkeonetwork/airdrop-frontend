@@ -39,9 +39,7 @@ export const Cosmos: React.FC<Props> = () => {
   useEffect(() => {
     if (!claimRecord) return
     if (isWalletConnected) {
-      console.log("OK")
-      dispatch({ type: 'SET_ARKEO_AMOUNT', payload: claimRecord.amountClaim })
-      dispatch({ type: 'ADD_TOTAL_AMOUNTS', payload: claimRecord })
+      dispatch({ type: 'SET_ARKEO_AMOUNTS', payload: claimRecord })
     }
   }, [isWalletConnected, claimRecord])
 
@@ -64,7 +62,6 @@ export const Cosmos: React.FC<Props> = () => {
           name={username}
           disconnect={() => {
             dispatch({ type: 'RESET_ARKEO' })
-            dispatch({ type: 'SUB_TOTAL_AMOUNTS', payload: claimRecord })
             disconnect?.()
           }}
         />

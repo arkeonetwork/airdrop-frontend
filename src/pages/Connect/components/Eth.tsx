@@ -75,8 +75,7 @@ export const Eth: React.FC<Props> = ({}) => {
   useEffect(() => {
     if (!claimRecord) return
     if (status === 'success') {
-      dispatch({ type: 'ADD_TOTAL_AMOUNTS', payload: claimRecord })
-      dispatch({ type: 'SET_ETH_AMOUNT', payload: claimRecord.amountClaim })
+      dispatch({ type: 'SET_ETH_AMOUNT', payload: claimRecord })
     }
   }, [status, claimRecord])
 
@@ -138,7 +137,6 @@ export const Eth: React.FC<Props> = ({}) => {
           account={ethAccount}
           disconnect={() => {
             disconnect()
-            dispatch({ type: 'SUB_TOTAL_AMOUNTS', payload: claimRecord })
             dispatch({ type: 'RESET_ETH' })
             reset()
           }}

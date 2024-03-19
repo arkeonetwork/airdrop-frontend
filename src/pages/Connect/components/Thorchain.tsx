@@ -50,9 +50,8 @@ export const Thorchain: React.FC<Props> = () => {
     if (thorAccount) {
       dispatch({
         type: 'SET_THORCHAIN_AMOUNT',
-        payload: claimRecord.amountClaim,
+        payload: claimRecord,
       })
-      dispatch({ type: 'ADD_TOTAL_AMOUNTS', payload: claimRecord })
     }
   }, [thorAccount, claimRecord])
 
@@ -96,7 +95,6 @@ export const Thorchain: React.FC<Props> = () => {
           name={'Thorchain'}
           disconnect={() => {
             dispatch({ type: 'RESET_THOR' })
-            dispatch({ type: 'SUB_TOTAL_AMOUNTS', payload: claimRecord })
           }}
         />
       )
