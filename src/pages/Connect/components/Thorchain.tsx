@@ -59,6 +59,7 @@ export const Thorchain: React.FC<Props> = () => {
 
   const handleClick = async () => {
     try {
+      setErrorMessage('')
       await client.connectXDEFI(connectChains)
     } catch (e) {
       setErrorMessage('No wallet found, please install xDefi')
@@ -88,7 +89,7 @@ export const Thorchain: React.FC<Props> = () => {
     //     type: 'SET_THORCHAIN_DELEGATE_TX',
     //     payload:
     //       'FA2768AEB52AE0A378372B48B10C5B374B25E8B2005C702AAD441B813ED2F174',
-    //   }) // TODO REMOVE
+    //   }) // for testing
     }
   }
 

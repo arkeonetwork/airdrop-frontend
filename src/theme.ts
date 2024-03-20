@@ -1,4 +1,4 @@
-import { extendTheme } from '@chakra-ui/react'
+import { background, extendTheme } from '@chakra-ui/react'
 import { Input } from './styles/Input'
 import { Link } from './styles/Link'
 import { Button } from './styles/Button'
@@ -15,10 +15,25 @@ export const theme = extendTheme({
         backgroundColor: '#080B12',
         minWidth: '100vw',
       },
+      '[id=":r0:"]': {
+        // This is a css hack to style the keplr wallet connect window
+        '> div > div > div:last-child > div > div > div > div > div': {
+          display: 'flex',
+          justifyContent: 'center',
+          button: {
+            width: '100%',
+          },
+        },
+      },
     },
   },
   colors: {
-    teal: { 50: '#3BE0FF', 100: '#2CA9D7', 200: '#1F9FD7', 300: 'rgba(59, 224, 255, 0.11)' },
+    teal: {
+      50: '#3BE0FF',
+      100: '#2CA9D7',
+      200: '#1F9FD7',
+      300: 'rgba(59, 224, 255, 0.11)',
+    },
     grey: {
       50: 'rgba(255, 255, 255, 0.36)',
       100: 'rgba(255, 255, 255, 0.1)',

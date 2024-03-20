@@ -11,7 +11,7 @@ import { ChainProvider } from '@cosmos-kit/react'
 import { chains, assets } from 'chain-registry'
 import { wallets } from '@cosmos-kit/keplr-extension'
 import { Chain, AssetList } from '@chain-registry/types'
-
+import "@interchain-ui/react/globalStyles";
 import '@interchain-ui/react/styles'
 
 const projectId = import.meta.env.VITE_WALLET_CONNECT_ID

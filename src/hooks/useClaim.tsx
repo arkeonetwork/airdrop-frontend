@@ -35,6 +35,7 @@ export const useClaim = () => {
         rpc: arkeoEndpointRpc,
         rest: arkeoEndpointRest,
       })
+
       const creator = Uint8Array.from(
         bech32.fromWords(bech32.decode(arkeoAccount).words),
       )
