@@ -9,7 +9,7 @@ import { WagmiConfig } from 'wagmi'
 import { mainnet } from 'viem/chains'
 import { ChainProvider } from '@cosmos-kit/react'
 import { chains, assets } from 'chain-registry'
-import { wallets } from '@cosmos-kit/keplr'
+import { wallets } from '@cosmos-kit/keplr-extension'
 import { Chain, AssetList } from '@chain-registry/types'
 
 import '@interchain-ui/react/styles'
@@ -47,7 +47,7 @@ const localArkeo: Chain = {
   chain_id: 'arkeo',
   pretty_name: 'Arkeo',
   bech32_prefix: 'tarkeo',
-  slip44: 931,
+  slip44: 118,
 }
 const localArkeoAssets: AssetList = {
   chain_name: 'localarkeo',
@@ -69,6 +69,7 @@ root.render(
         chains={[...chains, localArkeo]}
         assetLists={[...assets, localArkeoAssets]}
         wallets={wallets}
+        walletConnectOptions={{ signClient: { projectId: projectId } }}
         endpointOptions={{
           endpoints: {
             localarkeo: {

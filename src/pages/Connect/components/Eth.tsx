@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Button, Box, Text, Image, Flex } from '@chakra-ui/react'
-import CosmosLogo from '@assets/cosmos-atom-logo.svg'
+import EthLogo from '@assets/eth-logo-diamond.svg'
 import { useConnect } from '../ConnectContext'
 import { ConnectedAccount } from './ConnectedAccount'
 import { useWeb3Modal } from '@web3modal/wagmi/react'
@@ -130,7 +130,7 @@ export const Eth: React.FC<Props> = ({}) => {
         />
       )
     }
-    return <Image w="150px" h="150px" src={CosmosLogo} />
+    return <Image w="150px" h="150px" src={EthLogo} />
   }
   const buttonText =
     ethAccount && ethSignature

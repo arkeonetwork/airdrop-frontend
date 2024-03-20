@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Button, Box, Text, Image, Flex, useRadioGroup } from '@chakra-ui/react'
-import CosmosLogo from '@assets/cosmos-atom-logo.svg'
+import ArkeoLogo from '@assets/arkeo-symbol-grey.svg'
 import { useConnect } from '../ConnectContext'
 import { ConnectedAccount } from './ConnectedAccount'
 import { useChain } from '@cosmos-kit/react'
@@ -66,7 +66,7 @@ export const Cosmos: React.FC<Props> = () => {
         />
       )
     }
-    return <Image w="180px" h="180px" src={CosmosLogo} />
+    return <Image w="180px" h="180px" src={ArkeoLogo} />
   }
 
   return (

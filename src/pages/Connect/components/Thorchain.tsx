@@ -7,7 +7,7 @@ import { bech32 } from 'bech32'
 import { AssetValue, Chain, createSwapKit } from '@swapkit/sdk'
 import { xdefiWallet } from '@swapkit/wallet-xdefi'
 import { ConnectedAccount } from './ConnectedAccount'
-// example tx FA2768AEB52AE0A378372B48B10C5B374B25E8B2005C702AAD441B813ED2F174
+
 type Props = {}
 
 const isTestnet = import.meta.env.VITE_IS_TESTNET
@@ -68,6 +68,11 @@ export const Thorchain: React.FC<Props> = () => {
       dispatch({ type: 'SET_STEP', payload: step + 1 })
     } else if (thorAccount) {
       const wallet = client.getWallet(Chain.THORChain)
+      const walletAddress = client.getAddress(Chain.THORChain)
+      if(walletAddress !== thorAccount) {
+        setErrorMessage('Wallet address does not match')
+        return
+      }
       const assetValue = AssetValue.fromStringSync('THOR.RUNE')
       const tx = await wallet.deposit({
         assetValue,
@@ -79,11 +84,11 @@ export const Thorchain: React.FC<Props> = () => {
     } else {
       const address = client.getAddress(Chain.THORChain)
       dispatch({ type: 'SET_THORCHAIN_ACCOUNT', payload: address })
-      dispatch({
-        type: 'SET_THORCHAIN_DELEGATE_TX',
-        payload:
-          'FA2768AEB52AE0A378372B48B10C5B374B25E8B2005C702AAD441B813ED2F174',
-      }) // TODO REMOVE
+    //   dispatch({
+    //     type: 'SET_THORCHAIN_DELEGATE_TX',
+    //     payload:
+    //       'FA2768AEB52AE0A378372B48B10C5B374B25E8B2005C702AAD441B813ED2F174',
+    //   }) // TODO REMOVE
     }
   }
 
