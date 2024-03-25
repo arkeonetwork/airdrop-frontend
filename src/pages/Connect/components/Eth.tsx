@@ -138,6 +138,7 @@ export const Eth: React.FC<Props> = ({}) => {
       : address
         ? 'Sign With Wallet'
         : 'Connect Wallet'
+  const canSignTx = address && claimRecord?.amountClaim > 0
 
   return (
     <>
@@ -160,7 +161,9 @@ export const Eth: React.FC<Props> = ({}) => {
           {errorMessage}
         </Text>
         <Box w="100%">
-          <Button onClick={handleClick}>{buttonText}</Button>
+          <Button isDisabled={true} onClick={handleClick}>
+            {buttonText}
+          </Button>
           <Button onClick={skipClick} variant="outline" mt={2}>
             Skip
           </Button>

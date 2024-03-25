@@ -39,6 +39,7 @@ export const Thorchain: React.FC<Props> = () => {
     address: arkeoAccountDerivedFromThorchain ?? '',
   })
 
+  console.log({ arkeoAccountDerivedFromThorchain })
   useEffect(() => {
     if (!thorAccount) return
     const prefix = isTestnet ? 'tarkeo' : 'arkeo'
@@ -70,7 +71,7 @@ export const Thorchain: React.FC<Props> = () => {
     } else if (thorAccount) {
       const wallet = client.getWallet(Chain.THORChain)
       const walletAddress = client.getAddress(Chain.THORChain)
-      if(walletAddress !== thorAccount) {
+      if (walletAddress !== thorAccount) {
         setErrorMessage('Wallet address does not match')
         return
       }
@@ -85,11 +86,13 @@ export const Thorchain: React.FC<Props> = () => {
     } else {
       const address = client.getAddress(Chain.THORChain)
       dispatch({ type: 'SET_THORCHAIN_ACCOUNT', payload: address })
-    //   dispatch({
-    //     type: 'SET_THORCHAIN_DELEGATE_TX',
-    //     payload:
-    //       'FA2768AEB52AE0A378372B48B10C5B374B25E8B2005C702AAD441B813ED2F174',
-    //   }) // for testing
+      // TODO: SHOW ERROR WHEN CLAIM RECORD IS 0 AND DON'T PASS IN
+
+      // dispatch({
+      //   type: 'SET_THORCHAIN_DELEGATE_TX',
+      //   payload:
+      //     'FA2768AEB52AE0A378372B48B10C5B374B25E8B2005C702AAD441B813ED2F174',
+      // }) // for testing
     }
   }
 
@@ -147,7 +150,7 @@ export const Thorchain: React.FC<Props> = () => {
         </Text>
         <Box w="100%">
           <Button
-            disabled={!!thorAccount && thorAmountClaim === 0}
+            isDisabled={!!thorAccount && thorAmountClaim === 0}
             onClick={handleClick}
           >
             {buttonText}

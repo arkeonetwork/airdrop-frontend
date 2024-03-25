@@ -91,13 +91,13 @@ export class IgniteClient extends EventEmitter {
       const staking = await (await stakingqc.queryParams()).data;
       const bankqc = bankQueryClient({ addr: this.env.apiURL });
       const tokens = await (await bankqc.queryTotalSupply()).data;
-      const addrPrefix = this.env.prefix ?? "tarkeo";
+      const addrPrefix = this.env.prefix ?? "cosmos";
       const rpc = this.env.rpcURL;
       const rest = this.env.apiURL;
       let stakeCurrency = {
         coinDenom: staking.params?.bond_denom?.toUpperCase() ?? "",
         coinMinimalDenom: staking.params?.bond_denom ?? "",
-        coinDecimals: 8,
+        coinDecimals: 0,
       };
 
       let bip44 = {

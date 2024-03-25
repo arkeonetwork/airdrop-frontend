@@ -15,6 +15,7 @@ export const useClaim = () => {
     state: {
       arkeoInfo: { account: arkeoAccount },
       ethInfo: { account: ethAccount, amountClaim: ethAmount, signature },
+      thorInfo: { delegateTx: thorDelegateTx },
     },
   } = useConnect()
 
@@ -48,6 +49,7 @@ export const useClaim = () => {
           value: {
             ethAddress: ethAccount,
             signature,
+            thorTx: thorDelegateTx ?? '',
             creator,
           },
           memo: '',
@@ -56,6 +58,7 @@ export const useClaim = () => {
         result = await client.ArkeoClaim.tx.sendMsgClaimArkeo({
           value: {
             creator,
+            thorTx: thorDelegateTx ?? '',
           },
           memo: '',
         })
