@@ -14,7 +14,7 @@ export const CircleNumber: React.FC<{ number: number; step: number, skipped: boo
         mr="8px"
         textAlign="center"
       >
-        {number < step ? '✓' : number}
+        {skipped ? '-' : number < step ? '✓' : number}
       </Box>
     </Flex>
   );
