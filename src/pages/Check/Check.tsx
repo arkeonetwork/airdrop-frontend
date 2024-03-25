@@ -43,7 +43,7 @@ export const Check = () => {
             value={address}
           />
         </Box>
-        <Text my="16px" height="16px" color="red.500">
+        <Text my="8px" height="16px" color="red.500">
           {errorMessage}
         </Text>
 

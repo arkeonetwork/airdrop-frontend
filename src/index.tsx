@@ -11,16 +11,17 @@ import { ChainProvider } from '@cosmos-kit/react'
 import { chains, assets } from 'chain-registry'
 import { wallets } from '@cosmos-kit/keplr-extension'
 import { Chain, AssetList } from '@chain-registry/types'
-
+import "@interchain-ui/react/globalStyles";
 import '@interchain-ui/react/styles'
 
 const projectId = import.meta.env.VITE_WALLET_CONNECT_ID
+const arkeoEndpointRest = import.meta.env.VITE_ARKEO_ENDPOINT_REST
+const arkeoEndpointRpc = import.meta.env.VITE_ARKEO_ENDPOINT_RPC
 
 const metadata = {
   name: 'Arkeo',
   description: 'Arkeo Airdrop',
   url: 'https://arkeo.network',
-  icons: ['https://avatars.githubusercontent.com/u/37784886'], // TODO: update to arkeo
 }
 
 const evmChains = [mainnet]
@@ -29,8 +30,13 @@ const wagmiConfig = defaultWagmiConfig({
   projectId,
   metadata,
 })
+wagmiConfig.args.autoConnect = false
 
-createWeb3Modal({ wagmiConfig, projectId, chains: evmChains })
+createWeb3Modal({
+  wagmiConfig,
+  projectId,
+  chains: evmChains,
+})
 
 let root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
 
@@ -49,8 +55,8 @@ const localArkeoAssets: AssetList = {
     {
       name: 'Arkeo',
       symbol: 'arkeo',
-      denom_units: [{ denom: 'uarkeo', exponent: 18 }],
-      base: 'uarkeo',
+      denom_units: [{ denom: 'arkeo', exponent: 8 }],
+      base: 'arkeo',
       display: 'arkeo',
     },
   ],
@@ -63,11 +69,12 @@ root.render(
         chains={[...chains, localArkeo]}
         assetLists={[...assets, localArkeoAssets]}
         wallets={wallets}
+        walletConnectOptions={{ signClient: { projectId: projectId } }}
         endpointOptions={{
           endpoints: {
             localarkeo: {
-              rpc: ['http://localhost:26657'],
-              rest: ['http://localhost:1317'],
+              rpc: [arkeoEndpointRpc],
+              rest: [arkeoEndpointRest],
             },
           },
         }}

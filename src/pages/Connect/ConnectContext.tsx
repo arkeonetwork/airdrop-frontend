@@ -1,16 +1,13 @@
 import { createContext, useContext, useReducer } from 'react'
 
-interface Info {
-  amount: number
+interface Info extends ClaimRecord {
   account?: string
 }
+
 interface StateProps {
   step: number
-  totalClaimAmount: number
-  totalDelegateAmount: number
-  totalVoteAmount: number
-  cosmosInfo: Info
   arkeoInfo: Info
+  thorInfo: Info & { delegateTx?: string }
   ethInfo: Info & { signature?: string }
 }
 
@@ -20,27 +17,26 @@ interface ClaimRecord {
   amountVote: number
 }
 
-type DispatchProps  =
-| { type: 'SET_STEP'; payload: number }
-| { type: 'SET_COSMOS_ACCOUNT'; payload: string | undefined }
-| { type: 'SET_COSMOS_AMOUNT'; payload: number }
-| { type: 'SET_ARKEO_ACCOUNT'; payload: string }
-| { type: 'SET_ARKEO_AMOUNT'; payload: number }
-| { type: 'SET_ETH_ACCOUNT'; payload: string }
-| { type: 'SET_ETH_AMOUNT'; payload: number }
-| { type: 'SET_ETH_SIGNATURE'; payload: string | undefined }
-| { type: 'RESET_ETH'; payload?: undefined }
-| { type: 'ADD_TOTAL_AMOUNTS'; payload: ClaimRecord }
-| { type: 'SUB_TOTAL_AMOUNTS'; payload: ClaimRecord }
+type DispatchProps =
+  | { type: 'SET_STEP'; payload: number }
+  | { type: 'SET_THORCHAIN_ACCOUNT'; payload: string | undefined }
+  | { type: 'SET_THORCHAIN_AMOUNT'; payload: ClaimRecord }
+  | { type: 'SET_THORCHAIN_DELEGATE_TX'; payload: string }
+  | { type: 'SET_ARKEO_ACCOUNT'; payload: string | undefined }
+  | { type: 'SET_ARKEO_AMOUNTS'; payload: ClaimRecord }
+  | { type: 'SET_ETH_ACCOUNT'; payload: string }
+  | { type: 'SET_ETH_AMOUNT'; payload: ClaimRecord }
+  | { type: 'SET_ETH_SIGNATURE'; payload?: string | undefined }
+  | { type: 'RESET_ETH'; payload?: undefined }
+  | { type: 'RESET_ARKEO'; payload?: undefined }
+  | { type: 'RESET_THOR'; payload?: undefined }
+  | { type: 'RESET'; payload?: undefined }
 
 const initialState = {
   step: 1,
-  totalClaimAmount: 0,
-  totalDelegateAmount: 0,
-  totalVoteAmount: 0,
-  cosmosInfo: { amount: 0 },
-  arkeoInfo: { amount: 0 },
-  ethInfo: { amount: 0 },
+  arkeoInfo: { amountClaim: 0, amountVote: 0, amountDelegate: 0 },
+  ethInfo: { amountClaim: 0, amountVote: 0, amountDelegate: 0 },
+  thorInfo: { amountClaim: 0, amountVote: 0, amountDelegate: 0 },
 }
 
 const connectReducer = (state: StateProps, action: DispatchProps) => {
@@ -51,22 +47,6 @@ const connectReducer = (state: StateProps, action: DispatchProps) => {
         ...state,
         step: payload,
       }
-    case 'SET_COSMOS_ACCOUNT':
-      return {
-        ...state,
-        cosmosInfo: {
-          ...state.cosmosInfo,
-          account: payload,
-        },
-      }
-    case 'SET_COSMOS_AMOUNT':
-      return {
-        ...state,
-        cosmosInfo: {
-          ...state.cosmosInfo,
-          amount: payload,
-        },
-      }
     case 'SET_ARKEO_ACCOUNT':
       return {
         ...state,
@@ -75,12 +55,40 @@ const connectReducer = (state: StateProps, action: DispatchProps) => {
           account: payload,
         },
       }
-    case 'SET_ARKEO_AMOUNT':
+    case 'SET_ARKEO_AMOUNTS':
       return {
         ...state,
         arkeoInfo: {
           ...state.arkeoInfo,
-          amount: payload,
+          amountClaim: payload.amountClaim,
+          amountVote: payload.amountVote,
+          amountDelegate: payload.amountDelegate,
+        },
+      }
+    case 'SET_THORCHAIN_ACCOUNT':
+      return {
+        ...state,
+        thorInfo: {
+          ...state.thorInfo,
+          account: payload,
+        },
+      }
+    case 'SET_THORCHAIN_AMOUNT':
+      return {
+        ...state,
+        thorInfo: {
+          ...state.thorInfo,
+          amountClaim: payload.amountClaim,
+          amountVote: payload.amountVote,
+          amountDelegate: payload.amountDelegate,
+        },
+      }
+    case 'SET_THORCHAIN_DELEGATE_TX':
+      return {
+        ...state,
+        thorInfo: {
+          ...state.thorInfo,
+          delegateTx: payload,
         },
       }
     case 'SET_ETH_ACCOUNT':
@@ -96,7 +104,9 @@ const connectReducer = (state: StateProps, action: DispatchProps) => {
         ...state,
         ethInfo: {
           ...state.ethInfo,
-          amount: payload,
+          amountClaim: payload.amountClaim,
+          amountVote: payload.amountVote,
+          amountDelegate: payload.amountDelegate,
         },
       }
     case 'SET_ETH_SIGNATURE':
@@ -110,25 +120,21 @@ const connectReducer = (state: StateProps, action: DispatchProps) => {
     case 'RESET_ETH':
       return {
         ...state,
-        ethInfo: {
-          amount: 0,
-        },
+        ethInfo: { amountClaim: 0, amountVote: 0, amountDelegate: 0 },
       }
-    case 'ADD_TOTAL_AMOUNTS':
+    case 'RESET_THOR':
       return {
         ...state,
-        totalClaimAmount: (state.totalClaimAmount += payload?.amountClaim),
-        totalDelegateAmount: (state.totalDelegateAmount +=
-          payload?.amountDelegate),
-        totalVoteAmount: (state.totalVoteAmount += payload?.amountVote),
+        thorInfo: { amountClaim: 0, amountVote: 0, amountDelegate: 0 },
       }
-    case 'SUB_TOTAL_AMOUNTS':
+    case 'RESET_ARKEO':
       return {
         ...state,
-        totalClaimAmount: (state.totalClaimAmount -= payload.amountClaim),
-        totalDelegateAmount: (state.totalDelegateAmount -=
-          payload.amountDelegate),
-        totalVoteAmount: (state.totalVoteAmount -= payload.amountVote),
+        arkeoInfo: { amountClaim: 0, amountVote: 0, amountDelegate: 0 },
+      }
+    case 'RESET':
+      return {
+        ...initialState,
       }
     default:
       return state

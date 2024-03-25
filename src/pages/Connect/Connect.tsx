@@ -8,22 +8,28 @@ import { toDecimal } from '@utils/functions'
 
 import { Learn } from './components/Learn'
 import { Cosmos } from './components/Cosmos'
-import { Arkeo } from './components/Arkeo'
 import { Eth } from './components/Eth'
 import { Claim } from './components/Claim'
 import { useConnect } from './ConnectContext'
 import { Congrats } from './components/Congrats'
+import { Thorchain } from './components/Thorchain'
 
 export const Connect = () => {
   const items = [
     'Learn About Arkeo',
-    'Connect Cosmos Account',
-    'Connect Arkeo Account',
-    'Connect ETH Account',
+    'Arkeo Account',
+    'Eth Account',
+    'Thorchain Account',
     'Claim',
   ]
   const {
-    state: { step, cosmosAccount, arkeoAccount, ethAccount, totalClaimAmount },
+    state: {
+      step,
+      arkeoInfo: { account: arkeoAccount, amountClaim: arkeoAmountClaim },
+      thorInfo: { account: thorAccount, amountClaim: thorAmountClaim },
+      ethInfo: { account: ethAccount, amountClaim: ethAmountClaim },
+    },
+    dispatch,
   } = useConnect()
 
   const displayStep = () => {
@@ -33,9 +39,9 @@ export const Connect = () => {
       case 2:
         return <Cosmos />
       case 3:
-        return <Arkeo />
-      case 4:
         return <Eth />
+      case 4:
+        return <Thorchain />
       case 5:
         return <Claim />
       case 6:
@@ -50,17 +56,26 @@ export const Connect = () => {
       let subText
       switch (index + 1) {
         case 2:
-          subText = cosmosAccount
-          break
-        case 3:
           subText = arkeoAccount
           break
-        case 4:
+        case 3:
           subText = ethAccount
           break
+        case 4:
+          subText = thorAccount
+          break
       }
+      const skipped = !subText && index > 1 && step > index + 1
+      const previousStep = step > index + 1
       return (
-        <Box position="relative" key={index}>
+        <Box
+          position="relative"
+          key={index}
+          onClick={() =>
+            previousStep && dispatch({ type: 'SET_STEP', payload: index + 1 })
+          }
+          cursor={previousStep ? 'pointer' : 'default'}
+        >
           <Flex pb="8px">
             <Box
               display={index + 1 === step ? 'block' : 'none'}
@@ -73,11 +88,12 @@ export const Connect = () => {
               borderTopRightRadius="5px"
               borderBottomRightRadius="5px"
             />
-            <CircleNumber number={index + 1} step={step} />
+            <CircleNumber number={index + 1} step={step} skipped={skipped} />
             <Text
               fontWeight={500}
               lineHeight="24px"
               color={index + 1 === step ? 'white' : 'grey.50'}
+              as={skipped ? 's' : 'span'}
             >
               {item}
             </Text>
@@ -98,6 +114,7 @@ export const Connect = () => {
       )
     })
   }
+  const totalClaimAmount = arkeoAmountClaim + thorAmountClaim + ethAmountClaim
 
   return (
     <Panel width="800px">
@@ -112,7 +129,7 @@ export const Connect = () => {
             <Flex flexDir="row" alignItems="center">
               <Image w="24px" h="24px" src={Symbol} />
               <Text fontSize="24px" fontWeight="900" pl="5px">
-                {toDecimal(totalClaimAmount)} ARKEO
+                {toDecimal(totalClaimAmount)}
               </Text>
             </Flex>
           </Box>

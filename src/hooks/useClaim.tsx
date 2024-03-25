@@ -14,15 +14,15 @@ export const useClaim = () => {
   const {
     state: {
       arkeoInfo: { account: arkeoAccount },
-      ethInfo: { account: ethAccount, amount: ethAmount, signature },
+      ethInfo: { account: ethAccount, amountClaim: ethAmount, signature },
+      thorInfo: { delegateTx: thorDelegateTx },
     },
   } = useConnect()
 
   const claimRecord = async () => {
-    if (!arkeoAccount) {
-      return
-    }
     try {
+      if (!arkeoAccount) return
+
       setIsLoading(true)
       setError(null)
       setIsSucceeded(false)
@@ -36,6 +36,7 @@ export const useClaim = () => {
         rpc: arkeoEndpointRpc,
         rest: arkeoEndpointRest,
       })
+
       const creator = Uint8Array.from(
         bech32.fromWords(bech32.decode(arkeoAccount).words),
       )
@@ -48,6 +49,7 @@ export const useClaim = () => {
           value: {
             ethAddress: ethAccount,
             signature,
+            thorTx: thorDelegateTx ?? '',
             creator,
           },
           memo: '',
@@ -56,12 +58,13 @@ export const useClaim = () => {
         result = await client.ArkeoClaim.tx.sendMsgClaimArkeo({
           value: {
             creator,
+            thorTx: thorDelegateTx ?? '',
           },
           memo: '',
         })
       }
 
-      console.log({ result })
+      console.info({ result })
       if (result.code !== 0) {
         // TODO better error handling
         throw new Error(result.rawLog)

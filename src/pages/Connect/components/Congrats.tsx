@@ -1,5 +1,5 @@
 import React from 'react'
-import { Box, Text, Image, Flex } from '@chakra-ui/react'
+import { Box, Text, Image, Flex, Button } from '@chakra-ui/react'
 import { useConnect } from '../ConnectContext'
 import Success from '@assets/success.svg'
 import { ArrowForwardIcon } from '@chakra-ui/icons'
@@ -9,9 +9,30 @@ type Props = {}
 
 export const Congrats: React.FC<Props> = ({}) => {
   const {
-    state: { totalDelegateAmount, totalVoteAmount, totalClaimAmount },
+    state: {
+      arkeoInfo: {
+        amountClaim: arkeoAmountClaim,
+        amountDelegate: arkeoAmountDelegate,
+        amountVote: arkeoAmountVote,
+      },
+      thorInfo: {
+        amountClaim: thorAmountClaim,
+        amountDelegate: thorAmountDelegate,
+        amountVote: thorAmountVote,
+      },
+      ethInfo: {
+        amountClaim: ethAmountClaim,
+        amountDelegate: ethAmountDelegate,
+        amountVote: ethAmountVote,
+      },
+    },
+    dispatch,
   } = useConnect()
-
+  const totalClaimAmount = arkeoAmountClaim + thorAmountClaim + ethAmountClaim
+  const totalDelegateAmount =
+    arkeoAmountDelegate + thorAmountDelegate + ethAmountDelegate
+  const totalVoteAmount = arkeoAmountVote + thorAmountVote + ethAmountVote
+  
   return (
     <>
       <Flex flexDir="column" flex="1 0 0" justifyContent="space-between">
@@ -62,6 +83,9 @@ export const Congrats: React.FC<Props> = ({}) => {
               />
             </Flex>
           </Flex>
+          <Button mt={6} onClick={() => dispatch({ type: 'RESET' })}>
+            Claim Again
+          </Button>
         </Box>
       </Flex>
     </>

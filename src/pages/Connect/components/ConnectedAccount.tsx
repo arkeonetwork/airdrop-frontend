@@ -14,7 +14,7 @@ import { toDecimal } from '@utils/functions'
 type Props = {
   amount: string
   account: string
-  disconnect: () => void
+  disconnect?: () => void
   name?: string
 } & BoxProps
 
@@ -25,7 +25,7 @@ export const ConnectedAccount: React.FC<Props> = ({
   disconnect,
   ...rest
 }) => (
-  <Flex width="100%" flex="1" flexDir="column" {...rest}>
+  <Flex width="100%" flex="1" my="32px" flexDir="column" {...rest}>
     <Container
       borderRadius="24px"
       border="1px solid"
@@ -34,7 +34,6 @@ export const ConnectedAccount: React.FC<Props> = ({
       backgroundColor="grey.300"
       backdropFilter="blur(50px)"
       textAlign="left"
-      my="32px"
       p="16px"
       color="white"
     >
@@ -47,21 +46,8 @@ export const ConnectedAccount: React.FC<Props> = ({
             fontWeight={400}
             pb="16px"
           />
-          <Text pl="4px">will receive</Text>
+          {/* <Text pl="4px">will receive</Text> */}
         </Flex>
-        {name && (
-          <Flex alignItems="center" gap={2}>
-            <Text>{name}</Text>
-            {/* <ChevronDownIcon
-                width="24px"
-                height="24px"
-                backgroundColor="grey.100"
-                borderRadius="4px"
-                padding="4px"
-                color="grey.50"
-              /> */}
-          </Flex>
-        )}
       </Flex>
       <Flex flexDir="row" alignItems="center" gap={2}>
         <Image w="24px" h="24px" src={Symbol} />
@@ -69,9 +55,11 @@ export const ConnectedAccount: React.FC<Props> = ({
           {toDecimal(amount)} ARKEO
         </Text>
       </Flex>
-      <Button onClick={disconnect} mt="16px" variant="outline">
-        Disconnect
-      </Button>
+      {disconnect && (
+        <Button onClick={disconnect} mt="16px" variant="outline">
+          Disconnect
+        </Button>
+      )}
     </Container>
   </Flex>
 )

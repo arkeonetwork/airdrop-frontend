@@ -1,10 +1,15 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Button, Box, Text, Image, Flex } from '@chakra-ui/react'
-import CosmosLogo from '@assets/cosmos-atom-logo.svg'
+import EthLogo from '@assets/eth-logo-diamond.svg'
 import { useConnect } from '../ConnectContext'
 import { ConnectedAccount } from './ConnectedAccount'
 import { useWeb3Modal } from '@web3modal/wagmi/react'
-import { useSignTypedData, useDisconnect, useAccount } from 'wagmi'
+import {
+  useSignTypedData,
+  useDisconnect,
+  useAccount,
+  ConnectorData,
+} from 'wagmi'
 import { useGetClaim } from '@hooks/useGetClaim'
 
 type Props = {}
@@ -13,41 +18,64 @@ export const Eth: React.FC<Props> = ({}) => {
   const {
     state: {
       step,
-      ethInfo: { account: ethAccount },
+      ethInfo: { account: ethAccount, signature: ethSignature },
       arkeoInfo: { account: arkeoAccount },
     },
     dispatch,
   } = useConnect()
+  const [errorMessage, setErrorMessage] = useState<string>('')
   const { open } = useWeb3Modal()
-  const { address } = useAccount()
+  const { address, connector: activeConnector } = useAccount()
   const { disconnect } = useDisconnect()
-  const { claimRecord, error } = useGetClaim({
+  const { claimRecord } = useGetClaim({
     address: address ?? '',
   })
-
-  const { data, isError, isLoading, isSuccess, signTypedData, status, reset } =
-    useSignTypedData()
+  const { data, signTypedData, status, reset, error } = useSignTypedData()
 
   useEffect(() => {
-    dispatch({ type: 'SET_ETH_SIGNATURE', payload: data })
+    const handleConnectorUpdate = ({ account, chain }: ConnectorData) => {
+      if (account) {
+        dispatch({ type: 'SET_ETH_ACCOUNT', payload: account })
+        dispatch({ type: 'SET_ETH_SIGNATURE' })
+        reset()
+      }
+    }
+
+    if (activeConnector) {
+      activeConnector.on('change', handleConnectorUpdate)
+    }
+
+    return () => {
+      activeConnector?.off('change', handleConnectorUpdate)
+    }
+  }, [activeConnector])
+
+  useEffect(() => {
+    if (data) dispatch({ type: 'SET_ETH_SIGNATURE', payload: data })
   }, [data])
+
+  useEffect(() => {
+    if (error?.name.includes('ChainMismatchError')) {
+      setErrorMessage('Please switch to Ethereum network')
+    }
+  }, [error])
 
   useEffect(() => {
     if (!claimRecord) return
     if (status === 'success') {
-      dispatch({ type: 'ADD_TOTAL_AMOUNTS', payload: claimRecord })
-      dispatch({ type: 'SET_ETH_AMOUNT', payload: claimRecord.amountClaim })
+      dispatch({ type: 'SET_ETH_AMOUNT', payload: claimRecord })
     }
   }, [status, claimRecord])
 
   useEffect(() => {
-    if (isSuccess && address) {
+    if (address) {
       dispatch({ type: 'SET_ETH_ACCOUNT', payload: address })
     }
-  }, [isError, isLoading, isSuccess])
+  }, [address])
 
   const handleClick = () => {
-    if (ethAccount) {
+    setErrorMessage('')
+    if (ethAccount && ethSignature) {
       dispatch({ type: 'SET_STEP', payload: step + 1 })
     } else {
       if (address && arkeoAccount) {
@@ -77,9 +105,14 @@ export const Eth: React.FC<Props> = ({}) => {
           },
         })
       } else {
-        open()
+        open({ view: 'Connect' })
       }
     }
+  }
+
+  const skipClick = () => {
+    dispatch({ type: 'SET_STEP', payload: step + 1 })
+    dispatch({ type: 'RESET_ETH' })
   }
 
   const renderWallet = () => {
@@ -91,21 +124,22 @@ export const Eth: React.FC<Props> = ({}) => {
           account={ethAccount}
           disconnect={() => {
             disconnect()
-            dispatch({ type: 'SUB_TOTAL_AMOUNTS', payload: claimRecord })
             dispatch({ type: 'RESET_ETH' })
             reset()
           }}
         />
       )
     }
-    return <Image w="150px" h="150px" src={CosmosLogo} />
+    return <Image w="150px" h="150px" src={EthLogo} />
   }
-  const buttonText = ethAccount
-    ? 'Next'
-    : address
-      ? 'Sign With Wallet'
-      : 'Connect Wallet'
-  console.log({ status, isSuccess, data })
+  const buttonText =
+    ethAccount && ethSignature
+      ? 'Next'
+      : address
+        ? 'Sign With Wallet'
+        : 'Connect Wallet'
+  const canSignTx = !address || (address && claimRecord?.amountClaim > 0)
+
   return (
     <>
       <Flex
@@ -123,7 +157,17 @@ export const Eth: React.FC<Props> = ({}) => {
           </Text>
         </Box>
         {renderWallet()}
-        <Button onClick={handleClick}>{buttonText}</Button>
+        <Text my="8px" height="16px" color="red.500">
+          {errorMessage}
+        </Text>
+        <Box w="100%">
+          <Button isDisabled={!canSignTx} onClick={handleClick}>
+            {buttonText}
+          </Button>
+          <Button onClick={skipClick} variant="outline" mt={2}>
+            Skip
+          </Button>
+        </Box>
       </Flex>
     </>
   )

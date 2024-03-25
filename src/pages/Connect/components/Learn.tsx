@@ -72,7 +72,7 @@ export const Learn: React.FC<Props> = ({}) => {
           <p>Even More Stuff</p>
         </Box>
       </Carousel>
-      <Button onClick={() => dispatch({ type: 'SET_STEP', payload: step + 1 })}>
+      <Button mt={5} onClick={() => dispatch({ type: 'SET_STEP', payload: step + 1 })}>
         Next
       </Button>
     </Flex>
