@@ -1,19 +1,24 @@
 import React, { useEffect, useState } from 'react'
-import { Button, Box, Text, Image, Flex } from '@chakra-ui/react'
+import { Button, Box, Text, Image, Flex, Link } from '@chakra-ui/react'
 import ArkeoLogo from '@assets/arkeo-symbol.svg'
 import { useConnect } from '../ConnectContext'
 import { toDecimal } from '@utils/functions'
 import { useClaim } from '@hooks/useClaim'
+import { Link as ReactRouterLink } from 'react-router-dom'
 
 type Props = {}
 
 export const Claim: React.FC<Props> = ({}) => {
+  const [errorMessage, setErrorMessage] = useState<string>('')
   const {
-    state: { step, totalClaimAmount },
+    state: {
+      step,
+      arkeoInfo: { amountClaim: arkeoAmountClaim },
+      thorInfo: { amountClaim: thorAmountClaim },
+      ethInfo: { amountClaim: ethAmountClaim },
+    },
     dispatch,
   } = useConnect()
-  const [errorMessage, setErrorMessage] = useState<string>('')
-
   const { claimRecord, isLoading, isSucceeded, error } = useClaim()
 
   useEffect(() => {
@@ -44,6 +49,8 @@ export const Claim: React.FC<Props> = ({}) => {
   const claimArkeo = () => {
     claimRecord()
   }
+  const totalClaimAmount = arkeoAmountClaim + thorAmountClaim + ethAmountClaim
+  const nothingToClaim = totalClaimAmount === 0
 
   return (
     <>
@@ -73,18 +80,28 @@ export const Claim: React.FC<Props> = ({}) => {
             Available to Claim
           </Text>
         </Flex>
-        <Box w="100%">
+        <Flex w="100%" alignItems="center" flexDirection="column">
           <Text height="16px" mb={'20px'} color="red.500">
             {errorMessage}
           </Text>
           <Button
             isLoading={isLoading}
-            isDisabled={totalClaimAmount == 0}
+            isDisabled={nothingToClaim}
             onClick={claimArkeo}
           >
             {totalClaimAmount > 0 ? 'Claim' : 'Nothing to Claim'}
           </Button>
-        </Box>
+          {nothingToClaim && (
+            <Link
+              pl="6px"
+              pt="6px"
+              as={ReactRouterLink}
+              onClick={() => dispatch({ type: 'RESET' })}
+            >
+              Try Again
+            </Link>
+          )}
+        </Flex>
       </Flex>
     </>
   )

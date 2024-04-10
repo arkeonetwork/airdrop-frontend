@@ -1,15 +1,31 @@
-import React from 'react';
-import type { BoxProps, ContainerProps } from '@chakra-ui/react';
-import { Box, Flex, Container, Text } from '@chakra-ui/react';
+import React from 'react'
+import type { BoxProps, ContainerProps } from '@chakra-ui/react'
+import { Box, Flex, Container, Text } from '@chakra-ui/react'
+import { ArrowBackIcon } from '@chakra-ui/icons'
 
 type Props = {
-  header?: string;
-  desc?: string;
-  containerProps?: ContainerProps;
-} & BoxProps;
+  back?: () => void
+  header?: string
+  desc?: string
+  containerProps?: ContainerProps
+} & BoxProps
 
-export const Panel: React.FC<Props> = ({ containerProps, children, header, desc, ...rest }) => (
-  <Flex flex="1" flexDir="column" justifyContent="center" width="650px" px={{ base: 4, md: 0 }} {...rest}>
+export const Panel: React.FC<Props> = ({
+  containerProps,
+  children,
+  header,
+  desc,
+  back,
+  ...rest
+}) => (
+  <Flex
+    flex="1"
+    flexDir="column"
+    justifyContent="center"
+    width="650px"
+    px={{ base: 4, md: 0 }}
+    {...rest}
+  >
     <Container
       borderRadius="24px"
       color="white"
@@ -20,16 +36,30 @@ export const Panel: React.FC<Props> = ({ containerProps, children, header, desc,
       backdropFilter="blur(50px)"
       maxW="auto"
       p="0"
-      height='inherit'
+      height="inherit"
       {...containerProps}
     >
       {header && (
         <Box pt="32px">
-          <Text background="purple" backgroundClip="text" fontSize="36px" fontWeight="900" lineHeight="normal" letterSpacing="-1.08px" pb="12px">
+          <Text
+            background="purple"
+            backgroundClip="text"
+            fontSize="36px"
+            fontWeight="900"
+            lineHeight="normal"
+            letterSpacing="-1.08px"
+            pb="12px"
+          >
             {header}
           </Text>
           {desc && (
-            <Text color="white" fontSize="18px" fontStyle="normal" fontWeight="400" lineHeight="28px">
+            <Text
+              color="white"
+              fontSize="18px"
+              fontStyle="normal"
+              fontWeight="400"
+              lineHeight="28px"
+            >
               {desc}
             </Text>
           )}
@@ -38,4 +68,4 @@ export const Panel: React.FC<Props> = ({ containerProps, children, header, desc,
       {children}
     </Container>
   </Flex>
-);
+)

@@ -1,20 +1,24 @@
-import React from 'react';
-import { Text, TextProps } from '@chakra-ui/react';
+import React from 'react'
+import { Text, TextProps } from '@chakra-ui/react'
 
 type Props = {
-  text?: string;
-  maxLength: number;
-} & TextProps;
+  text?: string
+  maxLength: number
+} & TextProps
 
-export const MiddleEllipsis: React.FC<Props> = ({ text, maxLength, ...rest }) => {
-  if(!text) return (<></>);
-  
+export const MiddleEllipsis: React.FC<Props> = ({
+  text,
+  maxLength,
+  ...rest
+}) => {
+  if (!text) return <></>
+
   if (text.length <= maxLength) {
-    return <Text {...rest}>{text}</Text>;
+    return <Text {...rest}>{text}</Text>
   }
 
-  const firstHalf = text.slice(0, maxLength / 2);
-  const secondHalf = text.slice(-maxLength / 2);
+  const firstHalf = text.slice(0, maxLength / 2 + 7)
+  const secondHalf = text.slice(-maxLength / 2)
 
   return (
     <Text {...rest}>
@@ -22,5 +26,5 @@ export const MiddleEllipsis: React.FC<Props> = ({ text, maxLength, ...rest }) =>
       {'...'}
       {secondHalf}
     </Text>
-  );
-};
+  )
+}
