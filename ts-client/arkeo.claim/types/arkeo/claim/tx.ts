@@ -7,12 +7,10 @@ export const protobufPackage = "arkeo.claim";
 
 export interface MsgClaimEth {
   creator: Uint8Array;
-  /** the adress the claim is for */
+  /** the address the claim is for */
   ethAddress: string;
   /** EIP712 signature that has to be signed by ethAddress */
   signature: string;
-  /** the tx hash of the thorchain tx that delegates the arkeo claim */
-  thorTx: string;
 }
 
 export interface MsgClaimEthResponse {
@@ -20,11 +18,20 @@ export interface MsgClaimEthResponse {
 
 export interface MsgClaimArkeo {
   creator: Uint8Array;
-  /** the tx hash of the thorchain tx that delegates the arkeo claim */
-  thorTx: string;
 }
 
 export interface MsgClaimArkeoResponse {
+}
+
+export interface MsgClaimThorchain {
+  creator: Uint8Array;
+  /** the address that is delegating the claim */
+  fromAddress: string;
+  /** the address to delegate the claim to */
+  toAddress: string;
+}
+
+export interface MsgClaimThorchainResponse {
 }
 
 export interface MsgTransferClaim {
@@ -46,7 +53,7 @@ export interface MsgAddClaimResponse {
 }
 
 function createBaseMsgClaimEth(): MsgClaimEth {
-  return { creator: new Uint8Array(), ethAddress: "", signature: "", thorTx: "" };
+  return { creator: new Uint8Array(), ethAddress: "", signature: "" };
 }
 
 export const MsgClaimEth = {
@@ -59,9 +66,6 @@ export const MsgClaimEth = {
     }
     if (message.signature !== "") {
       writer.uint32(26).string(message.signature);
-    }
-    if (message.thorTx !== "") {
-      writer.uint32(34).string(message.thorTx);
     }
     return writer;
   },
@@ -82,9 +86,6 @@ export const MsgClaimEth = {
         case 3:
           message.signature = reader.string();
           break;
-        case 4:
-          message.thorTx = reader.string();
-          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -98,7 +99,6 @@ export const MsgClaimEth = {
       creator: isSet(object.creator) ? bytesFromBase64(object.creator) : new Uint8Array(),
       ethAddress: isSet(object.ethAddress) ? String(object.ethAddress) : "",
       signature: isSet(object.signature) ? String(object.signature) : "",
-      thorTx: isSet(object.thorTx) ? String(object.thorTx) : "",
     };
   },
 
@@ -108,7 +108,6 @@ export const MsgClaimEth = {
       && (obj.creator = base64FromBytes(message.creator !== undefined ? message.creator : new Uint8Array()));
     message.ethAddress !== undefined && (obj.ethAddress = message.ethAddress);
     message.signature !== undefined && (obj.signature = message.signature);
-    message.thorTx !== undefined && (obj.thorTx = message.thorTx);
     return obj;
   },
 
@@ -117,7 +116,6 @@ export const MsgClaimEth = {
     message.creator = object.creator ?? new Uint8Array();
     message.ethAddress = object.ethAddress ?? "";
     message.signature = object.signature ?? "";
-    message.thorTx = object.thorTx ?? "";
     return message;
   },
 };
@@ -162,16 +160,13 @@ export const MsgClaimEthResponse = {
 };
 
 function createBaseMsgClaimArkeo(): MsgClaimArkeo {
-  return { creator: new Uint8Array(), thorTx: "" };
+  return { creator: new Uint8Array() };
 }
 
 export const MsgClaimArkeo = {
   encode(message: MsgClaimArkeo, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.creator.length !== 0) {
       writer.uint32(10).bytes(message.creator);
-    }
-    if (message.thorTx !== "") {
-      writer.uint32(18).string(message.thorTx);
     }
     return writer;
   },
@@ -186,9 +181,6 @@ export const MsgClaimArkeo = {
         case 1:
           message.creator = reader.bytes();
           break;
-        case 2:
-          message.thorTx = reader.string();
-          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -198,24 +190,19 @@ export const MsgClaimArkeo = {
   },
 
   fromJSON(object: any): MsgClaimArkeo {
-    return {
-      creator: isSet(object.creator) ? bytesFromBase64(object.creator) : new Uint8Array(),
-      thorTx: isSet(object.thorTx) ? String(object.thorTx) : "",
-    };
+    return { creator: isSet(object.creator) ? bytesFromBase64(object.creator) : new Uint8Array() };
   },
 
   toJSON(message: MsgClaimArkeo): unknown {
     const obj: any = {};
     message.creator !== undefined
       && (obj.creator = base64FromBytes(message.creator !== undefined ? message.creator : new Uint8Array()));
-    message.thorTx !== undefined && (obj.thorTx = message.thorTx);
     return obj;
   },
 
   fromPartial<I extends Exact<DeepPartial<MsgClaimArkeo>, I>>(object: I): MsgClaimArkeo {
     const message = createBaseMsgClaimArkeo();
     message.creator = object.creator ?? new Uint8Array();
-    message.thorTx = object.thorTx ?? "";
     return message;
   },
 };
@@ -255,6 +242,113 @@ export const MsgClaimArkeoResponse = {
 
   fromPartial<I extends Exact<DeepPartial<MsgClaimArkeoResponse>, I>>(_: I): MsgClaimArkeoResponse {
     const message = createBaseMsgClaimArkeoResponse();
+    return message;
+  },
+};
+
+function createBaseMsgClaimThorchain(): MsgClaimThorchain {
+  return { creator: new Uint8Array(), fromAddress: "", toAddress: "" };
+}
+
+export const MsgClaimThorchain = {
+  encode(message: MsgClaimThorchain, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.creator.length !== 0) {
+      writer.uint32(10).bytes(message.creator);
+    }
+    if (message.fromAddress !== "") {
+      writer.uint32(18).string(message.fromAddress);
+    }
+    if (message.toAddress !== "") {
+      writer.uint32(26).string(message.toAddress);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgClaimThorchain {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseMsgClaimThorchain();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.creator = reader.bytes();
+          break;
+        case 2:
+          message.fromAddress = reader.string();
+          break;
+        case 3:
+          message.toAddress = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgClaimThorchain {
+    return {
+      creator: isSet(object.creator) ? bytesFromBase64(object.creator) : new Uint8Array(),
+      fromAddress: isSet(object.fromAddress) ? String(object.fromAddress) : "",
+      toAddress: isSet(object.toAddress) ? String(object.toAddress) : "",
+    };
+  },
+
+  toJSON(message: MsgClaimThorchain): unknown {
+    const obj: any = {};
+    message.creator !== undefined
+      && (obj.creator = base64FromBytes(message.creator !== undefined ? message.creator : new Uint8Array()));
+    message.fromAddress !== undefined && (obj.fromAddress = message.fromAddress);
+    message.toAddress !== undefined && (obj.toAddress = message.toAddress);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<MsgClaimThorchain>, I>>(object: I): MsgClaimThorchain {
+    const message = createBaseMsgClaimThorchain();
+    message.creator = object.creator ?? new Uint8Array();
+    message.fromAddress = object.fromAddress ?? "";
+    message.toAddress = object.toAddress ?? "";
+    return message;
+  },
+};
+
+function createBaseMsgClaimThorchainResponse(): MsgClaimThorchainResponse {
+  return {};
+}
+
+export const MsgClaimThorchainResponse = {
+  encode(_: MsgClaimThorchainResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgClaimThorchainResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseMsgClaimThorchainResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(_: any): MsgClaimThorchainResponse {
+    return {};
+  },
+
+  toJSON(_: MsgClaimThorchainResponse): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<MsgClaimThorchainResponse>, I>>(_: I): MsgClaimThorchainResponse {
+    const message = createBaseMsgClaimThorchainResponse();
     return message;
   },
 };
@@ -478,6 +572,7 @@ export const MsgAddClaimResponse = {
 export interface Msg {
   ClaimEth(request: MsgClaimEth): Promise<MsgClaimEthResponse>;
   ClaimArkeo(request: MsgClaimArkeo): Promise<MsgClaimArkeoResponse>;
+  ClaimThorchain(request: MsgClaimThorchain): Promise<MsgClaimThorchainResponse>;
   TransferClaim(request: MsgTransferClaim): Promise<MsgTransferClaimResponse>;
   /** this line is used by starport scaffolding # proto/tx/rpc */
   AddClaim(request: MsgAddClaim): Promise<MsgAddClaimResponse>;
@@ -489,6 +584,7 @@ export class MsgClientImpl implements Msg {
     this.rpc = rpc;
     this.ClaimEth = this.ClaimEth.bind(this);
     this.ClaimArkeo = this.ClaimArkeo.bind(this);
+    this.ClaimThorchain = this.ClaimThorchain.bind(this);
     this.TransferClaim = this.TransferClaim.bind(this);
     this.AddClaim = this.AddClaim.bind(this);
   }
@@ -502,6 +598,12 @@ export class MsgClientImpl implements Msg {
     const data = MsgClaimArkeo.encode(request).finish();
     const promise = this.rpc.request("arkeo.claim.Msg", "ClaimArkeo", data);
     return promise.then((data) => MsgClaimArkeoResponse.decode(new _m0.Reader(data)));
+  }
+
+  ClaimThorchain(request: MsgClaimThorchain): Promise<MsgClaimThorchainResponse> {
+    const data = MsgClaimThorchain.encode(request).finish();
+    const promise = this.rpc.request("arkeo.claim.Msg", "ClaimThorchain", data);
+    return promise.then((data) => MsgClaimThorchainResponse.decode(new _m0.Reader(data)));
   }
 
   TransferClaim(request: MsgTransferClaim): Promise<MsgTransferClaimResponse> {

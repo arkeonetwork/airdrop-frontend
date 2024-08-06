@@ -2,10 +2,12 @@ import { useState } from 'react'
 import { bech32 } from 'bech32'
 import { Client } from '../../ts-client'
 import { useConnect } from '@src/pages/Connect/ConnectContext'
+import axios from 'axios'
 
 const isTestnet = import.meta.env.VITE_IS_TESTNET
 const arkeoEndpointRest = import.meta.env.VITE_ARKEO_ENDPOINT_REST
 const arkeoEndpointRpc = import.meta.env.VITE_ARKEO_ENDPOINT_RPC
+const thorServer = import.meta.env.VITE_THORCHAIN_SERVER
 
 export const useClaim = () => {
   const [isSucceeded, setIsSucceeded] = useState(false)
@@ -15,7 +17,6 @@ export const useClaim = () => {
     state: {
       arkeoInfo: { account: arkeoAccount },
       ethInfo: { account: ethAccount, amountClaim: ethAmount, signature },
-      thorInfo: { delegateTx: thorDelegateTx },
     },
   } = useConnect()
 
@@ -49,7 +50,6 @@ export const useClaim = () => {
           value: {
             ethAddress: ethAccount,
             signature,
-            thorTx: thorDelegateTx ?? '',
             creator,
           },
           memo: '',
@@ -58,7 +58,6 @@ export const useClaim = () => {
         result = await client.ArkeoClaim.tx.sendMsgClaimArkeo({
           value: {
             creator,
-            thorTx: thorDelegateTx ?? '',
           },
           memo: '',
         })
@@ -79,5 +78,25 @@ export const useClaim = () => {
     }
   }
 
-  return { claimRecord, isLoading, isSucceeded, error }
+  const delegateThorchain = async (txHash: string) => {
+    try {
+      if (!arkeoAccount) return
+
+      setIsLoading(true)
+      setError(null)
+
+      const { data } = await axios.post(`${thorServer}/claim`, {
+        txHash: txHash,
+      })
+      console.info({ data })
+
+    } catch (error) {
+      setError(error)
+      console.error(error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  return { claimRecord, delegateThorchain, isLoading, isSucceeded, error }
 }

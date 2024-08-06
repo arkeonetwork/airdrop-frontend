@@ -7,6 +7,7 @@ import { bech32 } from 'bech32'
 import { AssetValue, Chain, createSwapKit } from '@swapkit/sdk'
 import { xdefiWallet } from '@swapkit/wallet-xdefi'
 import { ConnectedAccount } from './ConnectedAccount'
+import { useClaim } from '@hooks/useClaim'
 
 type Props = {}
 
@@ -38,6 +39,7 @@ export const Thorchain: React.FC<Props> = () => {
   const { claimRecord } = useGetClaim({
     address: arkeoAccountDerivedFromThorchain ?? '',
   })
+  const { delegateThorchain } = useClaim()
 
   console.log({ arkeoAccountDerivedFromThorchain })
   useEffect(() => {
@@ -71,6 +73,7 @@ export const Thorchain: React.FC<Props> = () => {
     } else if (thorAccount) {
       const wallet = client.getWallet(Chain.THORChain)
       const walletAddress = client.getAddress(Chain.THORChain)
+
       if (walletAddress !== thorAccount) {
         setErrorMessage('Wallet address does not match')
         return
@@ -82,17 +85,21 @@ export const Thorchain: React.FC<Props> = () => {
       })
       console.log({ tx })
       dispatch({ type: 'SET_THORCHAIN_DELEGATE_TX', payload: tx })
+      delegateThorchain(tx)
       dispatch({ type: 'SET_STEP', payload: step + 1 })
     } else {
       const address = client.getAddress(Chain.THORChain)
       dispatch({ type: 'SET_THORCHAIN_ACCOUNT', payload: address })
       // TODO: SHOW ERROR WHEN CLAIM RECORD IS 0 AND DON'T PASS IN
 
-      // dispatch({
-      //   type: 'SET_THORCHAIN_DELEGATE_TX',
-      //   payload:
-      //     'FA2768AEB52AE0A378372B48B10C5B374B25E8B2005C702AAD441B813ED2F174',
-      // }) // for testing
+      dispatch({
+        type: 'SET_THORCHAIN_DELEGATE_TX',
+        payload:
+          'FA2768AEB52AE0A378372B48B10C5B374B25E8B2005C702AAD441B813ED2F174',
+      }) // for testing
+      delegateThorchain(
+        'FA2768AEB52AE0A378372B48B10C5B374B25E8B2005C702AAD441B813ED2F174',
+      )
     }
   }
 

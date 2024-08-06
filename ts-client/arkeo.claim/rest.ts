@@ -76,6 +76,8 @@ export type ClaimMsgClaimArkeoResponse = object;
 
 export type ClaimMsgClaimEthResponse = object;
 
+export type ClaimMsgClaimThorchainResponse = object;
+
 export type ClaimMsgTransferClaimResponse = object;
 
 export interface ClaimQueryClaimRecordResponse {

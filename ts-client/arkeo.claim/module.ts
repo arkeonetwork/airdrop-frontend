@@ -9,13 +9,13 @@ import { MissingWalletError } from "../helpers"
 import { Api } from "./rest";
 import { MsgAddClaim } from "./types/arkeo/claim/tx";
 import { MsgClaimArkeo } from "./types/arkeo/claim/tx";
-import { MsgClaimEth } from "./types/arkeo/claim/tx";
 import { MsgTransferClaim } from "./types/arkeo/claim/tx";
+import { MsgClaimEth } from "./types/arkeo/claim/tx";
 
 import { ClaimRecord as typeClaimRecord} from "./types"
 import { Params as typeParams} from "./types"
 
-export { MsgAddClaim, MsgClaimArkeo, MsgClaimEth, MsgTransferClaim };
+export { MsgAddClaim, MsgClaimArkeo, MsgTransferClaim, MsgClaimEth };
 
 type sendMsgAddClaimParams = {
   value: MsgAddClaim,
@@ -29,14 +29,14 @@ type sendMsgClaimArkeoParams = {
   memo?: string
 };
 
-type sendMsgClaimEthParams = {
-  value: MsgClaimEth,
+type sendMsgTransferClaimParams = {
+  value: MsgTransferClaim,
   fee?: StdFee,
   memo?: string
 };
 
-type sendMsgTransferClaimParams = {
-  value: MsgTransferClaim,
+type sendMsgClaimEthParams = {
+  value: MsgClaimEth,
   fee?: StdFee,
   memo?: string
 };
@@ -50,12 +50,12 @@ type msgClaimArkeoParams = {
   value: MsgClaimArkeo,
 };
 
-type msgClaimEthParams = {
-  value: MsgClaimEth,
-};
-
 type msgTransferClaimParams = {
   value: MsgTransferClaim,
+};
+
+type msgClaimEthParams = {
+  value: MsgClaimEth,
 };
 
 
@@ -116,20 +116,6 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 			}
 		},
 		
-		async sendMsgClaimEth({ value, fee, memo }: sendMsgClaimEthParams): Promise<DeliverTxResponse> {
-			if (!signer) {
-					throw new Error('TxClient:sendMsgClaimEth: Unable to sign Tx. Signer is not present.')
-			}
-			try {			
-				const { address } = (await signer.getAccounts())[0]; 
-				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgClaimEth({ value: MsgClaimEth.fromPartial(value) })
-				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
-			} catch (e: any) {
-				throw new Error('TxClient:sendMsgClaimEth: Could not broadcast Tx: '+ e.message)
-			}
-		},
-		
 		async sendMsgTransferClaim({ value, fee, memo }: sendMsgTransferClaimParams): Promise<DeliverTxResponse> {
 			if (!signer) {
 					throw new Error('TxClient:sendMsgTransferClaim: Unable to sign Tx. Signer is not present.')
@@ -141,6 +127,20 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
 			} catch (e: any) {
 				throw new Error('TxClient:sendMsgTransferClaim: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
+		async sendMsgClaimEth({ value, fee, memo }: sendMsgClaimEthParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgClaimEth: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgClaimEth({ value: MsgClaimEth.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgClaimEth: Could not broadcast Tx: '+ e.message)
 			}
 		},
 		
@@ -161,19 +161,19 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 			}
 		},
 		
-		msgClaimEth({ value }: msgClaimEthParams): EncodeObject {
-			try {
-				return { typeUrl: "/arkeo.claim.MsgClaimEth", value: MsgClaimEth.fromPartial( value ) }  
-			} catch (e: any) {
-				throw new Error('TxClient:MsgClaimEth: Could not create message: ' + e.message)
-			}
-		},
-		
 		msgTransferClaim({ value }: msgTransferClaimParams): EncodeObject {
 			try {
 				return { typeUrl: "/arkeo.claim.MsgTransferClaim", value: MsgTransferClaim.fromPartial( value ) }  
 			} catch (e: any) {
 				throw new Error('TxClient:MsgTransferClaim: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgClaimEth({ value }: msgClaimEthParams): EncodeObject {
+			try {
+				return { typeUrl: "/arkeo.claim.MsgClaimEth", value: MsgClaimEth.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgClaimEth: Could not create message: ' + e.message)
 			}
 		},
 		
