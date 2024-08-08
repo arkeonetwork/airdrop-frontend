@@ -17,6 +17,7 @@ export const useClaim = () => {
     state: {
       arkeoInfo: { account: arkeoAccount },
       ethInfo: { account: ethAccount, amountClaim: ethAmount, signature },
+      thorInfo: { amountClaim: thorAmount, delegateTx: thorDelegateTx },
     },
   } = useConnect()
 
@@ -27,6 +28,13 @@ export const useClaim = () => {
       setIsLoading(true)
       setError(null)
       setIsSucceeded(false)
+
+      if (thorAmount > 0 && thorDelegateTx) {
+        const { data } = await axios.post(`${thorServer}/claim`, {
+          txHash: thorDelegateTx,
+        })
+      }
+
       const client = new Client({
         apiURL: arkeoEndpointRest,
         rpcURL: arkeoEndpointRpc,
@@ -78,25 +86,5 @@ export const useClaim = () => {
     }
   }
 
-  const delegateThorchain = async (txHash: string) => {
-    try {
-      if (!arkeoAccount) return
-
-      setIsLoading(true)
-      setError(null)
-
-      const { data } = await axios.post(`${thorServer}/claim`, {
-        txHash: txHash,
-      })
-      console.info({ data })
-
-    } catch (error) {
-      setError(error)
-      console.error(error)
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
-  return { claimRecord, delegateThorchain, isLoading, isSucceeded, error }
+  return { claimRecord, isLoading, isSucceeded, error }
 }
