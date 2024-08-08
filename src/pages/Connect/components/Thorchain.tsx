@@ -129,7 +129,7 @@ export const Thorchain: React.FC<Props> = () => {
       if (!thorAccount) {
         throw new Error('Invalid Tx Hash')
       }
-      dispatch({ type: 'SET_THORCHAIN_ACCOUNT', payload: thorAccount })
+      dispatch({ type: 'SET_THORCHAIN_DELEGATE_TX', payload: hashValue })
       dispatch({ type: 'SET_STEP', payload: step + 1 })
     } catch (e) {
       setErrorMessage('Invalid Transaction')
@@ -138,7 +138,7 @@ export const Thorchain: React.FC<Props> = () => {
 
   const skipClick = async () => {
     setErrorMessage('')
-    if (!thorAccount) {
+    if (!thorAccount || thorAmountClaim === 0) {
       dispatch({ type: 'SET_STEP', payload: step + 1 })
       dispatch({ type: 'RESET_THOR' })
     } else if (!enterHash) {
@@ -189,16 +189,15 @@ export const Thorchain: React.FC<Props> = () => {
     return <Image w="150px" h="150px" src={CosmosLogo} />
   }
 
-  const shouldEnterHash = !enterHash && thorAmountClaim > 0
   const buttonText =
     thorDelegateTx || enterHash
       ? 'Next'
       : thorAccount
         ? 'Broadcast Transaction'
         : 'Connect Wallet'
-  const skipText = !thorAccount
+  const skipText = !thorAccount || thorAmountClaim === 0
     ? 'Skip'
-    : shouldEnterHash
+    : !enterHash
       ? 'Enter Tx Hash'
       : 'Back'
   return (
