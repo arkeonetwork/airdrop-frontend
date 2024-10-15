@@ -553,10 +553,6 @@ export const MsgAddClaimResponse: MessageFns<MsgAddClaimResponse> = {
   },
 };
 
-function createBaseMsgClaimThorchain(): MsgClaimThorchain {
-  return { creator: "", fromAddress: "", toAddress: "" };
-}
-
 export const MsgClaimThorchain: MessageFns<MsgClaimThorchain> = {
   encode(message: MsgClaimThorchain, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
     if (message.creator !== "") {

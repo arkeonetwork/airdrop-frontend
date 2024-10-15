@@ -41,7 +41,7 @@ createWeb3Modal({
 let root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
 
 const localArkeo: Chain = {
-  chain_name: 'localarkeo',
+  chain_name: 'arkeo',
   status: 'live',
   network_type: 'testnet',
   chain_id: 'arkeo',
@@ -50,7 +50,7 @@ const localArkeo: Chain = {
   slip44: 118,
 }
 const localArkeoAssets: AssetList = {
-  chain_name: 'localarkeo',
+  chain_name: 'arkeo',
   assets: [
     {
       name: 'Arkeo',

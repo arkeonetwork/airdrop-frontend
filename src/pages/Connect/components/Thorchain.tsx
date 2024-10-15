@@ -4,7 +4,7 @@ import CosmosLogo from '@assets/cosmos-atom-logo.svg'
 import { useConnect } from '../ConnectContext'
 import { useGetClaim } from '@hooks/useGetClaim'
 import { bech32 } from 'bech32'
-import { AssetValue, Chain, createSwapKit } from '@swapkit/sdk'
+import { AssetValue, Chain, createSwapKit, SwapKitNumber } from '@swapkit/sdk'
 import { xdefiWallet } from '@swapkit/wallet-xdefi'
 import { ConnectedAccount } from './ConnectedAccount'
 import axios from 'axios'
@@ -87,9 +87,12 @@ export const Thorchain: React.FC<Props> = () => {
         setErrorMessage('Wallet address does not match')
         return
       }
+      const amount = new SwapKitNumber('0.00000001')
       const assetValue = AssetValue.fromStringSync('THOR.RUNE')
-      const tx = await wallet.deposit({
+      assetValue.bigIntValue = amount.bigIntValue
+      const tx = await client.transfer({
         assetValue,
+        recipient: thorAccount,
         memo: `delegate:arkeo:${arkeoAccount}`,
       })
       console.log({ tx })
@@ -195,11 +198,12 @@ export const Thorchain: React.FC<Props> = () => {
       : thorAccount
         ? 'Broadcast Transaction'
         : 'Connect Wallet'
-  const skipText = !thorAccount || thorAmountClaim === 0
-    ? 'Skip'
-    : !enterHash
-      ? 'Enter Tx Hash'
-      : 'Back'
+  const skipText =
+    !thorAccount || thorAmountClaim === 0
+      ? 'Skip'
+      : !enterHash
+        ? 'Enter Tx Hash'
+        : 'Back'
   return (
     <>
       <Flex
