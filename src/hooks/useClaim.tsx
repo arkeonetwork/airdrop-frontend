@@ -3,6 +3,7 @@ import { bech32 } from 'bech32'
 import { Client } from '../../ts-client'
 import { useConnect } from '@src/pages/Connect/ConnectContext'
 import axios from 'axios'
+import { coins } from '@cosmjs/proto-signing'
 
 const isTestnet = import.meta.env.VITE_IS_TESTNET
 const arkeoEndpointRest = import.meta.env.VITE_ARKEO_ENDPOINT_REST
@@ -58,7 +59,11 @@ export const useClaim = () => {
           value: {
             creator: arkeoAccount,
             ethAddress: ethAccount,
-            signature: signature
+            signature: signature,
+          },
+          fee: {
+            amount: coins(20, 'uarkeo'),
+            gas: '200000',
           },
           memo: '',
         })
@@ -66,6 +71,10 @@ export const useClaim = () => {
         result = await client.ArkeoClaim.tx.sendMsgClaimArkeo({
           value: {
             creator: arkeoAccount,
+          },
+          fee: {
+            amount: coins(20, 'uarkeo'),
+            gas: '200000',
           },
           memo: '',
         })

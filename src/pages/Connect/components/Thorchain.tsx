@@ -74,13 +74,6 @@ export const Thorchain: React.FC<Props> = () => {
     } else if (thorDelegateTx) {
       dispatch({ type: 'SET_STEP', payload: step + 1 })
     } else if (thorAccount) {
-      // dispatch({
-      //   type: 'SET_THORCHAIN_DELEGATE_TX',
-      //   payload:
-      //     'FA2768AEB52AE0A378372B48B10C5B374B25E8B2005C702AAD441B813ED2F174',
-      // }) // for testing
-
-      const wallet = client.getWallet(Chain.THORChain)
       const walletAddress = client.getAddress(Chain.THORChain)
 
       if (walletAddress !== thorAccount) {
@@ -106,15 +99,22 @@ export const Thorchain: React.FC<Props> = () => {
 
   const setTxHash = async () => {
     try {
-      const apiUrl = `https://thornode.ninerealms.com/thorchain/tx/${hashValue}`
+      const apiUrl = `https://vanaheimex.com/actions?txid=${hashValue}`
       const response = await axios.get(apiUrl)
       const data = response.data
-      const thorAccount = data?.observed_tx?.tx?.from_address
+      const { actions } = data as any
+      const {
+        in: inbound,
+        metadata: {
+          send: { memo },
+        },
+      } = actions[0]
+      const thorAccount = inbound[0].address
+      console.log({ thorAccount })
       if (!thorAccount) {
         throw new Error('Invalid Tx Hash')
       }
 
-      const memo = data?.observed_tx?.tx?.memo
       const split = memo.split(':')
       const delegate = split[0]
       const arkeo = split[1]
