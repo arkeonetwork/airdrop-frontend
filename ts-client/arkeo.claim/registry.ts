@@ -34,8 +34,7 @@ const msgTypes: Array<[string, GeneratedType]>  = [
     ["/arkeo.claim.Params", Params],
     ["/arkeo.claim.QueryClaimRecordRequest", QueryClaimRecordRequest],
     ["/arkeo.claim.MsgTransferClaim", MsgTransferClaim],
-    ["/arkeo.claim.MsgAddClaimResponse", MsgAddClaimResponse],
-    
+    ["/arkeo.claim.MsgAddClaimResponse", MsgAddClaimResponse],    
 ];
 
 export { msgTypes }

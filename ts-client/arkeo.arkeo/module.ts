@@ -112,8 +112,8 @@ type sendMsgOpenContractResponseParams = {
   memo?: string
 };
 
-type sendMsgClaimContractIncomeParams = {
-  value: MsgClaimContractIncome,
+type sendMsgSetVersionParams = {
+  value: MsgSetVersion,
   fee?: StdFee,
   memo?: string
 };
@@ -502,7 +502,6 @@ interface TxClientOptions {
 export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "http://localhost:26657", prefix: "cosmos" }) => {
 
   return {
-		
 		async sendMsgCloseContractResponse({ value, fee, memo }: sendMsgCloseContractResponseParams): Promise<DeliverTxResponse> {
 			if (!signer) {
 					throw new Error('TxClient:sendMsgCloseContractResponse: Unable to sign Tx. Signer is not present.')
@@ -1172,11 +1171,11 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 			}
 		},
 		
-		msgClaimContractIncome({ value }: msgClaimContractIncomeParams): EncodeObject {
+		msgSetVersion({ value }: msgSetVersionParams): EncodeObject {
 			try {
-				return { typeUrl: "/arkeo.arkeo.MsgClaimContractIncome", value: MsgClaimContractIncome.fromPartial( value ) }  
+				return { typeUrl: "/arkeo.arkeo.MsgSetVersion", value: MsgSetVersion.fromPartial( value ) }  
 			} catch (e: any) {
-				throw new Error('TxClient:MsgClaimContractIncome: Could not create message: ' + e.message)
+				throw new Error('TxClient:MsgSetVersion: Could not create message: ' + e.message)
 			}
 		},
 		
@@ -1270,9 +1269,9 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 		
 		msgSetVersion({ value }: msgSetVersionParams): EncodeObject {
 			try {
-				return { typeUrl: "/arkeo.arkeo.MsgSetVersion", value: MsgSetVersion.fromPartial( value ) }  
+				return { typeUrl: "/arkeo.arkeo.MsgClaimContractIncome", value: MsgClaimContractIncome.fromPartial( value ) }  
 			} catch (e: any) {
-				throw new Error('TxClient:MsgSetVersion: Could not create message: ' + e.message)
+				throw new Error('TxClient:MsgClaimContractIncome: Could not create message: ' + e.message)
 			}
 		},
 		

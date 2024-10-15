@@ -28,6 +28,17 @@ export interface MsgClaimArkeo {
 export interface MsgClaimArkeoResponse {
 }
 
+export interface MsgClaimThorchain {
+  creator: Uint8Array;
+  /** the address that is delegating the claim */
+  fromAddress: string;
+  /** the address to delegate the claim to */
+  toAddress: string;
+}
+
+export interface MsgClaimThorchainResponse {
+}
+
 export interface MsgTransferClaim {
   creator: string;
   toAddress: string;
@@ -285,6 +296,113 @@ export const MsgClaimArkeoResponse: MessageFns<MsgClaimArkeoResponse> = {
   },
   fromPartial<I extends Exact<DeepPartial<MsgClaimArkeoResponse>, I>>(_: I): MsgClaimArkeoResponse {
     const message = createBaseMsgClaimArkeoResponse();
+    return message;
+  },
+};
+
+function createBaseMsgClaimThorchain(): MsgClaimThorchain {
+  return { creator: new Uint8Array(), fromAddress: "", toAddress: "" };
+}
+
+export const MsgClaimThorchain = {
+  encode(message: MsgClaimThorchain, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.creator.length !== 0) {
+      writer.uint32(10).bytes(message.creator);
+    }
+    if (message.fromAddress !== "") {
+      writer.uint32(18).string(message.fromAddress);
+    }
+    if (message.toAddress !== "") {
+      writer.uint32(26).string(message.toAddress);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgClaimThorchain {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseMsgClaimThorchain();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.creator = reader.bytes();
+          break;
+        case 2:
+          message.fromAddress = reader.string();
+          break;
+        case 3:
+          message.toAddress = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgClaimThorchain {
+    return {
+      creator: isSet(object.creator) ? bytesFromBase64(object.creator) : new Uint8Array(),
+      fromAddress: isSet(object.fromAddress) ? String(object.fromAddress) : "",
+      toAddress: isSet(object.toAddress) ? String(object.toAddress) : "",
+    };
+  },
+
+  toJSON(message: MsgClaimThorchain): unknown {
+    const obj: any = {};
+    message.creator !== undefined
+      && (obj.creator = base64FromBytes(message.creator !== undefined ? message.creator : new Uint8Array()));
+    message.fromAddress !== undefined && (obj.fromAddress = message.fromAddress);
+    message.toAddress !== undefined && (obj.toAddress = message.toAddress);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<MsgClaimThorchain>, I>>(object: I): MsgClaimThorchain {
+    const message = createBaseMsgClaimThorchain();
+    message.creator = object.creator ?? new Uint8Array();
+    message.fromAddress = object.fromAddress ?? "";
+    message.toAddress = object.toAddress ?? "";
+    return message;
+  },
+};
+
+function createBaseMsgClaimThorchainResponse(): MsgClaimThorchainResponse {
+  return {};
+}
+
+export const MsgClaimThorchainResponse = {
+  encode(_: MsgClaimThorchainResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgClaimThorchainResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseMsgClaimThorchainResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(_: any): MsgClaimThorchainResponse {
+    return {};
+  },
+
+  toJSON(_: MsgClaimThorchainResponse): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<MsgClaimThorchainResponse>, I>>(_: I): MsgClaimThorchainResponse {
+    const message = createBaseMsgClaimThorchainResponse();
     return message;
   },
 };
@@ -689,6 +807,7 @@ export const MsgClaimThorchainResponse: MessageFns<MsgClaimThorchainResponse> = 
 export interface Msg {
   ClaimEth(request: MsgClaimEth): Promise<MsgClaimEthResponse>;
   ClaimArkeo(request: MsgClaimArkeo): Promise<MsgClaimArkeoResponse>;
+  ClaimThorchain(request: MsgClaimThorchain): Promise<MsgClaimThorchainResponse>;
   TransferClaim(request: MsgTransferClaim): Promise<MsgTransferClaimResponse>;
   AddClaim(request: MsgAddClaim): Promise<MsgAddClaimResponse>;
   ClaimThorchain(request: MsgClaimThorchain): Promise<MsgClaimThorchainResponse>;
@@ -703,6 +822,7 @@ export class MsgClientImpl implements Msg {
     this.rpc = rpc;
     this.ClaimEth = this.ClaimEth.bind(this);
     this.ClaimArkeo = this.ClaimArkeo.bind(this);
+    this.ClaimThorchain = this.ClaimThorchain.bind(this);
     this.TransferClaim = this.TransferClaim.bind(this);
     this.AddClaim = this.AddClaim.bind(this);
     this.ClaimThorchain = this.ClaimThorchain.bind(this);
@@ -717,6 +837,12 @@ export class MsgClientImpl implements Msg {
     const data = MsgClaimArkeo.encode(request).finish();
     const promise = this.rpc.request(this.service, "ClaimArkeo", data);
     return promise.then((data) => MsgClaimArkeoResponse.decode(new BinaryReader(data)));
+  }
+
+  ClaimThorchain(request: MsgClaimThorchain): Promise<MsgClaimThorchainResponse> {
+    const data = MsgClaimThorchain.encode(request).finish();
+    const promise = this.rpc.request("arkeo.claim.Msg", "ClaimThorchain", data);
+    return promise.then((data) => MsgClaimThorchainResponse.decode(new _m0.Reader(data)));
   }
 
   TransferClaim(request: MsgTransferClaim): Promise<MsgTransferClaimResponse> {

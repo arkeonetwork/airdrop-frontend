@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Button, Box, Text, Image, Flex } from '@chakra-ui/react'
+import { Button, Box, Text, Image, Flex, Input } from '@chakra-ui/react'
 import CosmosLogo from '@assets/cosmos-atom-logo.svg'
 import { useConnect } from '../ConnectContext'
 import { useGetClaim } from '@hooks/useGetClaim'
@@ -7,6 +7,7 @@ import { bech32 } from 'bech32'
 import { AssetValue, Chain, createSwapKit } from '@swapkit/sdk'
 import { xdefiWallet } from '@swapkit/wallet-xdefi'
 import { ConnectedAccount } from './ConnectedAccount'
+import axios from 'axios'
 
 type Props = {}
 
@@ -14,6 +15,10 @@ const isTestnet = import.meta.env.VITE_IS_TESTNET
 
 export const Thorchain: React.FC<Props> = () => {
   const [errorMessage, setErrorMessage] = useState<string>('')
+  const [enterHash, setEnterHash] = useState(false)
+  const [hashValue, setHashValue] = React.useState('')
+  const prefix = isTestnet ? 'tarkeo' : 'arkeo'
+
   const [
     arkeoAccountDerivedFromThorchain,
     setArkeoAccountDerivedFromThorchain,
@@ -39,10 +44,8 @@ export const Thorchain: React.FC<Props> = () => {
     address: arkeoAccountDerivedFromThorchain ?? '',
   })
 
-  console.log({ arkeoAccountDerivedFromThorchain })
   useEffect(() => {
     if (!thorAccount) return
-    const prefix = isTestnet ? 'tarkeo' : 'arkeo'
     const words = bech32.decode(thorAccount).words
     const arkeoAccount = bech32.encode(prefix, words)
     setArkeoAccountDerivedFromThorchain(arkeoAccount)
@@ -58,7 +61,7 @@ export const Thorchain: React.FC<Props> = () => {
     }
   }, [thorAccount, claimRecord])
 
-  const handleClick = async () => {
+  const broadcastTx = async () => {
     try {
       setErrorMessage('')
       await client.connectXDEFI(connectChains)
@@ -66,11 +69,20 @@ export const Thorchain: React.FC<Props> = () => {
       setErrorMessage('No wallet found, please install xDefi')
       return
     }
-    if (thorDelegateTx) {
+    if (enterHash) {
+      setTxHash()
+    } else if (thorDelegateTx) {
       dispatch({ type: 'SET_STEP', payload: step + 1 })
     } else if (thorAccount) {
+      // dispatch({
+      //   type: 'SET_THORCHAIN_DELEGATE_TX',
+      //   payload:
+      //     'FA2768AEB52AE0A378372B48B10C5B374B25E8B2005C702AAD441B813ED2F174',
+      // }) // for testing
+
       const wallet = client.getWallet(Chain.THORChain)
       const walletAddress = client.getAddress(Chain.THORChain)
+
       if (walletAddress !== thorAccount) {
         setErrorMessage('Wallet address does not match')
         return
@@ -86,48 +98,108 @@ export const Thorchain: React.FC<Props> = () => {
     } else {
       const address = client.getAddress(Chain.THORChain)
       dispatch({ type: 'SET_THORCHAIN_ACCOUNT', payload: address })
-      // TODO: SHOW ERROR WHEN CLAIM RECORD IS 0 AND DON'T PASS IN
+    }
+  }
 
-      // dispatch({
-      //   type: 'SET_THORCHAIN_DELEGATE_TX',
-      //   payload:
-      //     'FA2768AEB52AE0A378372B48B10C5B374B25E8B2005C702AAD441B813ED2F174',
-      // }) // for testing
+  const setTxHash = async () => {
+    try {
+      const apiUrl = `https://thornode.ninerealms.com/thorchain/tx/${hashValue}`
+      const response = await axios.get(apiUrl)
+      const data = response.data
+      const thorAccount = data?.observed_tx?.tx?.from_address
+      if (!thorAccount) {
+        throw new Error('Invalid Tx Hash')
+      }
+
+      const memo = data?.observed_tx?.tx?.memo
+      const split = memo.split(':')
+      const delegate = split[0]
+      const arkeo = split[1]
+      const toAddress = split[2]
+      const decodedToAddress = bech32.decode(toAddress)
+
+      if (
+        arkeo !== 'arkeo' &&
+        delegate !== 'delegate' &&
+        decodedToAddress.prefix !== prefix
+      ) {
+        throw new Error('Invalid Tx Memo')
+      }
+
+      if (!thorAccount) {
+        throw new Error('Invalid Tx Hash')
+      }
+      dispatch({ type: 'SET_THORCHAIN_DELEGATE_TX', payload: hashValue })
+      dispatch({ type: 'SET_STEP', payload: step + 1 })
+    } catch (e) {
+      setErrorMessage('Invalid Transaction')
     }
   }
 
   const skipClick = async () => {
-    dispatch({ type: 'SET_STEP', payload: step + 1 })
-    dispatch({ type: 'RESET_THOR' })
+    setErrorMessage('')
+    if (!thorAccount || thorAmountClaim === 0) {
+      dispatch({ type: 'SET_STEP', payload: step + 1 })
+      dispatch({ type: 'RESET_THOR' })
+    } else if (!enterHash) {
+      setEnterHash(true)
+    } else {
+      setEnterHash(false)
+    }
   }
 
   const renderWallet = () => {
     if (thorAccount) {
-      return (
-        <ConnectedAccount
-          width="100%"
-          my={0}
-          amount={claimRecord?.amountClaim ?? '0'}
-          account={thorAccount}
-          name={'Thorchain'}
-          disconnect={
-            !thorDelegateTx
-              ? () => {
-                  dispatch({ type: 'RESET_THOR' })
-                }
-              : undefined
-          }
-        />
-      )
+      if (!enterHash) {
+        return (
+          <Box w="100%">
+            <ConnectedAccount
+              width="100%"
+              my={0}
+              amount={claimRecord?.amountClaim ?? '0'}
+              account={thorAccount}
+              name={'Thorchain'}
+              disconnect={
+                !thorDelegateTx
+                  ? () => {
+                      dispatch({ type: 'RESET_THOR' })
+                    }
+                  : undefined
+              }
+            />
+          </Box>
+        )
+      } else {
+        return (
+          <>
+            <Text>
+              Enter your Thorchain TX hash that contains your delegation
+              transaction. The memo should be in the format of <br />
+              <b>delegate:arkeo:{'{txhash}'}</b>
+            </Text>
+            <Input
+              value={hashValue}
+              onChange={(event) => setHashValue(event.target.value)}
+              placeholder="Enter Your Transaction Hash"
+            />
+          </>
+        )
+      }
     }
     return <Image w="150px" h="150px" src={CosmosLogo} />
   }
 
-  const buttonText = thorDelegateTx
-    ? 'Next'
-    : thorAccount
-      ? 'Broadcast Transaction'
-      : 'Connect Wallet'
+  const buttonText =
+    thorDelegateTx || enterHash
+      ? 'Next'
+      : thorAccount
+        ? 'Broadcast Transaction'
+        : 'Connect Wallet'
+  const skipText = !thorAccount || thorAmountClaim === 0
+    ? 'Skip'
+    : !enterHash
+      ? 'Enter Tx Hash'
+      : 'Back'
   return (
     <>
       <Flex
@@ -145,19 +217,20 @@ export const Thorchain: React.FC<Props> = () => {
           </Text>
         </Box>
         {renderWallet()}
+
         <Text my="8px" height="16px" color="red.500">
           {errorMessage}
         </Text>
         <Box w="100%">
           <Button
             isDisabled={!!thorAccount && thorAmountClaim === 0}
-            onClick={handleClick}
+            onClick={broadcastTx}
           >
             {buttonText}
           </Button>
           {!thorDelegateTx && (
             <Button onClick={skipClick} variant="outline" mt={2}>
-              Skip
+              {skipText}
             </Button>
           )}
         </Box>

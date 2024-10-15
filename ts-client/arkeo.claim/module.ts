@@ -348,7 +348,7 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 		
 		async sendMsgClaimEth({ value, fee, memo }: sendMsgClaimEthParams): Promise<DeliverTxResponse> {
 			if (!signer) {
-					throw new Error('TxClient:sendMsgClaimEth: Unable to sign Tx. Signer is not present.')
+					throw new Error('TxClient:sendMsgTransferClaim: Unable to sign Tx. Signer is not present.')
 			}
 			try {			
 				const { address } = (await signer.getAccounts())[0]; 
@@ -356,7 +356,7 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 				let msg = this.msgClaimEth({ value: MsgClaimEth.fromPartial(value) })
 				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
 			} catch (e: any) {
-				throw new Error('TxClient:sendMsgClaimEth: Could not broadcast Tx: '+ e.message)
+				throw new Error('TxClient:sendMsgTransferClaim: Could not broadcast Tx: '+ e.message)
 			}
 		},
 		
@@ -446,7 +446,7 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 		
 		async sendMsgTransferClaim({ value, fee, memo }: sendMsgTransferClaimParams): Promise<DeliverTxResponse> {
 			if (!signer) {
-					throw new Error('TxClient:sendMsgTransferClaim: Unable to sign Tx. Signer is not present.')
+					throw new Error('TxClient:sendMsgClaimEth: Unable to sign Tx. Signer is not present.')
 			}
 			try {			
 				const { address } = (await signer.getAccounts())[0]; 
@@ -454,7 +454,7 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 				let msg = this.msgTransferClaim({ value: MsgTransferClaim.fromPartial(value) })
 				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
 			} catch (e: any) {
-				throw new Error('TxClient:sendMsgTransferClaim: Could not broadcast Tx: '+ e.message)
+				throw new Error('TxClient:sendMsgClaimEth: Could not broadcast Tx: '+ e.message)
 			}
 		},
 		
@@ -539,9 +539,9 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 		
 		msgClaimEth({ value }: msgClaimEthParams): EncodeObject {
 			try {
-				return { typeUrl: "/arkeo.claim.MsgClaimEth", value: MsgClaimEth.fromPartial( value ) }  
+				return { typeUrl: "/arkeo.claim.MsgTransferClaim", value: MsgTransferClaim.fromPartial( value ) }  
 			} catch (e: any) {
-				throw new Error('TxClient:MsgClaimEth: Could not create message: ' + e.message)
+				throw new Error('TxClient:MsgTransferClaim: Could not create message: ' + e.message)
 			}
 		},
 		
@@ -595,9 +595,9 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 		
 		msgTransferClaim({ value }: msgTransferClaimParams): EncodeObject {
 			try {
-				return { typeUrl: "/arkeo.claim.MsgTransferClaim", value: MsgTransferClaim.fromPartial( value ) }  
+				return { typeUrl: "/arkeo.claim.MsgClaimEth", value: MsgClaimEth.fromPartial( value ) }  
 			} catch (e: any) {
-				throw new Error('TxClient:MsgTransferClaim: Could not create message: ' + e.message)
+				throw new Error('TxClient:MsgClaimEth: Could not create message: ' + e.message)
 			}
 		},
 		

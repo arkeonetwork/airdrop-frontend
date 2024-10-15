@@ -84,8 +84,7 @@ const msgTypes: Array<[string, GeneratedType]>  = [
     ["/arkeo.arkeo.MsgSetVersionResponse", MsgSetVersionResponse],
     ["/arkeo.arkeo.ProtoStrings", ProtoStrings],
     ["/arkeo.arkeo.QueryFetchContractResponse", QueryFetchContractResponse],
-    ["/arkeo.arkeo.QueryAllContractRequest", QueryAllContractRequest],
-    
+    ["/arkeo.arkeo.QueryAllContractRequest", QueryAllContractRequest],    
 ];
 
 export { msgTypes }

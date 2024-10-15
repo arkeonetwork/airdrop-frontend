@@ -2,10 +2,12 @@ import { useState } from 'react'
 import { bech32 } from 'bech32'
 import { Client } from '../../ts-client'
 import { useConnect } from '@src/pages/Connect/ConnectContext'
+import axios from 'axios'
 
 const isTestnet = import.meta.env.VITE_IS_TESTNET
 const arkeoEndpointRest = import.meta.env.VITE_ARKEO_ENDPOINT_REST
 const arkeoEndpointRpc = import.meta.env.VITE_ARKEO_ENDPOINT_RPC
+const thorServer = import.meta.env.VITE_THORCHAIN_SERVER
 
 export const useClaim = () => {
   const [isSucceeded, setIsSucceeded] = useState(false)
@@ -15,7 +17,7 @@ export const useClaim = () => {
     state: {
       arkeoInfo: { account: arkeoAccount },
       ethInfo: { account: ethAccount, amountClaim: ethAmount, signature },
-      thorInfo: { delegateTx: thorDelegateTx },
+      thorInfo: { amountClaim: thorAmount, delegateTx: thorDelegateTx },
     },
   } = useConnect()
 
@@ -26,6 +28,13 @@ export const useClaim = () => {
       setIsLoading(true)
       setError(null)
       setIsSucceeded(false)
+
+      if (thorAmount > 0 && thorDelegateTx) {
+        const { data } = await axios.post(`${thorServer}/claim`, {
+          txHash: thorDelegateTx,
+        })
+      }
+
       const client = new Client({
         apiURL: arkeoEndpointRest,
         rpcURL: arkeoEndpointRpc,
