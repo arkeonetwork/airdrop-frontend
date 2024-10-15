@@ -56,16 +56,16 @@ export const useClaim = () => {
         }
         result = await client.ArkeoClaim.tx.sendMsgClaimEth({
           value: {
+            creator: arkeoAccount,
             ethAddress: ethAccount,
-            signature,
-            creator,
+            signature: signature
           },
           memo: '',
         })
       } else {
         result = await client.ArkeoClaim.tx.sendMsgClaimArkeo({
           value: {
-            creator,
+            creator: arkeoAccount,
           },
           memo: '',
         })

@@ -2,8 +2,8 @@
 import { Registry } from '@cosmjs/proto-signing'
 import { IgniteClient } from "./client";
 import { MissingWalletError } from "./helpers";
-import { Module as ArkeoArkeo, msgTypes as ArkeoArkeoMsgTypes } from './arkeo.arkeo'
-import { Module as ArkeoClaim, msgTypes as ArkeoClaimMsgTypes } from './arkeo.claim'
+import { IgntModule as ArkeoArkeo, msgTypes as ArkeoArkeoMsgTypes } from './arkeo.arkeo'
+import { IgntModule as ArkeoClaim, msgTypes as ArkeoClaimMsgTypes } from './arkeo.claim'
 import { Module as CosmosAuthV1Beta1, msgTypes as CosmosAuthV1Beta1MsgTypes } from './cosmos.auth.v1beta1'
 import { Module as CosmosAuthzV1Beta1, msgTypes as CosmosAuthzV1Beta1MsgTypes } from './cosmos.authz.v1beta1'
 import { Module as CosmosBankV1Beta1, msgTypes as CosmosBankV1Beta1MsgTypes } from './cosmos.bank.v1beta1'

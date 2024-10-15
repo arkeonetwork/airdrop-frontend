@@ -2,8 +2,8 @@
 // versions:
 //   protoc-gen-ts_proto  v2.2.0
 //   protoc               unknown
-// source: gogoproto/gogo.proto
+// source: cosmos/msg/v1/msg.proto
 
 /* eslint-disable */
 
-export const protobufPackage = "gogoproto";
+export const protobufPackage = "cosmos.msg.v1";
