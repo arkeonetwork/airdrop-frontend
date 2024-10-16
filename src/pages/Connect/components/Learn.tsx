@@ -47,7 +47,7 @@ export const Learn: React.FC<Props> = ({}) => {
           <Text color="teal.50" fontSize="16px" fontWeight={700}>
             Learn About Arkeo
           </Text>
-          <Text fontSize="24px" fontWeight={400} pb="42px">
+          <Text fontSize="24px" fontWeight={400} pb="32px">
             What is Arkeo?
           </Text>
           <Text
@@ -56,23 +56,67 @@ export const Learn: React.FC<Props> = ({}) => {
             color="grey.50"
             textAlign="left"
           >
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-            aliquip ex ea commodo consequat. Duis aute irure dolor in
-            reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-            pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-            culpa qui officia deserunt mollit anim id est laborum.
+            ARKEO is the native token of the Arkeo network. Arkeo is a purpose
+            built blockchain built on top of the cosmos SDK that is the
+            foundation of a marketplace for decentralized and indexed blockchain
+            data. ARKEO is being airdropped according to the Arkeo airdrop spec
+            (link here) and a wide range of crypto users are eligible for the
+            airdrop including FOX holders, ATOM, OSMO, and RUNE holders.
           </Text>
         </Box>
         <Box height="100%" mt="52px">
-          <p>More Stuff</p>
+          <Text color="teal.50" fontSize="16px" fontWeight={700}>
+            Learn About Arkeo
+          </Text>
+          <Text fontSize="24px" fontWeight={400} pb="32px">
+            How to claim?
+          </Text>
+          <Text
+            fontSize="16px"
+            fontWeight={400}
+            color="grey.50"
+            textAlign="left"
+          >
+            You can claim and check your eligibility for the ARKEO airdrop by
+            connecting your wallet(s). The process is slightly different for
+            different types of token holders: <br/>For FOX holders this means
+            connecting your EVM compatible wallet (such as metamask or rabby)
+            and signing a message to assign your airdrop to an ARKEO wallet
+            address. You will need to connect Keplr to get your Arkeo address in
+            order to receive the airdrop. <br/>For ATOM/OSMO holders you simply need
+            to connect your associated Keplr wallet in order to claim and follow
+            the claim steps. <br/>For eligible RUNE holders and LPs you will need to
+            connect your THORChain compatible wallet and sign a message in order
+            to assign your claim to an Arkeo address using Keplr.
+          </Text>
         </Box>
         <Box height="100%" mt="52px">
-          <p>Even More Stuff</p>
+          <Text color="teal.50" fontSize="16px" fontWeight={700}>
+            Learn About Arkeo
+          </Text>
+          <Text fontSize="24px" fontWeight={400} pb="32px">
+            What can you do with ARKEO?
+          </Text>
+          <Text
+            fontSize="16px"
+            fontWeight={400}
+            color="grey.50"
+            textAlign="left"
+          >
+            ARKEO will be both the main governance token for the Arkeo network
+            as well as a utility token used to pay for decentralized node data
+            over the Arkeo network. While node data can be paid for with any IBC
+            supported token, many users will want to pay with Arkeo at genesis.
+            ARKEO is also used to stake and support the security of the Arkeo
+            blockchain, by staking your ARKEO with a validator you will receive
+            ARKEO staking rewards from the reserve.
+          </Text>
         </Box>
       </Carousel>
-      <Button mt={5} onClick={() => dispatch({ type: 'SET_STEP', payload: step + 1 })}>
+      <Button
+        mt={5}
+        onClick={() => dispatch({ type: 'SET_STEP', payload: step + 1 })}
+      >
         Next
       </Button>
     </Flex>

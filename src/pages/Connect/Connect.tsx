@@ -75,6 +75,7 @@ export const Connect = () => {
             previousStep && dispatch({ type: 'SET_STEP', payload: index + 1 })
           }
           cursor={previousStep ? 'pointer' : 'default'}
+          whiteSpace="nowrap"
         >
           <Flex pb="8px">
             <Box

@@ -21,6 +21,7 @@ export const useClaim = () => {
       thorInfo: { amountClaim: thorAmount, delegateTx: thorDelegateTx },
     },
   } = useConnect()
+  const fee = 200;
 
   const claimRecord = async () => {
     try {
@@ -62,7 +63,7 @@ export const useClaim = () => {
             signature: signature,
           },
           fee: {
-            amount: coins(20, 'uarkeo'),
+            amount: coins(200, 'uarkeo'),
             gas: '200000',
           },
           memo: '',
@@ -73,7 +74,7 @@ export const useClaim = () => {
             creator: arkeoAccount,
           },
           fee: {
-            amount: coins(20, 'uarkeo'),
+            amount: coins(200, 'uarkeo'),
             gas: '200000',
           },
           memo: '',
