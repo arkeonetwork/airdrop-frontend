@@ -4,6 +4,7 @@ import { Client } from '../../ts-client'
 import { useConnect } from '@src/pages/Connect/ConnectContext'
 import axios from 'axios'
 import { coins } from '@cosmjs/proto-signing'
+import { MsgClaimArkeoResponse } from '../../ts-client/arkeo.claim/module'
 
 const isTestnet = import.meta.env.VITE_IS_TESTNET
 const arkeoEndpointRest = import.meta.env.VITE_ARKEO_ENDPOINT_REST
@@ -21,7 +22,7 @@ export const useClaim = () => {
       thorInfo: { amountClaim: thorAmount, delegateTx: thorDelegateTx },
     },
   } = useConnect()
-  const fee = 200;
+  const fee = 200
 
   const claimRecord = async () => {
     try {
@@ -81,7 +82,43 @@ export const useClaim = () => {
         })
       }
 
-      console.info({ result })
+      console.log('Result: ', result)
+
+      console.info('Response: ', result.msgResponses)
+
+      // Convert the byte array to a string, but parse it as a protobuf message
+      const response = result.msgResponses[0]
+      const bytes = Object.values(response.value)
+
+      // The first byte (10) is the field number 1 (address) with wire type 2 (length-delimited)
+      // The second byte (45) is the length of the address
+      const addressLength = bytes[1]
+      const address = new TextDecoder().decode(
+        new Uint8Array(bytes.slice(2, 2 + addressLength)),
+      )
+
+      // The remaining bytes contain the amount
+      // byte 47 (16) is field number 2 (amount) with wire type 0 (varint)
+      // bytes 48-49 (232, 7) represent the amount in varint encoding
+      const amountBytes = bytes.slice(48) // Skip the field number/type byte
+      let amount = BigInt(0)
+      let multiplier = BigInt(1)
+
+      for (let i = 0; i < amountBytes.length; i++) {
+        amount += BigInt(amountBytes[i] & 0x7f) * multiplier
+        multiplier *= BigInt(128)
+      }
+
+      console.info('Decoded Response:', {
+        address,
+        amount: Number(amount), // Convert back to number for display if the value is small enough
+      })
+
+      console.info(
+        'Response: ',
+        MsgClaimArkeoResponse.toJSON(result.msgResponses[0]),
+      )
+
       if (result.code !== 0) {
         // TODO better error handling
         throw new Error(result.rawLog)
