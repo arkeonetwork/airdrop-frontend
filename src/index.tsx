@@ -11,12 +11,14 @@ import { ChainProvider } from '@cosmos-kit/react'
 import { chains, assets } from 'chain-registry'
 import { wallets } from '@cosmos-kit/keplr-extension'
 import { Chain, AssetList } from '@chain-registry/types'
-import "@interchain-ui/react/globalStyles";
+import '@interchain-ui/react/globalStyles'
 import '@interchain-ui/react/styles'
 
 const projectId = import.meta.env.VITE_WALLET_CONNECT_ID
 const arkeoEndpointRest = import.meta.env.VITE_ARKEO_ENDPOINT_REST
 const arkeoEndpointRpc = import.meta.env.VITE_ARKEO_ENDPOINT_RPC
+const thorchainEndpointRpc = 'https://rpc.ninerealms.com'
+const thorchainEndpointRest = 'https://thornode.ninerealms.com'
 
 const metadata = {
   name: 'Arkeo',
@@ -43,6 +45,7 @@ let root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
 const localArkeo: Chain = {
   chain_name: 'arkeo',
   status: 'live',
+  chain_type: 'cosmos',
   network_type: 'testnet',
   chain_id: 'arkeo',
   pretty_name: 'Arkeo',
@@ -58,6 +61,7 @@ const localArkeoAssets: AssetList = {
       denom_units: [{ denom: 'arkeo', exponent: 8 }],
       base: 'arkeo',
       display: 'arkeo',
+      type_asset: 'sdk.coin',
     },
   ],
 }
@@ -75,6 +79,10 @@ root.render(
             localarkeo: {
               rpc: [arkeoEndpointRpc],
               rest: [arkeoEndpointRest],
+            },
+            thorchain: {
+              rpc: [thorchainEndpointRpc],
+              rest: [thorchainEndpointRest],
             },
           },
         }}

@@ -5,10 +5,11 @@ import { useConnect } from '../ConnectContext'
 import { useGetClaim } from '@hooks/useGetClaim'
 import { bech32 } from 'bech32'
 import { AssetValue, Chain, createSwapKit, SwapKitNumber } from '@swapkit/sdk'
-import { ctrlWallet } from '@swapkit/wallet-ctrl'
 import { ConnectedAccount } from './ConnectedAccount'
 import axios from 'axios'
 import { useChain } from '@cosmos-kit/react'
+import { SigningStargateClient } from '@cosmjs/stargate'
+import { coins } from '@cosmjs/proto-signing'
 
 type Props = {}
 
@@ -22,15 +23,12 @@ export const Thorchain: React.FC<Props> = () => {
 
   const { address, disconnect, openView, isWalletConnected } =
     useChain('thorchain')
-  console.log({ address, isWalletConnected })
+
   const [
     arkeoAccountDerivedFromThorchain,
     setArkeoAccountDerivedFromThorchain,
   ] = useState<string>('')
-  // const client = createSwapKit()
-  // client.extend({ wallets: [ctrlWallet] }) //TODO
 
-  // const connectChains = [Chain.THORChain]
   const {
     state: {
       step,
@@ -47,6 +45,8 @@ export const Thorchain: React.FC<Props> = () => {
   const { claimRecord } = useGetClaim({
     address: arkeoAccountDerivedFromThorchain ?? '',
   })
+
+  const { getSigningStargateClient } = useChain('thorchain')
 
   useEffect(() => {
     if (!thorAccount) return
@@ -68,38 +68,48 @@ export const Thorchain: React.FC<Props> = () => {
   const broadcastTx = async () => {
     try {
       setErrorMessage('')
-      // await client.connectCtrl(connectChains)
-      openView()
-    } catch (e) {
-      setErrorMessage('No wallet found, please install xDefi')
-      return
-    }
-    if (enterHash) {
-      setTxHash()
-    } else if (thorDelegateTx) {
-      dispatch({ type: 'SET_STEP', payload: step + 1 })
-    } else if (thorAccount) {
-      // const walletAddress = client.getAddress(Chain.THORChain)
 
-      if (walletAddress !== thorAccount) {
-        setErrorMessage('Wallet address does not match')
-        return
+      if (enterHash) {
+        setTxHash()
+      } else if (thorDelegateTx) {
+        dispatch({ type: 'SET_STEP', payload: step + 1 })
+      } else if (thorAccount) {
+        console.log('thorAccount', thorAccount)
+        const signingClient = await getSigningStargateClient()
+        if (!signingClient) {
+          console.log('No signing client found')
+          throw new Error('No signing client found')
+        }
+        console.log({ signingClient })
+
+        const amount = coins('1', 'rune') // 0.00000001 RUNE
+        const fee = {
+          amount: coins('2000', 'rune'),
+          gas: '200000',
+        }
+
+        const tx = await signingClient.sendTokens(
+          thorAccount,
+          thorAccount,
+          amount,
+          fee,
+          `delegate:arkeo:${arkeoAccount}`,
+        )
+
+        console.log('Transaction hash:', tx.transactionHash)
+        dispatch({
+          type: 'SET_THORCHAIN_DELEGATE_TX',
+          payload: tx.transactionHash,
+        })
+        dispatch({ type: 'SET_STEP', payload: step + 1 })
+      } else {
+        dispatch({ type: 'SET_THORCHAIN_ACCOUNT', payload: address })
       }
-      const amount = new SwapKitNumber('0.00000001')
-      const assetValue = AssetValue.fromStringSync('THOR.RUNE')
-      assetValue.bigIntValue = amount.bigIntValue
-      // const tx = await client.transfer({
-      //   assetValue,
-      //   recipient: thorAccount,
-      //   from: thorAccount,
-      //   memo: `delegate:arkeo:${arkeoAccount}`,
-      // })
-      // console.log({ tx })
-      // dispatch({ type: 'SET_THORCHAIN_DELEGATE_TX', payload: tx }) //TODO
-      dispatch({ type: 'SET_STEP', payload: step + 1 })
-    } else {
-      // const address = client.getAddress(Chain.THORChain)
-      dispatch({ type: 'SET_THORCHAIN_ACCOUNT', payload: address })
+    } catch (error) {
+      console.error(error)
+      setErrorMessage(
+        error instanceof Error ? error.message : 'Transaction failed',
+      )
     }
   }
 
