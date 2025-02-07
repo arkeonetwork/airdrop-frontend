@@ -8,12 +8,7 @@ import { useGetClaim } from '@hooks/useGetClaim'
 
 type Props = {}
 
-const isTestnet = import.meta.env.VITE_IS_TESTNET
-const arkeoEndpointRest = import.meta.env.VITE_ARKEO_ENDPOINT_REST
-const arkeoEndpointRpc = import.meta.env.VITE_ARKEO_ENDPOINT_RPC
-
 export const Cosmos: React.FC<Props> = () => {
-  const chainArkeo = isTestnet ? 'arkeonetworktestnet' : 'arkeonetwork'
   const [errorMessage, setErrorMessage] = useState<string>('')
   const {
     state: {
@@ -23,7 +18,7 @@ export const Cosmos: React.FC<Props> = () => {
     dispatch,
   } = useConnect()
 
-  const { chain, username, address, disconnect, openView, isWalletConnected } =
+  const { username, address, disconnect, openView, isWalletConnected } =
     useChain('arkeo')
 
   const { claimRecord } = useGetClaim({

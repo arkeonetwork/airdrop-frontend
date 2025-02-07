@@ -27,13 +27,13 @@ export const Claim: React.FC<Props> = ({}) => {
       return
     }
     const errorString = error.toString()
-    if (errorString.includes('no claimable amount')) {
+    if (errorString.toLowerCase().includes('no claimable amount')) {
       setErrorMessage('You are not eligible for the Arkeo airdrop')
-    } else if (errorString.includes('Airdrop has ended')) {
+    } else if (errorString.toLowerCase().includes('airdrop has ended')) {
       setErrorMessage('Airdrop Has Ended')
-    } else if (errorString.includes('failed to validate signature')) {
+    } else if (errorString.toLowerCase().includes('failed to validate signature')) {
       setErrorMessage('Invalid Ethereum Signature')
-    } else if (errorString.includes('No signature')) {
+    } else if (errorString.toLowerCase().includes('no signature')) {
       setErrorMessage('No Ethereum Signature Found')
     } else {
       setErrorMessage('Something Went Wrong')
