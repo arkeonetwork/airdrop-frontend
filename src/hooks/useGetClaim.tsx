@@ -21,7 +21,7 @@ export const useGetClaim = ({ address }: UseGetClaim) => {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<Error | unknown>(null)
   const arkeoPrefix = isTestnet ? 'tarkeo' : 'arkeo'
-  const validCosmosPrefix = ['cosmos', 'juno', arkeoPrefix]
+  const validCosmosPrefix = ['cosmos', 'thor', arkeoPrefix]
 
   const calculateClaimAmount = (claimRecord: any) => {
     const parseAmount = (amount: string) => parseInt(amount, 10) ?? 0

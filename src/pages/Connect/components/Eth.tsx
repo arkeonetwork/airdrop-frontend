@@ -24,6 +24,8 @@ export const Eth: React.FC<Props> = ({}) => {
     dispatch,
   } = useConnect()
   const [errorMessage, setErrorMessage] = useState<string>('')
+  const [isLoading, setIsLoading] = useState(false)
+
   const { open } = useWeb3Modal()
   const { address, connector: activeConnector } = useAccount()
   const { disconnect } = useDisconnect()
@@ -31,6 +33,13 @@ export const Eth: React.FC<Props> = ({}) => {
     address: address ?? '',
   })
   const { data, signTypedData, status, reset, error } = useSignTypedData()
+
+  useEffect(() => {
+    console.log('status', status)
+    if (status === 'success' || status === 'error') {
+      setIsLoading(false)
+    }
+  }, [status])
 
   useEffect(() => {
     const handleConnectorUpdate = ({ account, chain }: ConnectorData) => {
@@ -73,12 +82,13 @@ export const Eth: React.FC<Props> = ({}) => {
     }
   }, [address])
 
-  const handleClick = () => {
+  const handleClick = async () => {
     setErrorMessage('')
     if (ethAccount && ethSignature) {
       dispatch({ type: 'SET_STEP', payload: step + 1 })
     } else {
       if (address && arkeoAccount) {
+        setIsLoading(true)
         signTypedData({
           types: {
             Claim: [
@@ -122,6 +132,7 @@ export const Eth: React.FC<Props> = ({}) => {
           width="100%"
           amount={claimRecord?.amountClaim ?? '0'}
           account={ethAccount}
+          loading={isLoading}
           disconnect={() => {
             disconnect()
             dispatch({ type: 'RESET_ETH' })
@@ -161,7 +172,11 @@ export const Eth: React.FC<Props> = ({}) => {
           {errorMessage}
         </Text>
         <Box w="100%">
-          <Button isDisabled={!canSignTx} onClick={handleClick}>
+          <Button
+            isDisabled={!canSignTx}
+            isLoading={isLoading}
+            onClick={handleClick}
+          >
             {buttonText}
           </Button>
           <Button onClick={skipClick} variant="outline" mt={2}>

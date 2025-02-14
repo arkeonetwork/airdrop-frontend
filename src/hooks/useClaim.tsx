@@ -21,6 +21,7 @@ export const useClaim = () => {
       ethInfo: { account: ethAccount, amountClaim: ethAmount, signature },
       thorInfo: { amountClaim: thorAmount, delegateTx: thorDelegateTx },
     },
+    dispatch,
   } = useConnect()
   const fee = 200
 
@@ -36,6 +37,10 @@ export const useClaim = () => {
         const { data } = await axios.post(`${thorServer}/claim`, {
           txHash: thorDelegateTx,
         })
+        console.log('thorDelegateTx', data)
+        if(data?.message?.includes("updated")){
+          dispatch({ type: 'SET_THORCHAIN_DELEGATE_TX', payload: undefined })
+        }
       }
 
       const client = new Client({

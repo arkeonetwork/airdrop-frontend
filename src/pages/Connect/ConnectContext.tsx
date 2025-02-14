@@ -21,7 +21,7 @@ type DispatchProps =
   | { type: 'SET_STEP'; payload: number }
   | { type: 'SET_THORCHAIN_ACCOUNT'; payload: string | undefined }
   | { type: 'SET_THORCHAIN_AMOUNT'; payload: ClaimRecord }
-  | { type: 'SET_THORCHAIN_DELEGATE_TX'; payload: string }
+  | { type: 'SET_THORCHAIN_DELEGATE_TX'; payload: string | undefined }
   | { type: 'SET_ARKEO_ACCOUNT'; payload: string | undefined }
   | { type: 'SET_ARKEO_AMOUNTS'; payload: ClaimRecord }
   | { type: 'SET_ETH_ACCOUNT'; payload: string }

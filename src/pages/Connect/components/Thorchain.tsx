@@ -4,11 +4,9 @@ import CosmosLogo from '@assets/cosmos-atom-logo.svg'
 import { useConnect } from '../ConnectContext'
 import { useGetClaim } from '@hooks/useGetClaim'
 import { bech32 } from 'bech32'
-import { AssetValue, Chain, createSwapKit, SwapKitNumber } from '@swapkit/sdk'
 import { ConnectedAccount } from './ConnectedAccount'
 import axios from 'axios'
 import { useChain } from '@cosmos-kit/react'
-import { SigningStargateClient } from '@cosmjs/stargate'
 import { coins } from '@cosmjs/proto-signing'
 
 type Props = {}
@@ -19,9 +17,11 @@ export const Thorchain: React.FC<Props> = () => {
   const [errorMessage, setErrorMessage] = useState<string>('')
   const [enterHash, setEnterHash] = useState(false)
   const [hashValue, setHashValue] = React.useState('')
+  const [isLoading, setIsLoading] = useState(false)
+
   const prefix = isTestnet ? 'tarkeo' : 'arkeo'
 
-  const { address, disconnect, openView, isWalletConnected } =
+  const { address } =
     useChain('thorchain')
 
   const [
@@ -68,7 +68,7 @@ export const Thorchain: React.FC<Props> = () => {
   const broadcastTx = async () => {
     try {
       setErrorMessage('')
-
+      setIsLoading(true)
       if (enterHash) {
         setTxHash()
       } else if (thorDelegateTx) {
@@ -110,6 +110,8 @@ export const Thorchain: React.FC<Props> = () => {
       setErrorMessage(
         error instanceof Error ? error.message : 'Transaction failed',
       )
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -178,6 +180,7 @@ export const Thorchain: React.FC<Props> = () => {
               amount={claimRecord?.amountClaim ?? '0'}
               account={thorAccount}
               name={'Thorchain'}
+              loading={isLoading}
               disconnect={
                 !thorDelegateTx
                   ? () => {
@@ -244,11 +247,12 @@ export const Thorchain: React.FC<Props> = () => {
         <Box w="100%">
           <Button
             isDisabled={!!thorAccount && thorAmountClaim === 0}
+            isLoading={isLoading}
             onClick={broadcastTx}
           >
             {buttonText}
           </Button>
-          {!thorDelegateTx && (
+          {!thorDelegateTx && !isLoading && (
             <Button onClick={skipClick} variant="outline" mt={2}>
               {skipText}
             </Button>

@@ -16,6 +16,7 @@ type Props = {
   account: string
   disconnect?: () => void
   name?: string
+  loading?: boolean
 } & BoxProps
 
 export const ConnectedAccount: React.FC<Props> = ({
@@ -23,6 +24,7 @@ export const ConnectedAccount: React.FC<Props> = ({
   account,
   name,
   disconnect,
+  loading,
   ...rest
 }) => (
   <Flex width="100%" flex="1" my="32px" flexDir="column" {...rest}>
@@ -55,7 +57,7 @@ export const ConnectedAccount: React.FC<Props> = ({
         </Text>
       </Flex>
       {disconnect && (
-        <Button onClick={disconnect} mt="16px" variant="outline">
+        <Button onClick={disconnect} mt="16px" variant="outline" isDisabled={loading}>
           Disconnect
         </Button>
       )}
