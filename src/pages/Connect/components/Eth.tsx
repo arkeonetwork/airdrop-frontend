@@ -66,6 +66,10 @@ export const Eth: React.FC<Props> = ({}) => {
   useEffect(() => {
     if (error?.name.includes('ChainMismatchError')) {
       setErrorMessage('Please switch to Ethereum network')
+    } else if (error?.name.includes('UserRejectedRequestError')) {
+      setErrorMessage('User rejected the request')
+    } else if (error?.name) {
+      setErrorMessage('Signing failed')
     }
   }, [error])
 

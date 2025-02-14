@@ -79,15 +79,16 @@ export const Learn: React.FC<Props> = ({}) => {
           >
             You can claim and check your eligibility for the ARKEO airdrop by
             connecting your wallet(s). The process is slightly different for
-            different types of token holders: <br/>For FOX holders this means
-            connecting your EVM compatible wallet (such as metamask or rabby)
-            and signing a message to assign your airdrop to an ARKEO wallet
-            address. You will need to connect Keplr to get your Arkeo address in
-            order to receive the airdrop. <br/>For ATOM/OSMO holders you simply need
-            to connect your associated Keplr wallet in order to claim and follow
-            the claim steps. <br/>For eligible RUNE holders and LPs you will need to
-            connect your THORChain compatible wallet and sign a message in order
-            to assign your claim to an Arkeo address using Keplr.
+            different types of token holders: <br />
+            For FOX holders this means connecting your EVM compatible wallet
+            (such as metamask or rabby) and signing a message to assign your
+            airdrop to an ARKEO wallet address. You will need to connect Keplr
+            to get your Arkeo address in order to receive the airdrop. <br />
+            For ATOM/OSMO holders you simply need to connect your associated
+            Keplr wallet in order to claim and follow the claim steps. <br />
+            For eligible RUNE holders and LPs you will need to connect your
+            THORChain compatible wallet and sign a message in order to assign
+            your claim to an Arkeo address using Keplr.
           </Text>
         </Box>
         <Box height="100%" mt="52px">
