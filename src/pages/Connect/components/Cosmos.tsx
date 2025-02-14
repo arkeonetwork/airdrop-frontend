@@ -82,7 +82,7 @@ export const Cosmos: React.FC<Props> = () => {
           w="100%"
           justifyContent="center"
         >
-          {arkeoAccount ? (
+          {arkeoAccount ? ( 
             <ConnectedAccount
               width="100%"
               my={0}
@@ -110,7 +110,7 @@ export const Cosmos: React.FC<Props> = () => {
           width="100%"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
+          transition={{ delay: 0.2 }}
         >
           <Text my="8px" height="16px" color="red.500">
             {errorMessage}
@@ -118,7 +118,6 @@ export const Cosmos: React.FC<Props> = () => {
 
           <MotionButton
             onClick={handleClick}
-            whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
             {arkeoAccount ? 'Next' : 'Connect Wallet'}

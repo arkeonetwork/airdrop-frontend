@@ -52,7 +52,7 @@ export const Congrats: React.FC<Props> = ({}) => {
   }, [])
 
   return (
-    <AnimatePresence>
+    <>
       {showConfetti && (
         <ReactConfetti
           width={width}
@@ -120,23 +120,20 @@ export const Congrats: React.FC<Props> = ({}) => {
             p="8px 16px"
             borderRadius="12px"
             mb="16px"
-            whileHover={{ scale: 1.02, backgroundColor: 'grey.150' }}
+            _hover={{ backgroundColor: 'grey.150' }}
             transition={{ duration: 0.2 }}
+            cursor="pointer"
           >
             <Text fontWeight={400}>Stake your Arkeo</Text>
             <Flex>
               <Text>{toDecimal(totalDelegateAmount)} ARKEO</Text>
-              <motion.div
-                animate={{ x: [0, 5, 0] }}
-                transition={{ repeat: Infinity, duration: 1.5 }}
-              >
-                <ArrowForwardIcon
-                  width="24px"
-                  height="24px"
-                  padding="4px"
-                  color="grey.50"
-                />
-              </motion.div>
+
+              <ArrowForwardIcon
+                width="24px"
+                height="24px"
+                padding="4px"
+                color="grey.50"
+              />
             </Flex>
           </MotionFlex>
 
@@ -145,23 +142,19 @@ export const Congrats: React.FC<Props> = ({}) => {
             backgroundColor="grey.200"
             p="8px 16px"
             borderRadius="12px"
-            whileHover={{ scale: 1.02, backgroundColor: 'grey.150' }}
+            _hover={{ backgroundColor: 'grey.150' }}
             transition={{ duration: 0.2 }}
+            cursor="pointer"
           >
             <Text>Vote on Proposal</Text>
             <Flex>
               <Text>{toDecimal(totalVoteAmount)} ARKEO</Text>
-              <motion.div
-                animate={{ x: [0, 5, 0] }}
-                transition={{ repeat: Infinity, duration: 1.5, delay: 0.2 }}
-              >
-                <ArrowForwardIcon
-                  width="24px"
-                  height="24px"
-                  padding="4px"
-                  color="grey.50"
-                />
-              </motion.div>
+              <ArrowForwardIcon
+                width="24px"
+                height="24px"
+                padding="4px"
+                color="grey.50"
+              />
             </Flex>
           </MotionFlex>
 
@@ -176,6 +169,6 @@ export const Congrats: React.FC<Props> = ({}) => {
           </motion.div>
         </MotionBox>
       </MotionFlex>
-    </AnimatePresence>
+    </>
   )
 }

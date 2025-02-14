@@ -38,6 +38,7 @@ export const ConnectedAccount: React.FC<Props> = ({
     flex="1"
     my="32px"
     flexDir="column"
+    mb="60px"
     initial={{ opacity: 0, scale: 0.95 }}
     animate={{ opacity: 1, scale: 1 }}
     transition={{ duration: 0.3 }}
@@ -74,16 +75,8 @@ export const ConnectedAccount: React.FC<Props> = ({
           />
         </Flex>
       </MotionFlex>
-      <MotionFlex
-        flexDir="row"
-        alignItems="center"
-        gap={2}
-      >
-        <Image
-          w="24px"
-          h="24px"
-          src={Symbol}
-        />
+      <MotionFlex flexDir="row" alignItems="center" gap={2}>
+        <Image w="24px" h="24px" src={Symbol} />
         <Text fontSize="24px" fontWeight="900" textAlign="center">
           {toDecimal(amount)} ARKEO
         </Text>

@@ -8,11 +8,10 @@ const MotionBox = motion(Box)
 const MotionText = motion(Text)
 const MotionButton = motion(Button)
 
-// Add a style object for the non-selectable text
 const nonSelectableText = {
-  userSelect: 'none',
-  WebkitUserSelect: 'none',
-  WebkitTouchCallout: 'none',
+  userSelect: 'none' as const,
+  WebkitUserSelect: 'none' as const,
+  WebkitTouchCallout: 'none' as const,
 }
 
 type Props = {}
@@ -205,7 +204,6 @@ export const Learn: React.FC<Props> = ({}) => {
           <MotionButton
             mt={5}
             onClick={() => dispatch({ type: 'SET_STEP', payload: step + 1 })}
-            whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}

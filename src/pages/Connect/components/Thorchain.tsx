@@ -284,13 +284,12 @@ export const Thorchain: React.FC<Props> = () => {
           w="100%"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
+          transition={{ delay: 0.2 }}
         >
           <MotionButton
             isDisabled={!!thorAccount && thorAmountClaim === 0}
             isLoading={isLoading}
             onClick={broadcastTx}
-            whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
             {buttonText}
@@ -300,7 +299,6 @@ export const Thorchain: React.FC<Props> = () => {
               onClick={skipClick}
               variant="outline"
               mt={2}
-              whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
               {skipText}

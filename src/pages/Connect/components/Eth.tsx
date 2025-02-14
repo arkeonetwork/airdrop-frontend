@@ -177,6 +177,7 @@ export const Eth: React.FC<Props> = ({}) => {
           {ethAccount ? (
             <ConnectedAccount
               width="100%"
+              my={0}
               amount={claimRecord?.amountClaim ?? '0'}
               account={ethAccount}
               loading={isLoading}
@@ -206,13 +207,12 @@ export const Eth: React.FC<Props> = ({}) => {
           w="100%"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
+          transition={{ delay: 0.2 }}
         >
           <MotionButton
             isDisabled={!canSignTx}
             isLoading={isLoading}
             onClick={handleClick}
-            whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
             {buttonText}
@@ -221,7 +221,6 @@ export const Eth: React.FC<Props> = ({}) => {
             onClick={skipClick}
             variant="outline"
             mt={2}
-            whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
             Skip

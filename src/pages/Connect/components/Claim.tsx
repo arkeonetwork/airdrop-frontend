@@ -121,7 +121,7 @@ export const Claim: React.FC<Props> = ({}) => {
           flexDirection="column"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
+          transition={{ delay: 0.2 }}
         >
           <Text height="16px" mb={'20px'} color="red.500">
             {errorMessage}
@@ -130,7 +130,6 @@ export const Claim: React.FC<Props> = ({}) => {
             isLoading={isLoading}
             isDisabled={nothingToClaim}
             onClick={claimArkeo}
-            whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
             {totalClaimAmount > 0 ? 'Claim' : 'Nothing to Claim'}
@@ -141,7 +140,6 @@ export const Claim: React.FC<Props> = ({}) => {
               pt="6px"
               as={ReactRouterLink}
               onClick={() => dispatch({ type: 'RESET' })}
-              whileHover={{ scale: 1.05 }}
             >
               Try Again
             </MotionLink>
