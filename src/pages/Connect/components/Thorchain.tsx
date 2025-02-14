@@ -8,6 +8,13 @@ import { ConnectedAccount } from './ConnectedAccount'
 import axios from 'axios'
 import { useChain } from '@cosmos-kit/react'
 import { coins } from '@cosmjs/proto-signing'
+import { motion, AnimatePresence } from 'framer-motion'
+
+const MotionFlex = motion(Flex)
+const MotionBox = motion(Box)
+const MotionImage = motion(Image)
+const MotionButton = motion(Button)
+const MotionInput = motion(Input)
 
 type Props = {}
 
@@ -21,8 +28,7 @@ export const Thorchain: React.FC<Props> = () => {
 
   const prefix = isTestnet ? 'tarkeo' : 'arkeo'
 
-  const { address } =
-    useChain('thorchain')
+  const { address } = useChain('thorchain')
 
   const [
     arkeoAccountDerivedFromThorchain,
@@ -193,8 +199,12 @@ export const Thorchain: React.FC<Props> = () => {
         )
       } else {
         return (
-          <>
-            <Text>
+          <MotionBox
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.2 }}
+          >
+            <Text mb="26px">
               Enter your Thorchain TX hash that contains your delegation
               transaction. The memo should be in the format of <br />
               <b>delegate:arkeo:{'{txhash}'}</b>
@@ -204,11 +214,20 @@ export const Thorchain: React.FC<Props> = () => {
               onChange={(event) => setHashValue(event.target.value)}
               placeholder="Enter Your Transaction Hash"
             />
-          </>
+          </MotionBox>
         )
       }
     }
-    return <Image w="150px" h="150px" src={CosmosLogo} />
+    return (
+      <MotionImage
+        w="150px"
+        h="150px"
+        src={CosmosLogo}
+        initial={{ scale: 0 }}
+        animate={{ scale: [0, 1.2, 1] }}
+        transition={{ duration: 0.5, times: [0, 0.6, 1] }}
+      />
+    )
   }
 
   const buttonText =
@@ -224,41 +243,71 @@ export const Thorchain: React.FC<Props> = () => {
         ? 'Enter Tx Hash'
         : 'Back'
   return (
-    <>
-      <Flex
+    <AnimatePresence>
+      <MotionFlex
         flexDir="column"
         flex="1 0 0"
         gap="42px"
         textAlign="center"
         alignItems="center"
         justifyContent="space-between"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -20 }}
       >
-        <Box>
+        <MotionBox
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.2 }}
+        >
           <Text fontWeight={900}>Connect Thorchain Account</Text>
           <Text fontWeight={500} color="grey.50">
             Connect your Thorchain wallet to check for eligibility.
           </Text>
-        </Box>
-        {renderWallet()}
+        </MotionBox>
+
+        <MotionFlex
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.3 }}
+          width="100%"
+          justifyContent="center"
+        >
+          {renderWallet()}
+        </MotionFlex>
 
         <Text my="8px" height="16px" color="red.500">
           {errorMessage}
         </Text>
-        <Box w="100%">
-          <Button
+
+        <MotionBox
+          w="100%"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+        >
+          <MotionButton
             isDisabled={!!thorAccount && thorAmountClaim === 0}
             isLoading={isLoading}
             onClick={broadcastTx}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
           >
             {buttonText}
-          </Button>
+          </MotionButton>
           {!thorDelegateTx && !isLoading && (
-            <Button onClick={skipClick} variant="outline" mt={2}>
+            <MotionButton
+              onClick={skipClick}
+              variant="outline"
+              mt={2}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
               {skipText}
-            </Button>
+            </MotionButton>
           )}
-        </Box>
-      </Flex>
-    </>
+        </MotionBox>
+      </MotionFlex>
+    </AnimatePresence>
   )
 }

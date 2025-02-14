@@ -1,10 +1,12 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Box, Text, Image, Flex, Button } from '@chakra-ui/react'
 import { useConnect } from '../ConnectContext'
 import Success from '@assets/success.svg'
 import { ArrowForwardIcon } from '@chakra-ui/icons'
 import { toDecimal } from '@utils/functions'
 import { motion, AnimatePresence } from 'framer-motion'
+import ReactConfetti from 'react-confetti'
+import { useWindowSize } from '@hooks/useWindowSize'
 
 const MotionFlex = motion(Flex)
 const MotionImage = motion(Image)
@@ -13,6 +15,8 @@ const MotionBox = motion(Box)
 type Props = {}
 
 export const Congrats: React.FC<Props> = ({}) => {
+  const [showConfetti, setShowConfetti] = useState(true)
+  const { width, height } = useWindowSize()
   const {
     state: {
       arkeoInfo: {
@@ -38,8 +42,26 @@ export const Congrats: React.FC<Props> = ({}) => {
     arkeoAmountDelegate + thorAmountDelegate + ethAmountDelegate
   const totalVoteAmount = arkeoAmountVote + thorAmountVote + ethAmountVote
 
+  useEffect(() => {
+    // Hide confetti after 5 seconds
+    const timer = setTimeout(() => {
+      setShowConfetti(false)
+    }, 5000)
+
+    return () => clearTimeout(timer)
+  }, [])
+
   return (
     <AnimatePresence>
+      {showConfetti && (
+        <ReactConfetti
+          width={width}
+          height={height}
+          recycle={false}
+          numberOfPieces={200}
+          gravity={0.2}
+        />
+      )}
       <MotionFlex
         flexDir="column"
         flex="1 0 0"

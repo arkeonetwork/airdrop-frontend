@@ -41,6 +41,7 @@
     "framer-motion": "^10.16.5",
     "micro-key-producer": "^0.7.5",
     "react": "^18.2.0",
+    "react-confetti": "^6.2.2",
     "react-dom": "^18.2.0",
     "react-responsive-carousel": "^3.2.23",
     "react-router-dom": "^6.19.0",

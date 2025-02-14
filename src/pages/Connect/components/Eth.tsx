@@ -11,6 +11,12 @@ import {
   ConnectorData,
 } from 'wagmi'
 import { useGetClaim } from '@hooks/useGetClaim'
+import { motion, AnimatePresence } from 'framer-motion'
+
+const MotionFlex = motion(Flex)
+const MotionBox = motion(Box)
+const MotionImage = motion(Image)
+const MotionButton = motion(Button)
 
 type Props = {}
 
@@ -129,24 +135,6 @@ export const Eth: React.FC<Props> = ({}) => {
     dispatch({ type: 'RESET_ETH' })
   }
 
-  const renderWallet = () => {
-    if (ethAccount) {
-      return (
-        <ConnectedAccount
-          width="100%"
-          amount={claimRecord?.amountClaim ?? '0'}
-          account={ethAccount}
-          loading={isLoading}
-          disconnect={() => {
-            disconnect()
-            dispatch({ type: 'RESET_ETH' })
-            reset()
-          }}
-        />
-      )
-    }
-    return <Image w="150px" h="150px" src={EthLogo} />
-  }
   const buttonText =
     ethAccount && ethSignature
       ? 'Next'
@@ -156,38 +144,90 @@ export const Eth: React.FC<Props> = ({}) => {
   const canSignTx = !address || (address && claimRecord?.amountClaim > 0)
 
   return (
-    <>
-      <Flex
+    <AnimatePresence>
+      <MotionFlex
         flexDir="column"
         flex="1 0 0"
         gap="42px"
         textAlign="center"
         alignItems="center"
         justifyContent="space-between"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -20 }}
       >
-        <Box>
+        <MotionBox
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.2 }}
+        >
           <Text fontWeight={900}>Connect ETH Account</Text>
           <Text fontWeight={500} color="grey.50">
             Connect your ETH wallet to check for eligibility.
           </Text>
-        </Box>
-        {renderWallet()}
+        </MotionBox>
+
+        <MotionFlex
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.3 }}
+          w="100%"
+          justifyContent="center"
+        >
+          {ethAccount ? (
+            <ConnectedAccount
+              width="100%"
+              amount={claimRecord?.amountClaim ?? '0'}
+              account={ethAccount}
+              loading={isLoading}
+              disconnect={() => {
+                disconnect()
+                dispatch({ type: 'RESET_ETH' })
+                reset()
+              }}
+            />
+          ) : (
+            <MotionImage
+              w="150px"
+              h="150px"
+              src={EthLogo}
+              initial={{ scale: 0 }}
+              animate={{ scale: [0, 1.2, 1] }}
+              transition={{ duration: 0.5, times: [0, 0.6, 1] }}
+            />
+          )}
+        </MotionFlex>
+
         <Text my="8px" height="16px" color="red.500">
           {errorMessage}
         </Text>
-        <Box w="100%">
-          <Button
+
+        <MotionBox
+          w="100%"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+        >
+          <MotionButton
             isDisabled={!canSignTx}
             isLoading={isLoading}
             onClick={handleClick}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
           >
             {buttonText}
-          </Button>
-          <Button onClick={skipClick} variant="outline" mt={2}>
+          </MotionButton>
+          <MotionButton
+            onClick={skipClick}
+            variant="outline"
+            mt={2}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
             Skip
-          </Button>
-        </Box>
-      </Flex>
-    </>
+          </MotionButton>
+        </MotionBox>
+      </MotionFlex>
+    </AnimatePresence>
   )
 }
