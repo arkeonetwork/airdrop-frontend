@@ -21,6 +21,7 @@ export const useClaim = () => {
       ethInfo: { account: ethAccount, amountClaim: ethAmount, signature },
       thorInfo: { amountClaim: thorAmount, delegateTx: thorDelegateTx },
     },
+    dispatch,
   } = useConnect()
   const fee = 200
 
@@ -36,6 +37,10 @@ export const useClaim = () => {
         const { data } = await axios.post(`${thorServer}/claim`, {
           txHash: thorDelegateTx,
         })
+        console.log('thorDelegateTx', data)
+        if(data?.message?.includes("updated")){
+          dispatch({ type: 'SET_THORCHAIN_DELEGATE_TX', payload: undefined })
+        }
       }
 
       const client = new Client({
@@ -49,9 +54,6 @@ export const useClaim = () => {
         rest: arkeoEndpointRest,
       })
 
-      const creator = Uint8Array.from(
-        bech32.fromWords(bech32.decode(arkeoAccount).words),
-      )
       let result
       if (ethAccount && ethAmount > 0) {
         if (!signature) {
@@ -64,7 +66,7 @@ export const useClaim = () => {
             signature: signature,
           },
           fee: {
-            amount: coins(200, 'uarkeo'),
+            amount: coins(fee, 'uarkeo'),
             gas: '200000',
           },
           memo: '',
@@ -75,14 +77,12 @@ export const useClaim = () => {
             creator: arkeoAccount,
           },
           fee: {
-            amount: coins(200, 'uarkeo'),
+            amount: coins(fee, 'uarkeo'),
             gas: '200000',
           },
           memo: '',
         })
       }
-
-      console.log('Result: ', result)
 
       console.info('Response: ', result.msgResponses)
 
@@ -119,7 +119,7 @@ export const useClaim = () => {
         MsgClaimArkeoResponse.toJSON(result.msgResponses[0]),
       )
 
-      if (result.code !== 0) {
+      if (result.code !== 0 && result.rawLog) {
         // TODO better error handling
         throw new Error(result.rawLog)
       } else {

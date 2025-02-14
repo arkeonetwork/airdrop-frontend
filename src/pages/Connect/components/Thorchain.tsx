@@ -4,10 +4,17 @@ import CosmosLogo from '@assets/cosmos-atom-logo.svg'
 import { useConnect } from '../ConnectContext'
 import { useGetClaim } from '@hooks/useGetClaim'
 import { bech32 } from 'bech32'
-import { AssetValue, Chain, createSwapKit, SwapKitNumber } from '@swapkit/sdk'
-import { xdefiWallet } from '@swapkit/wallet-xdefi'
 import { ConnectedAccount } from './ConnectedAccount'
 import axios from 'axios'
+import { useChain } from '@cosmos-kit/react'
+import { coins } from '@cosmjs/proto-signing'
+import { motion, AnimatePresence } from 'framer-motion'
+
+const MotionFlex = motion(Flex)
+const MotionBox = motion(Box)
+const MotionImage = motion(Image)
+const MotionButton = motion(Button)
+const MotionInput = motion(Input)
 
 type Props = {}
 
@@ -17,16 +24,17 @@ export const Thorchain: React.FC<Props> = () => {
   const [errorMessage, setErrorMessage] = useState<string>('')
   const [enterHash, setEnterHash] = useState(false)
   const [hashValue, setHashValue] = React.useState('')
+  const [isLoading, setIsLoading] = useState(false)
+
   const prefix = isTestnet ? 'tarkeo' : 'arkeo'
+
+  const { address } = useChain('thorchain')
 
   const [
     arkeoAccountDerivedFromThorchain,
     setArkeoAccountDerivedFromThorchain,
   ] = useState<string>('')
-  const client = createSwapKit()
-  client.extend({ wallets: [xdefiWallet] })
 
-  const connectChains = [Chain.THORChain]
   const {
     state: {
       step,
@@ -43,6 +51,8 @@ export const Thorchain: React.FC<Props> = () => {
   const { claimRecord } = useGetClaim({
     address: arkeoAccountDerivedFromThorchain ?? '',
   })
+
+  const { getSigningStargateClient } = useChain('thorchain')
 
   useEffect(() => {
     if (!thorAccount) return
@@ -64,36 +74,50 @@ export const Thorchain: React.FC<Props> = () => {
   const broadcastTx = async () => {
     try {
       setErrorMessage('')
-      await client.connectXDEFI(connectChains)
-    } catch (e) {
-      setErrorMessage('No wallet found, please install xDefi')
-      return
-    }
-    if (enterHash) {
-      setTxHash()
-    } else if (thorDelegateTx) {
-      dispatch({ type: 'SET_STEP', payload: step + 1 })
-    } else if (thorAccount) {
-      const walletAddress = client.getAddress(Chain.THORChain)
+      setIsLoading(true)
+      if (enterHash) {
+        setTxHash()
+      } else if (thorDelegateTx) {
+        dispatch({ type: 'SET_STEP', payload: step + 1 })
+      } else if (thorAccount) {
+        console.log('thorAccount', thorAccount)
+        const signingClient = await getSigningStargateClient()
+        if (!signingClient) {
+          console.log('No signing client found')
+          throw new Error('No signing client found')
+        }
+        console.log({ signingClient })
 
-      if (walletAddress !== thorAccount) {
-        setErrorMessage('Wallet address does not match')
-        return
+        const amount = coins('1', 'rune') // 0.00000001 RUNE
+        const fee = {
+          amount: coins('2000', 'rune'),
+          gas: '200000',
+        }
+
+        const tx = await signingClient.sendTokens(
+          thorAccount,
+          thorAccount,
+          amount,
+          fee,
+          `delegate:arkeo:${arkeoAccount}`,
+        )
+
+        console.log('Transaction hash:', tx.transactionHash)
+        dispatch({
+          type: 'SET_THORCHAIN_DELEGATE_TX',
+          payload: tx.transactionHash,
+        })
+        dispatch({ type: 'SET_STEP', payload: step + 1 })
+      } else {
+        dispatch({ type: 'SET_THORCHAIN_ACCOUNT', payload: address })
       }
-      const amount = new SwapKitNumber('0.00000001')
-      const assetValue = AssetValue.fromStringSync('THOR.RUNE')
-      assetValue.bigIntValue = amount.bigIntValue
-      const tx = await client.transfer({
-        assetValue,
-        recipient: thorAccount,
-        memo: `delegate:arkeo:${arkeoAccount}`,
-      })
-      console.log({ tx })
-      dispatch({ type: 'SET_THORCHAIN_DELEGATE_TX', payload: tx })
-      dispatch({ type: 'SET_STEP', payload: step + 1 })
-    } else {
-      const address = client.getAddress(Chain.THORChain)
-      dispatch({ type: 'SET_THORCHAIN_ACCOUNT', payload: address })
+    } catch (error) {
+      console.error(error)
+      setErrorMessage(
+        error instanceof Error ? error.message : 'Transaction failed',
+      )
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -162,6 +186,7 @@ export const Thorchain: React.FC<Props> = () => {
               amount={claimRecord?.amountClaim ?? '0'}
               account={thorAccount}
               name={'Thorchain'}
+              loading={isLoading}
               disconnect={
                 !thorDelegateTx
                   ? () => {
@@ -174,8 +199,12 @@ export const Thorchain: React.FC<Props> = () => {
         )
       } else {
         return (
-          <>
-            <Text>
+          <MotionBox
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.2 }}
+          >
+            <Text mb="26px">
               Enter your Thorchain TX hash that contains your delegation
               transaction. The memo should be in the format of <br />
               <b>delegate:arkeo:{'{txhash}'}</b>
@@ -185,11 +214,20 @@ export const Thorchain: React.FC<Props> = () => {
               onChange={(event) => setHashValue(event.target.value)}
               placeholder="Enter Your Transaction Hash"
             />
-          </>
+          </MotionBox>
         )
       }
     }
-    return <Image w="150px" h="150px" src={CosmosLogo} />
+    return (
+      <MotionImage
+        w="150px"
+        h="150px"
+        src={CosmosLogo}
+        initial={{ scale: 0 }}
+        animate={{ scale: [0, 1.2, 1] }}
+        transition={{ duration: 0.5, times: [0, 0.6, 1] }}
+      />
+    )
   }
 
   const buttonText =
@@ -205,40 +243,69 @@ export const Thorchain: React.FC<Props> = () => {
         ? 'Enter Tx Hash'
         : 'Back'
   return (
-    <>
-      <Flex
+    <AnimatePresence>
+      <MotionFlex
         flexDir="column"
         flex="1 0 0"
         gap="42px"
         textAlign="center"
         alignItems="center"
         justifyContent="space-between"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -20 }}
       >
-        <Box>
+        <MotionBox
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.2 }}
+        >
           <Text fontWeight={900}>Connect Thorchain Account</Text>
           <Text fontWeight={500} color="grey.50">
             Connect your Thorchain wallet to check for eligibility.
           </Text>
-        </Box>
-        {renderWallet()}
+        </MotionBox>
+
+        <MotionFlex
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.3 }}
+          width="100%"
+          justifyContent="center"
+        >
+          {renderWallet()}
+        </MotionFlex>
 
         <Text my="8px" height="16px" color="red.500">
           {errorMessage}
         </Text>
-        <Box w="100%">
-          <Button
+
+        <MotionBox
+          w="100%"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+        >
+          <MotionButton
             isDisabled={!!thorAccount && thorAmountClaim === 0}
+            isLoading={isLoading}
             onClick={broadcastTx}
+            whileTap={{ scale: 0.95 }}
           >
             {buttonText}
-          </Button>
-          {!thorDelegateTx && (
-            <Button onClick={skipClick} variant="outline" mt={2}>
+          </MotionButton>
+          {!thorDelegateTx && !isLoading && (
+            <MotionButton
+              onClick={skipClick}
+              variant="outline"
+              mt={2}
+              whileTap={{ scale: 0.95 }}
+            >
               {skipText}
-            </Button>
+            </MotionButton>
           )}
-        </Box>
-      </Flex>
-    </>
+        </MotionBox>
+      </MotionFlex>
+    </AnimatePresence>
   )
 }

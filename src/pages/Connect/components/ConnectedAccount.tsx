@@ -10,12 +10,19 @@ import {
 import { MiddleEllipsis } from '../../../components/MiddleEllipsis'
 import Symbol from '@assets/arkeo-symbol.svg'
 import { toDecimal } from '@utils/functions'
+import { motion } from 'framer-motion'
+
+const MotionFlex = motion(Flex)
+const MotionContainer = motion(Container)
+const MotionImage = motion(Image)
+const MotionButton = motion(Button)
 
 type Props = {
   amount: string
   account: string
   disconnect?: () => void
   name?: string
+  loading?: boolean
 } & BoxProps
 
 export const ConnectedAccount: React.FC<Props> = ({
@@ -23,10 +30,21 @@ export const ConnectedAccount: React.FC<Props> = ({
   account,
   name,
   disconnect,
+  loading,
   ...rest
 }) => (
-  <Flex width="100%" flex="1" my="32px" flexDir="column" {...rest}>
-    <Container
+  <MotionFlex
+    width="100%"
+    flex="1"
+    my="32px"
+    flexDir="column"
+    mb="60px"
+    initial={{ opacity: 0, scale: 0.95 }}
+    animate={{ opacity: 1, scale: 1 }}
+    transition={{ duration: 0.3 }}
+    {...rest}
+  >
+    <MotionContainer
       borderRadius="24px"
       border="1px solid"
       borderColor="grey.200"
@@ -36,8 +54,17 @@ export const ConnectedAccount: React.FC<Props> = ({
       textAlign="left"
       p="16px"
       color="white"
+      initial={{ y: 20 }}
+      animate={{ y: 0 }}
+      transition={{ duration: 0.1 }}
     >
-      <Flex justifyContent="space-between" alignItems="flex-start">
+      <MotionFlex
+        justifyContent="space-between"
+        alignItems="flex-start"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.2 }}
+      >
         <Flex>
           <MiddleEllipsis
             text={account}
@@ -47,18 +74,24 @@ export const ConnectedAccount: React.FC<Props> = ({
             pb="16px"
           />
         </Flex>
-      </Flex>
-      <Flex flexDir="row" alignItems="center" gap={2}>
+      </MotionFlex>
+      <MotionFlex flexDir="row" alignItems="center" gap={2}>
         <Image w="24px" h="24px" src={Symbol} />
         <Text fontSize="24px" fontWeight="900" textAlign="center">
           {toDecimal(amount)} ARKEO
         </Text>
-      </Flex>
+      </MotionFlex>
       {disconnect && (
-        <Button onClick={disconnect} mt="16px" variant="outline">
+        <MotionButton
+          onClick={disconnect}
+          mt="16px"
+          variant="outline"
+          isDisabled={loading}
+          whileTap={{ scale: 0.95 }}
+        >
           Disconnect
-        </Button>
+        </MotionButton>
       )}
-    </Container>
-  </Flex>
+    </MotionContainer>
+  </MotionFlex>
 )

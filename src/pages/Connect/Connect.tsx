@@ -65,7 +65,8 @@ export const Connect = () => {
           subText = thorAccount
           break
       }
-      const skipped = !subText && index > 1 && step > index + 1
+      console.log({step, index})
+      const skipped = !subText && index > 1 && step > index + 1 && index !== 4
       const previousStep = step > index + 1
       return (
         <Box
@@ -76,6 +77,7 @@ export const Connect = () => {
           }
           cursor={previousStep ? 'pointer' : 'default'}
           whiteSpace="nowrap"
+          mb="8px"
         >
           <Flex pb="8px">
             <Box
@@ -122,7 +124,9 @@ export const Connect = () => {
       <Flex flexDir="row" textAlign="left">
         <Flex flexDir="column" p="32px" gap="24px">
           <Text fontWeight={900}>Claim Airdrop</Text>
-          {renderListItem()}
+          <Flex height='340px' flexDir="column" gap="8px">
+            {renderListItem()}
+          </Flex>
           <Box pt="64px" bottom="0">
             <Text fontSize="14px" fontWeight={500} color="grey.50">
               Available to Claim
