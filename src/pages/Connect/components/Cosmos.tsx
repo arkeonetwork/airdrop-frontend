@@ -96,8 +96,8 @@ export const Cosmos: React.FC<Props> = () => {
             />
           ) : (
             <MotionImage
-              w="180px"
-              h="180px"
+              w="150px"
+              h="150px"
               src={ArkeoLogo}
               initial={{ scale: 0 }}
               animate={{ scale: [0, 1.2, 1] }}
