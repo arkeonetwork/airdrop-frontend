@@ -86,7 +86,7 @@ export const Cosmos: React.FC<Props> = () => {
             <ConnectedAccount
               width="100%"
               my={0}
-              amount={claimRecord?.amountClaim ?? '0'}
+              amount={claimRecord?.claimableAmount ?? '0'}
               account={arkeoAccount}
               name={username}
               disconnect={() => {

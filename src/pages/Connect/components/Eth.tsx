@@ -141,7 +141,7 @@ export const Eth: React.FC<Props> = ({}) => {
       : address
         ? 'Sign With Wallet'
         : 'Connect Wallet'
-  const canSignTx = !address || (address && claimRecord?.amountClaim > 0)
+  const canSignTx = !address || (address && claimRecord?.claimableAmount > 0)
 
   return (
     <AnimatePresence>
@@ -178,7 +178,7 @@ export const Eth: React.FC<Props> = ({}) => {
             <ConnectedAccount
               width="100%"
               my={0}
-              amount={claimRecord?.amountClaim ?? '0'}
+              amount={claimRecord?.claimableAmount ?? '0'}
               account={ethAccount}
               loading={isLoading}
               disconnect={() => {

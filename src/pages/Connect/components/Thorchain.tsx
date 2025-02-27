@@ -18,7 +18,7 @@ const MotionInput = motion(Input)
 
 type Props = {}
 
-const isTestnet = import.meta.env.VITE_IS_TESTNET
+const isTestnet = import.meta.env.VITE_IS_TESTNET === 'true'
 
 export const Thorchain: React.FC<Props> = () => {
   const [errorMessage, setErrorMessage] = useState<string>('')
@@ -28,7 +28,7 @@ export const Thorchain: React.FC<Props> = () => {
 
   const prefix = isTestnet ? 'tarkeo' : 'arkeo'
 
-  const { address } = useChain('thorchain')
+  const { address, getSigningStargateClient } = useChain('thorchain')
 
   const [
     arkeoAccountDerivedFromThorchain,
@@ -52,7 +52,6 @@ export const Thorchain: React.FC<Props> = () => {
     address: arkeoAccountDerivedFromThorchain ?? '',
   })
 
-  const { getSigningStargateClient } = useChain('thorchain')
 
   useEffect(() => {
     if (!thorAccount) return
@@ -183,7 +182,7 @@ export const Thorchain: React.FC<Props> = () => {
             <ConnectedAccount
               width="100%"
               my={0}
-              amount={claimRecord?.amountClaim ?? '0'}
+              amount={claimRecord?.claimableAmount ?? '0'}
               account={thorAccount}
               name={'Thorchain'}
               loading={isLoading}

@@ -25,7 +25,7 @@ export const AddressCheck = () => {
   useEffect(() => {
     if (!claimRecord && !error) return
 
-    const amount = claimRecord?.amount_claim?.amount ?? '0'
+    const amount = claimRecord?.claimableAmount?.amount ?? '0'
     if (amount === '0') {
       navigate('/check')
     } else {

@@ -14,7 +14,9 @@ import { Chain, AssetList } from '@chain-registry/types'
 import '@interchain-ui/react/globalStyles'
 import '@interchain-ui/react/styles'
 
-const isTestnet = import.meta.env.VITE_IS_TESTNET
+const isTestnet = import.meta.env.VITE_IS_TESTNET === 'true'
+console.log('isTestnet', isTestnet)
+console.log('type of isTestnet', typeof isTestnet)
 const projectId = import.meta.env.VITE_WALLET_CONNECT_ID
 const arkeoEndpointRest = import.meta.env.VITE_ARKEO_ENDPOINT_REST
 const arkeoEndpointRpc = import.meta.env.VITE_ARKEO_ENDPOINT_RPC
@@ -47,10 +49,10 @@ const localArkeo: Chain = {
   chain_name: 'arkeo',
   status: 'live',
   chain_type: 'cosmos',
-  network_type: 'testnet',
-  chain_id: 'arkeo',
+  network_type: 'mainnet',
+  chain_id: 'arkeo-main-v1',
   pretty_name: 'Arkeo',
-  bech32_prefix: isTestnet ? 'tarkeo' : 'arkeo',
+  bech32_prefix: 'arkeo',
   slip44: 118,
 }
 const localArkeoAssets: AssetList = {

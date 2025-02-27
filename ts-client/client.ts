@@ -74,6 +74,7 @@ export class IgniteClient extends EventEmitter {
   async useKeplr(keplrChainInfo: Partial<ChainInfo> = {}) {
     // Using queryClients directly because BaseClient has no knowledge of the modules at this stage
     try {
+      console.log('this.env.prefix', this.env.prefix)
       const queryClient = (
         await import("./cosmos.base.tendermint.v1beta1/module")
       ).queryClient;
@@ -91,7 +92,7 @@ export class IgniteClient extends EventEmitter {
       const staking = await (await stakingqc.queryParams()).data;
       const bankqc = bankQueryClient({ addr: this.env.apiURL });
       const tokens = await (await bankqc.queryTotalSupply()).data;
-      const addrPrefix = this.env.prefix ?? "tarkeo";
+      const addrPrefix = this.env.prefix ?? "arkeo";
       const rpc = this.env.rpcURL;
       const rest = this.env.apiURL;
       let stakeCurrency = {

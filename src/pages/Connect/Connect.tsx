@@ -65,7 +65,6 @@ export const Connect = () => {
           subText = thorAccount
           break
       }
-      console.log({step, index})
       const skipped = !subText && index > 1 && step > index + 1 && index !== 4
       const previousStep = step > index + 1
       return (

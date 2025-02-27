@@ -15,14 +15,14 @@ export const Check = () => {
 
   useEffect(() => {
     if (claimRecord) {
-      const claimAmount = parseInt(claimRecord?.amount_claim?.amount, 10)
+      const claimAmount = parseInt(claimRecord?.claimableAmount?.amount, 10)
       if (claimAmount > 0) {
         navigate('/check/' + address)
       } else {
         setErrorMessage('You are not eligible for the Arkeo airdrop')
       }
     }
-  }, [claimRecord?.amount_claim?.amount])
+  }, [claimRecord?.claimableAmount?.amount])
 
   const changeAddress = (event: any) => {
     setAddress(event.target.value)

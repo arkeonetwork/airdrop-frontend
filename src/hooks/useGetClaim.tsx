@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { bech32 } from 'bech32'
 
 const arkeoEndpointRest = import.meta.env.VITE_ARKEO_ENDPOINT_REST
-const isTestnet = import.meta.env.VITE_IS_TESTNET
+const isTestnet = import.meta.env.VITE_IS_TESTNET === 'true'
 
 enum ChainEnum {
   INVALID = -1,
@@ -23,18 +23,17 @@ export const useGetClaim = ({ address }: UseGetClaim) => {
   const arkeoPrefix = isTestnet ? 'tarkeo' : 'arkeo'
   const validCosmosPrefix = ['cosmos', 'thor', arkeoPrefix]
 
-  const calculateClaimAmount = (claimRecord: any) => {
+  const calculateClaimAmount = (claimRecord: any, claimable: any) => {
     const parseAmount = (amount: string) => parseInt(amount, 10) ?? 0
 
+    const claimableAmount = parseAmount(claimable?.amount?.amount)
     const amountClaim = parseAmount(claimRecord?.amount_claim?.amount)
     const amountDelegate = parseAmount(claimRecord?.amount_delegate?.amount)
     const amountVote = parseAmount(claimRecord?.amount_vote?.amount)
     const totalAmount = (amountClaim + amountDelegate + amountVote).toString()
 
     return {
-      amountClaim,
-      amountDelegate,
-      amountVote,
+      claimableAmount,
       totalAmount,
     }
   }
@@ -66,12 +65,14 @@ export const useGetClaim = ({ address }: UseGetClaim) => {
         setIsLoading(true)
         setError(null)
         const params = { chain }
-        const url = buildUrl('/arkeo/claim/claimrecord', convertedAddress)
-        const { data } = await axios.get(url, { params })
-        const claimAmounts = calculateClaimAmount(data.claim_record)
+        const claimRecordUrl = buildUrl('/arkeo/claim/claimrecord', convertedAddress)
+        const { data: claimRecord } = await axios.get(claimRecordUrl, { params })
+        const claimableUrl = buildUrl('/arkeo/claim/claimable', convertedAddress)
+        const { data: claimable } = await axios.get(claimableUrl, { params })
+        const claimAmounts = calculateClaimAmount(claimRecord, claimable)
 
         setClaimRecord({
-          ...data.claim_record,
+          ...claimRecord.claim_record,
           ...claimAmounts,
         })
       }
@@ -85,7 +86,7 @@ export const useGetClaim = ({ address }: UseGetClaim) => {
 
   useEffect(() => {
     getClaimRecord()
-  }, [arkeoEndpointRest, address])
+  }, [address])
 
   return { claimRecord, isLoading, error }
 }

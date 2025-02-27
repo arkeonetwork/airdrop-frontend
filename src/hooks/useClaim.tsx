@@ -6,7 +6,7 @@ import axios from 'axios'
 import { coins } from '@cosmjs/proto-signing'
 import { MsgClaimArkeoResponse } from '../../ts-client/arkeo.claim/module'
 
-const isTestnet = import.meta.env.VITE_IS_TESTNET
+const isTestnet = import.meta.env.VITE_IS_TESTNET === 'true'
 const arkeoEndpointRest = import.meta.env.VITE_ARKEO_ENDPOINT_REST
 const arkeoEndpointRpc = import.meta.env.VITE_ARKEO_ENDPOINT_RPC
 const thorServer = import.meta.env.VITE_THORCHAIN_SERVER
@@ -52,6 +52,7 @@ export const useClaim = () => {
       await client.useKeplr({
         rpc: arkeoEndpointRpc,
         rest: arkeoEndpointRest,
+        prefix: isTestnet ? 'tarkeo' : 'arkeo',
       })
 
       let result
