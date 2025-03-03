@@ -15,6 +15,7 @@ interface ClaimRecord {
   amountClaim: number
   amountDelegate: number
   amountVote: number
+  claimableAmount: number
 }
 
 type DispatchProps =
@@ -34,9 +35,9 @@ type DispatchProps =
 
 const initialState = {
   step: 1,
-  arkeoInfo: { amountClaim: 0, amountVote: 0, amountDelegate: 0 },
-  ethInfo: { amountClaim: 0, amountVote: 0, amountDelegate: 0 },
-  thorInfo: { amountClaim: 0, amountVote: 0, amountDelegate: 0 },
+  arkeoInfo: { amountClaim: 0, amountVote: 0, amountDelegate: 0, claimableAmount: 0 },
+  ethInfo: { amountClaim: 0, amountVote: 0, amountDelegate: 0, claimableAmount: 0 },
+  thorInfo: { amountClaim: 0, amountVote: 0, amountDelegate: 0, claimableAmount: 0 },
 }
 
 const connectReducer = (state: StateProps, action: DispatchProps) => {
@@ -60,9 +61,7 @@ const connectReducer = (state: StateProps, action: DispatchProps) => {
         ...state,
         arkeoInfo: {
           ...state.arkeoInfo,
-          amountClaim: payload.amountClaim,
-          amountVote: payload.amountVote,
-          amountDelegate: payload.amountDelegate,
+          ...payload,
         },
       }
     case 'SET_THORCHAIN_ACCOUNT':
@@ -78,9 +77,7 @@ const connectReducer = (state: StateProps, action: DispatchProps) => {
         ...state,
         thorInfo: {
           ...state.thorInfo,
-          amountClaim: payload.amountClaim,
-          amountVote: payload.amountVote,
-          amountDelegate: payload.amountDelegate,
+          ...payload,
         },
       }
     case 'SET_THORCHAIN_DELEGATE_TX':
@@ -104,9 +101,7 @@ const connectReducer = (state: StateProps, action: DispatchProps) => {
         ...state,
         ethInfo: {
           ...state.ethInfo,
-          amountClaim: payload.amountClaim,
-          amountVote: payload.amountVote,
-          amountDelegate: payload.amountDelegate,
+          ...payload,
         },
       }
     case 'SET_ETH_SIGNATURE':
@@ -120,17 +115,17 @@ const connectReducer = (state: StateProps, action: DispatchProps) => {
     case 'RESET_ETH':
       return {
         ...state,
-        ethInfo: { amountClaim: 0, amountVote: 0, amountDelegate: 0 },
+        ethInfo: { amountClaim: 0, amountVote: 0, amountDelegate: 0, claimableAmount: 0 },
       }
     case 'RESET_THOR':
       return {
         ...state,
-        thorInfo: { amountClaim: 0, amountVote: 0, amountDelegate: 0 },
+        thorInfo: { amountClaim: 0, amountVote: 0, amountDelegate: 0, claimableAmount: 0 },
       }
     case 'RESET_ARKEO':
       return {
         ...state,
-        arkeoInfo: { amountClaim: 0, amountVote: 0, amountDelegate: 0 },
+        arkeoInfo: { amountClaim: 0, amountVote: 0, amountDelegate: 0, claimableAmount: 0 },
       }
     case 'RESET':
       return {

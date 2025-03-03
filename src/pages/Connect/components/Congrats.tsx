@@ -20,17 +20,17 @@ export const Congrats: React.FC<Props> = ({}) => {
   const {
     state: {
       arkeoInfo: {
-        amountClaim: arkeoAmountClaim,
+        claimableAmount: arkeoAmountClaim,
         amountDelegate: arkeoAmountDelegate,
         amountVote: arkeoAmountVote,
       },
       thorInfo: {
-        amountClaim: thorAmountClaim,
+        claimableAmount: thorAmountClaim,
         amountDelegate: thorAmountDelegate,
         amountVote: thorAmountVote,
       },
       ethInfo: {
-        amountClaim: ethAmountClaim,
+        claimableAmount: ethAmountClaim,
         amountDelegate: ethAmountDelegate,
         amountVote: ethAmountVote,
       },
@@ -38,6 +38,7 @@ export const Congrats: React.FC<Props> = ({}) => {
     dispatch,
   } = useConnect()
   const totalClaimAmount = arkeoAmountClaim + thorAmountClaim + ethAmountClaim
+  console.log({ ethAmountDelegate, ethAmountVote })
   const totalDelegateAmount =
     arkeoAmountDelegate + thorAmountDelegate + ethAmountDelegate
   const totalVoteAmount = arkeoAmountVote + thorAmountVote + ethAmountVote
@@ -126,7 +127,7 @@ export const Congrats: React.FC<Props> = ({}) => {
           >
             <Text fontWeight={400}>Stake your Arkeo</Text>
             <Flex>
-              <Text>{toDecimal(totalDelegateAmount)} ARKEO</Text>
+              {/* <Text>{toDecimal(totalDelegateAmount)} ARKEO</Text> */}
 
               <ArrowForwardIcon
                 width="24px"
@@ -148,7 +149,7 @@ export const Congrats: React.FC<Props> = ({}) => {
           >
             <Text>Vote on Proposal</Text>
             <Flex>
-              <Text>{toDecimal(totalVoteAmount)} ARKEO</Text>
+              {/* <Text>{toDecimal(totalVoteAmount)} ARKEO</Text> */}
               <ArrowForwardIcon
                 width="24px"
                 height="24px"

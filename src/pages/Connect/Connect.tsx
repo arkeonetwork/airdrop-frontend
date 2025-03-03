@@ -25,9 +25,9 @@ export const Connect = () => {
   const {
     state: {
       step,
-      arkeoInfo: { account: arkeoAccount, amountClaim: arkeoAmountClaim },
-      thorInfo: { account: thorAccount, amountClaim: thorAmountClaim },
-      ethInfo: { account: ethAccount, amountClaim: ethAmountClaim },
+      arkeoInfo: { account: arkeoAccount, claimableAmount: arkeoAmountClaim },
+      thorInfo: { account: thorAccount, claimableAmount: thorAmountClaim },
+      ethInfo: { account: ethAccount, claimableAmount: ethAmountClaim },
     },
     dispatch,
   } = useConnect()
@@ -117,7 +117,7 @@ export const Connect = () => {
     })
   }
   const totalClaimAmount = arkeoAmountClaim + thorAmountClaim + ethAmountClaim
-
+  console.log({arkeoAmountClaim, thorAmountClaim, ethAmountClaim, totalClaimAmount})
   return (
     <Panel width="800px">
       <Flex flexDir="row" textAlign="left">

@@ -20,9 +20,9 @@ export const Claim: React.FC<Props> = ({}) => {
   const {
     state: {
       step,
-      arkeoInfo: { amountClaim: arkeoAmountClaim },
-      thorInfo: { amountClaim: thorAmountClaim },
-      ethInfo: { amountClaim: ethAmountClaim },
+      arkeoInfo: { claimableAmount: arkeoAmountClaim },
+      thorInfo: { claimableAmount: thorAmountClaim },
+      ethInfo: { claimableAmount: ethAmountClaim },
     },
     dispatch,
   } = useConnect()

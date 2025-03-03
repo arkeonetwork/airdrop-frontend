@@ -24,7 +24,10 @@ export const Eth: React.FC<Props> = ({}) => {
   const {
     state: {
       step,
-      ethInfo: { account: ethAccount, signature: ethSignature },
+      ethInfo: {
+        account: ethAccount,
+        signature: ethSignature,
+      },
       arkeoInfo: { account: arkeoAccount },
     },
     dispatch,
@@ -41,14 +44,13 @@ export const Eth: React.FC<Props> = ({}) => {
   const { data, signTypedData, status, reset, error } = useSignTypedData()
 
   useEffect(() => {
-    console.log('status', status)
     if (status === 'success' || status === 'error') {
       setIsLoading(false)
     }
   }, [status])
 
   useEffect(() => {
-    const handleConnectorUpdate = ({ account, chain }: ConnectorData) => {
+    const handleConnectorUpdate = ({ account }: ConnectorData) => {
       if (account) {
         dispatch({ type: 'SET_ETH_ACCOUNT', payload: account })
         dispatch({ type: 'SET_ETH_SIGNATURE' })
