@@ -18,8 +18,8 @@ export const useClaim = () => {
   const {
     state: {
       arkeoInfo: { account: arkeoAccount },
-      ethInfo: { account: ethAccount, amountClaim: ethAmount, signature },
-      thorInfo: { amountClaim: thorAmount, delegateTx: thorDelegateTx },
+      ethInfo: { account: ethAccount, claimableAmount: ethAmount, signature },
+      thorInfo: { claimableAmount: thorAmount, delegateTx: thorDelegateTx },
     },
     dispatch,
   } = useConnect()
@@ -33,26 +33,53 @@ export const useClaim = () => {
       setError(null)
       setIsSucceeded(false)
 
-      if (thorAmount > 0 && thorDelegateTx) {
-        const { data } = await axios.post(`${thorServer}/claim`, {
-          txHash: thorDelegateTx,
-        })
-        console.log('thorDelegateTx', data)
-        if(data?.message?.includes("updated")){
-          dispatch({ type: 'SET_THORCHAIN_DELEGATE_TX', payload: undefined })
-        }
-      }
-
+      // Check if arkeoAccount exists on chain
       const client = new Client({
         apiURL: arkeoEndpointRest,
         rpcURL: arkeoEndpointRpc,
         prefix: isTestnet ? 'tarkeo' : 'arkeo',
       })
 
+      try {
+        const accountInfo =
+          await client.CosmosAuthV1Beta1.query.queryAccount(arkeoAccount)
+        console.log({ accountInfo })
+        if (!accountInfo) {
+          // Account doesn't exist, call /fund endpoint
+          await axios.post(`${thorServer}/fund`, {
+            address: arkeoAccount,
+            chain: isTestnet ? 'tarkeo' : 'arkeo',
+          })
+          // Wait a bit for the transaction to be processed
+          await new Promise((resolve) => setTimeout(resolve, 7500))
+        }
+      } catch (error) {
+        // If query fails, assume account doesn't exist and try to fund it
+        await axios.post(`${thorServer}/fund`, {
+          address: arkeoAccount,
+          chain: isTestnet ? 'tarkeo' : 'arkeo',
+        })
+        // Wait a bit for the transaction to be processed
+        await new Promise((resolve) => setTimeout(resolve, 7500))
+      }
+      //TODO - verify fund exists
+
+      if (thorAmount > 0 && thorDelegateTx) {
+        const { data } = await axios.post(`${thorServer}/claim`, {
+          txHash: thorDelegateTx,
+        })
+        console.log('thorDelegateTx', data)
+        if (data?.message?.includes('updated')) {
+          dispatch({ type: 'SET_THORCHAIN_DELEGATE_TX', payload: undefined })
+        }
+      }
+
+      console.log("Finish Fund")
+
       await client.useKeplr({
         rpc: arkeoEndpointRpc,
         rest: arkeoEndpointRest,
-        prefix: isTestnet ? 'tarkeo' : 'arkeo',
+        // prefix: isTestnet ? 'tarkeo' : 'arkeo',
       })
 
       let result

@@ -44,7 +44,6 @@ export const Congrats: React.FC<Props> = ({}) => {
   const totalVoteAmount = arkeoAmountVote + thorAmountVote + ethAmountVote
 
   useEffect(() => {
-    // Hide confetti after 5 seconds
     const timer = setTimeout(() => {
       setShowConfetti(false)
     }, 5000)

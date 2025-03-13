@@ -42,7 +42,7 @@ export const Thorchain: React.FC<Props> = () => {
       thorInfo: {
         account: thorAccount,
         delegateTx: thorDelegateTx,
-        amountClaim: thorAmountClaim,
+        claimableAmount: thorAmountClaim,
       },
     },
     dispatch,
@@ -51,7 +51,7 @@ export const Thorchain: React.FC<Props> = () => {
   const { claimRecord } = useGetClaim({
     address: arkeoAccountDerivedFromThorchain ?? '',
   })
-
+  console.log({ claimRecord })
 
   useEffect(() => {
     if (!thorAccount) return
@@ -63,6 +63,7 @@ export const Thorchain: React.FC<Props> = () => {
   useEffect(() => {
     if (!claimRecord) return
     if (thorAccount) {
+      console.log('CLAIM RECORD', claimRecord)
       dispatch({
         type: 'SET_THORCHAIN_AMOUNT',
         payload: claimRecord,
