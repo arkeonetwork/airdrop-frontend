@@ -47,6 +47,8 @@ export const Claim: React.FC<Props> = ({}) => {
       setErrorMessage('No Ethereum Signature Found')
     } else if (errorString.toLowerCase().includes('request rejected')) {
       setErrorMessage('Transaction Cancelled')
+    } else if (errorString.toLowerCase().includes('no unfunded claim records')) {
+      setErrorMessage('No Claims Found')
     } else {
       setErrorMessage('Something Went Wrong')
     }

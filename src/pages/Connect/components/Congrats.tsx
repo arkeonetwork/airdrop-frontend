@@ -38,7 +38,6 @@ export const Congrats: React.FC<Props> = ({}) => {
     dispatch,
   } = useConnect()
   const totalClaimAmount = arkeoAmountClaim + thorAmountClaim + ethAmountClaim
-  console.log({ ethAmountDelegate, ethAmountVote })
   const totalDelegateAmount =
     arkeoAmountDelegate + thorAmountDelegate + ethAmountDelegate
   const totalVoteAmount = arkeoAmountVote + thorAmountVote + ethAmountVote

@@ -14,7 +14,6 @@ import { Chain, AssetList } from '@chain-registry/types'
 import '@interchain-ui/react/globalStyles'
 import '@interchain-ui/react/styles'
 
-const isTestnet = import.meta.env.VITE_IS_TESTNET === 'true'
 const projectId = import.meta.env.VITE_WALLET_CONNECT_ID
 const arkeoEndpointRest = import.meta.env.VITE_ARKEO_ENDPOINT_REST
 const arkeoEndpointRpc = import.meta.env.VITE_ARKEO_ENDPOINT_RPC

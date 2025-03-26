@@ -30,7 +30,6 @@ export const useGetClaim = ({ address }: UseGetClaim) => {
     const amountDelegate = parseAmount(claimRecord?.amount_delegate?.amount)
     const amountVote = parseAmount(claimRecord?.amount_vote?.amount)
     const totalAmount = (amountClaim + amountDelegate + amountVote).toString()
-    console.log({claimRecord, totalAmount, amountClaim, amountDelegate, amountVote, claimableAmount})
     return {
       claimableAmount,
       totalAmount,
@@ -66,7 +65,6 @@ export const useGetClaim = ({ address }: UseGetClaim) => {
         const params = { chain }
         const claimRecordUrl = buildUrl('/arkeo/claim/claimrecord', convertedAddress)
         const { data: claimRecord } = await axios.get(claimRecordUrl, { params })
-        console.log("CLAIM RECORD", claimRecord)
         const claimableUrl = buildUrl('/arkeo/claim/claimable', convertedAddress)
         const { data: claimable } = await axios.get(claimableUrl, { params })
         const claimAmounts = calculateClaimAmount(claimRecord.claim_record, claimable)
