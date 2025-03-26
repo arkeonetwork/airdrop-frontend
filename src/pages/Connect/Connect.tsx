@@ -117,7 +117,6 @@ export const Connect = () => {
     })
   }
   const totalClaimAmount = arkeoAmountClaim + thorAmountClaim + ethAmountClaim
-  console.log({arkeoAmountClaim, thorAmountClaim, ethAmountClaim, totalClaimAmount})
   return (
     <Panel width="800px">
       <Flex flexDir="row" textAlign="left">

@@ -12,6 +12,7 @@ import {
 } from 'wagmi'
 import { useGetClaim } from '@hooks/useGetClaim'
 import { motion, AnimatePresence } from 'framer-motion'
+import { verifyTypedData } from 'ethers'
 
 const MotionFlex = motion(Flex)
 const MotionBox = motion(Box)
@@ -24,10 +25,7 @@ export const Eth: React.FC<Props> = ({}) => {
   const {
     state: {
       step,
-      ethInfo: {
-        account: ethAccount,
-        signature: ethSignature,
-      },
+      ethInfo: { account: ethAccount, signature: ethSignature },
       arkeoInfo: { account: arkeoAccount },
     },
     dispatch,
@@ -42,7 +40,6 @@ export const Eth: React.FC<Props> = ({}) => {
     address: address ?? '',
   })
   const { data, signTypedData, status, reset, error } = useSignTypedData()
-
   useEffect(() => {
     if (status === 'success' || status === 'error') {
       setIsLoading(false)
@@ -68,7 +65,9 @@ export const Eth: React.FC<Props> = ({}) => {
   }, [activeConnector])
 
   useEffect(() => {
-    if (data) dispatch({ type: 'SET_ETH_SIGNATURE', payload: data })
+    if (data) {
+      dispatch({ type: 'SET_ETH_SIGNATURE', payload: data })
+    }
   }, [data])
 
   useEffect(() => {
@@ -108,17 +107,12 @@ export const Eth: React.FC<Props> = ({}) => {
               { name: 'arkeoAddress', type: 'string' },
               { name: 'amount', type: 'string' },
             ],
-            EIP712Domain: [
-              { name: 'name', type: 'string' },
-              { name: 'chainId', type: 'uint256' },
-              { name: 'version', type: 'string' },
-            ],
           },
           primaryType: 'Claim',
           domain: {
-            name: 'ArkdropClaim' as any,
-            version: '1' as any,
-            chainId: 1 as any,
+            name: 'ArkdropClaim',
+            version: '1',
+            chainId: 1,
           },
           message: {
             address,

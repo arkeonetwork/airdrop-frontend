@@ -264,9 +264,10 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 				const { address } = (await signer.getAccounts())[0]; 
 				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry});
 				let msg = this.msgClaimArkeo({ value: MsgClaimArkeo.fromPartial(value) })
-				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+				const tx = await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+				return tx;
 			} catch (e: any) {
-				console.log(e)
+				console.error(e)
 				throw new Error('TxClient:sendMsgClaimArkeo: Could not broadcast Tx: '+ e.message)
 			}
 		},
@@ -281,7 +282,7 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 				let msg = this.msgClaimArkeoResponse({ value: MsgClaimArkeoResponse.fromPartial(value) })
 				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
 			} catch (e: any) {
-				console.log(e)
+				console.error(e)
 				throw new Error('TxClient:sendMsgClaimArkeoResponse: Could not broadcast Tx: '+ e.message)
 			}
 		},

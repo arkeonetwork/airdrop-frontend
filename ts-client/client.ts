@@ -74,7 +74,6 @@ export class IgniteClient extends EventEmitter {
   async useKeplr(keplrChainInfo: Partial<ChainInfo> = {}) {
     // Using queryClients directly because BaseClient has no knowledge of the modules at this stage
     try {
-      console.log('this.env.prefix', this.env.prefix)
       const queryClient = (
         await import("./cosmos.base.tendermint.v1beta1/module")
       ).queryClient;

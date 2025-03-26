@@ -22,7 +22,7 @@ export const Check = () => {
         setErrorMessage('You are not eligible for the Arkeo airdrop')
       }
     }
-  }, [claimRecord?.claimableAmount])
+  }, [claimRecord])
 
   const changeAddress = (event: any) => {
     setAddress(event.target.value)

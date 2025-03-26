@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Button, Box, Text, Image, Flex, Input } from '@chakra-ui/react'
-import CosmosLogo from '@assets/cosmos-atom-logo.svg'
+import TCLogo from '@assets/thorchain-logo.svg'
 import { useConnect } from '../ConnectContext'
 import { useGetClaim } from '@hooks/useGetClaim'
 import { bech32 } from 'bech32'
@@ -14,7 +14,6 @@ const MotionFlex = motion(Flex)
 const MotionBox = motion(Box)
 const MotionImage = motion(Image)
 const MotionButton = motion(Button)
-const MotionInput = motion(Input)
 
 type Props = {}
 
@@ -42,7 +41,7 @@ export const Thorchain: React.FC<Props> = () => {
       thorInfo: {
         account: thorAccount,
         delegateTx: thorDelegateTx,
-        amountClaim: thorAmountClaim,
+        claimableAmount: thorAmountClaim,
       },
     },
     dispatch,
@@ -51,7 +50,6 @@ export const Thorchain: React.FC<Props> = () => {
   const { claimRecord } = useGetClaim({
     address: arkeoAccountDerivedFromThorchain ?? '',
   })
-
 
   useEffect(() => {
     if (!thorAccount) return
@@ -79,17 +77,14 @@ export const Thorchain: React.FC<Props> = () => {
       } else if (thorDelegateTx) {
         dispatch({ type: 'SET_STEP', payload: step + 1 })
       } else if (thorAccount) {
-        console.log('thorAccount', thorAccount)
         const signingClient = await getSigningStargateClient()
         if (!signingClient) {
-          console.log('No signing client found')
+          console.error('No signing client found')
           throw new Error('No signing client found')
         }
-        console.log({ signingClient })
-
         const amount = coins('1', 'rune') // 0.00000001 RUNE
         const fee = {
-          amount: coins('2000', 'rune'),
+          amount: coins('0', 'rune'),
           gas: '200000',
         }
 
@@ -101,7 +96,6 @@ export const Thorchain: React.FC<Props> = () => {
           `delegate:arkeo:${arkeoAccount}`,
         )
 
-        console.log('Transaction hash:', tx.transactionHash)
         dispatch({
           type: 'SET_THORCHAIN_DELEGATE_TX',
           payload: tx.transactionHash,
@@ -112,9 +106,13 @@ export const Thorchain: React.FC<Props> = () => {
       }
     } catch (error) {
       console.error(error)
-      setErrorMessage(
-        error instanceof Error ? error.message : 'Transaction failed',
-      )
+      if(error instanceof Error && error.message.includes('insufficient funds')) {
+        setErrorMessage('Insufficient funds')
+      } else {
+        setErrorMessage(
+          error instanceof Error ? error.message : 'Transaction failed',
+        )
+      }
     } finally {
       setIsLoading(false)
     }
@@ -132,9 +130,10 @@ export const Thorchain: React.FC<Props> = () => {
           send: { memo },
         },
       } = actions[0]
-      const thorAccount = inbound[0].address
-      console.log({ thorAccount })
-      if (!thorAccount) {
+      const derivedThorAccount = inbound[0].address
+
+      if (!derivedThorAccount || thorAccount !== derivedThorAccount) {
+        console.log('Invalid Tx Hash')
         throw new Error('Invalid Tx Hash')
       }
 
@@ -152,12 +151,11 @@ export const Thorchain: React.FC<Props> = () => {
         throw new Error('Invalid Tx Memo')
       }
 
-      if (!thorAccount) {
-        throw new Error('Invalid Tx Hash')
-      }
+
       dispatch({ type: 'SET_THORCHAIN_DELEGATE_TX', payload: hashValue })
       dispatch({ type: 'SET_STEP', payload: step + 1 })
     } catch (e) {
+      console.error(e)
       setErrorMessage('Invalid Transaction')
     }
   }
@@ -221,7 +219,7 @@ export const Thorchain: React.FC<Props> = () => {
       <MotionImage
         w="150px"
         h="150px"
-        src={CosmosLogo}
+        src={TCLogo}
         initial={{ scale: 0 }}
         animate={{ scale: [0, 1.2, 1] }}
         transition={{ duration: 0.5, times: [0, 0.6, 1] }}

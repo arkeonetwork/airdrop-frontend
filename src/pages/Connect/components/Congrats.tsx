@@ -38,13 +38,11 @@ export const Congrats: React.FC<Props> = ({}) => {
     dispatch,
   } = useConnect()
   const totalClaimAmount = arkeoAmountClaim + thorAmountClaim + ethAmountClaim
-  console.log({ ethAmountDelegate, ethAmountVote })
   const totalDelegateAmount =
     arkeoAmountDelegate + thorAmountDelegate + ethAmountDelegate
   const totalVoteAmount = arkeoAmountVote + thorAmountVote + ethAmountVote
 
   useEffect(() => {
-    // Hide confetti after 5 seconds
     const timer = setTimeout(() => {
       setShowConfetti(false)
     }, 5000)

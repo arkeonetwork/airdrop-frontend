@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { bech32 } from 'bech32'
 import { Client } from '../../ts-client'
 import { useConnect } from '@src/pages/Connect/ConnectContext'
 import axios from 'axios'
@@ -18,8 +17,8 @@ export const useClaim = () => {
   const {
     state: {
       arkeoInfo: { account: arkeoAccount },
-      ethInfo: { account: ethAccount, amountClaim: ethAmount, signature },
-      thorInfo: { amountClaim: thorAmount, delegateTx: thorDelegateTx },
+      ethInfo: { account: ethAccount, claimableAmount: ethAmount, signature },
+      thorInfo: { claimableAmount: thorAmount, delegateTx: thorDelegateTx },
     },
     dispatch,
   } = useConnect()
@@ -33,26 +32,81 @@ export const useClaim = () => {
       setError(null)
       setIsSucceeded(false)
 
-      if (thorAmount > 0 && thorDelegateTx) {
-        const { data } = await axios.post(`${thorServer}/claim`, {
-          txHash: thorDelegateTx,
-        })
-        console.log('thorDelegateTx', data)
-        if(data?.message?.includes("updated")){
-          dispatch({ type: 'SET_THORCHAIN_DELEGATE_TX', payload: undefined })
-        }
-      }
-
       const client = new Client({
         apiURL: arkeoEndpointRest,
         rpcURL: arkeoEndpointRpc,
         prefix: isTestnet ? 'tarkeo' : 'arkeo',
       })
 
+      if (thorAmount > 0 && thorDelegateTx) {
+        const { data } = await axios.post(`${thorServer}/claim`, {
+          txHash: thorDelegateTx,
+        })
+        if (data?.message?.includes('updated')) {
+          dispatch({ type: 'SET_THORCHAIN_DELEGATE_TX', payload: undefined })
+        } else {
+          throw new Error('Thorchain delegate tx failed')
+        }
+      }
+
+      let data
+      try {
+        const accountInfo =
+          await client.CosmosAuthV1Beta1.query.queryAccount(arkeoAccount)
+        if (!accountInfo) {
+          // Account doesn't exist, call /fund endpoint
+          data = await axios.post(`${thorServer}/fund`, {
+            arkeoAddress: arkeoAccount,
+            ethAddress: ethAccount,
+            signature: signature,
+            chain: isTestnet ? 'tarkeo' : 'arkeo',
+          })
+        }
+      } catch (error) {
+        // If query fails, assume account doesn't exist and try to fund it
+        data = await axios.post(`${thorServer}/fund`, {
+          arkeoAddress: arkeoAccount,
+          ethAddress: ethAccount,
+          signature: signature,
+          chain: isTestnet ? 'tarkeo' : 'arkeo',
+        })
+      }
+
+      if (data) {
+        let attempts = 0
+        const maxAttempts = 3
+
+        while (attempts < maxAttempts) {
+          try {
+            const tx = await client.CosmosTxV1Beta1.query.serviceGetTx(
+              data.data.transaction,
+            )
+            if (tx && tx.status === 200) {
+              console.log('✅ TX succeeded', tx)
+              break
+            } else {
+              console.error('❌ TX failed', tx)
+              if (attempts === maxAttempts - 1) {
+                throw new Error('Transaction failed after maximum attempts')
+              }
+            }
+          } catch (error) {
+            if (attempts === maxAttempts - 1) {
+              throw error
+            }
+          }
+
+          attempts++
+          // Wait 2.5 seconds between attempts
+          await new Promise((resolve) => setTimeout(resolve, 2500))
+        }
+      }
+
+      console.info('Finish Fund')
+
       await client.useKeplr({
         rpc: arkeoEndpointRpc,
         rest: arkeoEndpointRest,
-        prefix: isTestnet ? 'tarkeo' : 'arkeo',
       })
 
       let result
@@ -121,7 +175,7 @@ export const useClaim = () => {
       )
 
       if (result.code !== 0 && result.rawLog) {
-        // TODO better error handling
+        console.error(result.rawLog)
         throw new Error(result.rawLog)
       } else {
         setIsSucceeded(true)
