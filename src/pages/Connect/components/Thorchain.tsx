@@ -131,10 +131,9 @@ export const Thorchain: React.FC<Props> = () => {
         },
       } = actions[0]
       const derivedThorAccount = inbound[0].address
-      console.log({ derivedThorAccount })
-      console.log({ thorAccount })
+
       if (!derivedThorAccount || thorAccount !== derivedThorAccount) {
-        console.log('Infsdvalid Tx Hash')
+        console.log('Invalid Tx Hash')
         throw new Error('Invalid Tx Hash')
       }
 
