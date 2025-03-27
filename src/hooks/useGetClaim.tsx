@@ -3,8 +3,8 @@ import { ethers } from 'ethers'
 import { useState, useEffect } from 'react'
 import { bech32 } from 'bech32'
 
-const arkeoEndpointRest = import.meta.env.VITE_ARKEO_ENDPOINT_REST || process.env.VITE_ARKEO_ENDPOINT_REST
-const isTestnet = import.meta.env.VITE_IS_TESTNET === 'true' || process.env.VITE_IS_TESTNET === 'true'
+const arkeoEndpointRest = import.meta.env.VITE_ARKEO_ENDPOINT_REST
+const isTestnet = import.meta.env.VITE_IS_TESTNET === 'true'
 
 enum ChainEnum {
   INVALID = -1,

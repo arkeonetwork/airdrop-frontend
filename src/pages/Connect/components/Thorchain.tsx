@@ -17,7 +17,7 @@ const MotionButton = motion(Button)
 
 type Props = {}
 
-const isTestnet = import.meta.env.VITE_IS_TESTNET === 'true' || process.env.VITE_IS_TESTNET === 'true'
+const isTestnet = import.meta.env.VITE_IS_TESTNET === 'true'
 
 export const Thorchain: React.FC<Props> = () => {
   const [errorMessage, setErrorMessage] = useState<string>('')
