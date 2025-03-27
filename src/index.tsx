@@ -14,9 +14,9 @@ import { Chain, AssetList } from '@chain-registry/types'
 import '@interchain-ui/react/globalStyles'
 import '@interchain-ui/react/styles'
 
-const projectId = import.meta.env.VITE_WALLET_CONNECT_ID
-const arkeoEndpointRest = import.meta.env.VITE_ARKEO_ENDPOINT_REST
-const arkeoEndpointRpc = import.meta.env.VITE_ARKEO_ENDPOINT_RPC
+const projectId = import.meta.env.VITE_WALLET_CONNECT_ID || process.env.VITE_WALLET_CONNECT_ID
+const arkeoEndpointRest = import.meta.env.VITE_ARKEO_ENDPOINT_REST || process.env.VITE_ARKEO_ENDPOINT_REST
+const arkeoEndpointRpc = import.meta.env.VITE_ARKEO_ENDPOINT_RPC || process.env.VITE_ARKEO_ENDPOINT_RPC
 const thorchainEndpointRpc = 'https://rpc.ninerealms.com'
 const thorchainEndpointRest = 'https://thornode.ninerealms.com'
 
