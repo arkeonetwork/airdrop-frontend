@@ -14,6 +14,14 @@ import { Chain, AssetList } from '@chain-registry/types'
 import '@interchain-ui/react/globalStyles'
 import '@interchain-ui/react/styles'
 
+console.log("import.meta.env", import.meta.env)
+console.log("process.env", process.env)
+console.log("VITE_WALLET_CONNECT_ID", import.meta.env.VITE_WALLET_CONNECT_ID)
+console.log("VITE_ARKEO_ENDPOINT_REST", import.meta.env.VITE_ARKEO_ENDPOINT_REST)
+console.log("VITE_ARKEO_ENDPOINT_RPC", import.meta.env.VITE_ARKEO_ENDPOINT_RPC) 
+console.log("VITE_THORCHAIN_SERVER", import.meta.env.VITE_THORCHAIN_SERVER)
+console.log("VITE_IS_TESTNET", import.meta.env.VITE_IS_TESTNET)
+
 const projectId = import.meta.env.VITE_WALLET_CONNECT_ID
 const arkeoEndpointRest = import.meta.env.VITE_ARKEO_ENDPOINT_REST
 const arkeoEndpointRpc = import.meta.env.VITE_ARKEO_ENDPOINT_RPC
