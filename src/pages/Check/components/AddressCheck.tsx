@@ -37,7 +37,7 @@ export const AddressCheck = () => {
     <Panel header="Congrats!" desc="You are eligible for the Arkeo airdrop!">
       <Box p="32px">
         <Account amount={amount} account={address!} />
-        <Button mb={2} onClick={() => navigate('/claim')}>Claim Arkeo</Button>
+        <Button mb={2} onClick={() => navigate('/')}>Claim Arkeo</Button>
         <Link as={ReactRouterLink} to='/check' mt={10}>
           Go Back
         </Link>
