@@ -10,6 +10,7 @@ import { mainnet } from 'viem/chains'
 import { ChainProvider } from '@cosmos-kit/react'
 import { chains, assets } from 'chain-registry'
 import { wallets } from '@cosmos-kit/keplr-extension'
+import { wallets as ledgerWallets } from "@cosmos-kit/ledger";
 import { Chain, AssetList } from '@chain-registry/types'
 import '@interchain-ui/react/globalStyles'
 import '@interchain-ui/react/styles'
