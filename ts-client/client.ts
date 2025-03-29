@@ -16,7 +16,11 @@ import { Env } from './env'
 import { UnionToIntersection, Return, Constructor } from './helpers'
 import { Module } from './modules'
 import { EventEmitter } from 'events'
-import { ChainInfo } from '@keplr-wallet/types'
+import {
+  ChainInfo,
+  OfflineAminoSigner,
+  OfflineDirectSigner,
+} from '@keplr-wallet/types'
 
 const defaultFee = {
   amount: [],
@@ -24,18 +28,25 @@ const defaultFee = {
 }
 
 export const aminoConverters: AminoConverters = {
-  "/your.module.MsgYourCustomMessage": {
-    aminoType: "your-module/MsgYourCustomMessage",
-    toAmino: ({ sender, dataField }) => ({
-      sender,
-      data_field: dataField, // note snake_case conversion
+  '/arkeo.claim.MsgClaimArkeo': {
+    aminoType: 'claim/MsgClaimArkeo',
+    toAmino: ({ creator }) => ({ creator }), // string → string
+    fromAmino: ({ creator }) => ({ creator }), // string → string
+  },
+  '/arkeo.claim.MsgClaimEth': {
+    aminoType: 'claim/ClaimEth',
+    toAmino: ({ creator, ethAddress, signature }) => ({
+      creator,
+      eth_address: ethAddress, // Note the snake_case conversion
+      signature,
     }),
-    fromAmino: ({ sender, data_field }) => ({
-      sender,
-      dataField: data_field,
+    fromAmino: ({ creator, eth_address, signature }) => ({
+      creator,
+      ethAddress: eth_address, // Convert back to camelCase
+      signature,
     }),
   },
-};
+}
 
 export class IgniteClient extends EventEmitter {
   static plugins: Module[] = []
@@ -58,43 +69,53 @@ export class IgniteClient extends EventEmitter {
     return AugmentedClient as typeof IgniteClient & Constructor<Extension>
   }
 
-  // async signAndBroadcast(msgs: EncodeObject[], fee: StdFee, memo: string) {
-  //   if (this.signer) {
-  //     const { address } = (await this.signer.getAccounts())[0];
-  //     const signingClient = await SigningStargateClient.connectWithSigner(this.env.rpcURL, this.signer, { registry: new Registry(this.registry) });
-  //     return await signingClient.signAndBroadcast(address, msgs, fee ? fee : defaultFee, memo)
-  //   } else {
-  //     throw new Error(" Signer is not present.");
-  //   }
-  // }
-
   async signAndBroadcast(msgs: EncodeObject[], fee: StdFee, memo: string) {
+    console.log('SIGN AND BROADCAST')
     if (this.signer) {
-      const [{ address }] = await this.signer.getAccounts()
-
-      const registry = new Registry([...defaultRegistryTypes, ...this.registry])
-
-      const aminoTypes = new AminoTypes() // ensure to properly configure this if needed
-
+      const { address } = (await this.signer.getAccounts())[0]
       const signingClient = await SigningStargateClient.connectWithSigner(
         this.env.rpcURL,
         this.signer,
-        {
-          registry,
-          aminoTypes,
-        },
+        { registry: new Registry(this.registry) },
       )
-
       return await signingClient.signAndBroadcast(
         address,
         msgs,
-        fee || defaultFee,
+        fee ? fee : defaultFee,
         memo,
       )
     } else {
-      throw new Error('Signer is not present.')
+      throw new Error(' Signer is not present.')
     }
   }
+
+  // async signAndBroadcast(msgs: EncodeObject[], fee: StdFee, memo: string) {
+  //   if (this.signer) {
+  //     const [{ address }] = await this.signer.getAccounts()
+
+  //     const registry = new Registry([...defaultRegistryTypes, ...this.registry])
+
+  //     const aminoTypes = new AminoTypes(aminoConverters)
+
+  //     const signingClient = await SigningStargateClient.connectWithSigner(
+  //       this.env.rpcURL,
+  //       this.signer,
+  //       {
+  //         registry,
+  //         aminoTypes,
+  //       },
+  //     )
+
+  //     return await signingClient.signAndBroadcast(
+  //       address,
+  //       msgs,
+  //       fee || defaultFee,
+  //       memo,
+  //     )
+  //   } else {
+  //     throw new Error('Signer is not present.')
+  //   }
+  // }
 
   constructor(env: Env, signer?: OfflineSigner) {
     super()
@@ -119,7 +140,6 @@ export class IgniteClient extends EventEmitter {
     this.emit('signer-changed', this.signer)
   }
   async useKeplr(keplrChainInfo: Partial<ChainInfo> = {}) {
-    // Using queryClients directly because BaseClient has no knowledge of the modules at this stage
     try {
       const queryClient = (
         await import('./cosmos.base.tendermint.v1beta1/module')
@@ -134,17 +154,18 @@ export class IgniteClient extends EventEmitter {
       const qc = queryClient({ addr: this.env.apiURL })
       const node_info = await (await qc.serviceGetNodeInfo()).data
       const chainId = node_info.default_node_info?.network ?? ''
-      const chainName = chainId?.toUpperCase() + ' Network'
+      const chainName = 'Arkeo Network'
       const staking = await (await stakingqc.queryParams()).data
       const bankqc = bankQueryClient({ addr: this.env.apiURL })
       const tokens = await (await bankqc.queryTotalSupply()).data
       const addrPrefix = this.env.prefix ?? 'arkeo'
       const rpc = this.env.rpcURL
       const rest = this.env.apiURL
+      console.log({ rpc, rest })
       let stakeCurrency = {
         coinDenom: staking.params?.bond_denom?.toUpperCase() ?? '',
         coinMinimalDenom: staking.params?.bond_denom ?? '',
-        coinDecimals: 0,
+        coinDecimals: 8,
       }
 
       let bip44 = {
@@ -165,7 +186,7 @@ export class IgniteClient extends EventEmitter {
           const y = {
             coinDenom: x.denom?.toUpperCase() ?? '',
             coinMinimalDenom: x.denom ?? '',
-            coinDecimals: 0,
+            coinDecimals: 8,
           }
           return y
         }) ?? []
@@ -175,12 +196,24 @@ export class IgniteClient extends EventEmitter {
           const y = {
             coinDenom: x.denom?.toUpperCase() ?? '',
             coinMinimalDenom: x.denom ?? '',
-            coinDecimals: 0,
+            coinDecimals: 8,
           }
           return y
         }) ?? []
 
       if (chainId) {
+        console.log('SUGGEST CHAIN', {
+          chainId,
+          chainName,
+          rpc,
+          rest,
+          stakeCurrency,
+          bip44,
+          bech32Config,
+          currencies,
+          feeCurrencies,
+          ...keplrChainInfo,
+        })
         const suggestOptions: ChainInfo = {
           chainId,
           chainName,
@@ -203,7 +236,9 @@ export class IgniteClient extends EventEmitter {
         }
       }
       await window.keplr.enable(chainId)
-      this.signer = window.keplr.getOfflineSigner(chainId)
+
+      this.signer = window.keplr.getOfflineSignerOnlyAmino(chainId)
+
       this.emit('signer-changed', this.signer)
     } catch (e) {
       throw new Error(

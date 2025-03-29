@@ -139,7 +139,7 @@ export const useClaim = () => {
         })
       }
 
-      console.info('Response: ', result.msgResponses)
+      console.info('Response: ', result)
 
       // Convert the byte array to a string, but parse it as a protobuf message
       const response = result.msgResponses[0]
@@ -171,7 +171,7 @@ export const useClaim = () => {
 
       console.info(
         'Response: ',
-        MsgClaimArkeoResponse.toJSON(result.msgResponses[0]),
+        MsgClaimArkeoResponse.toJSON(result),
       )
 
       if (result.code !== 0 && result.rawLog) {
