@@ -187,10 +187,10 @@ export const useClaim = () => {
         }
       }
 
-      await client.useKeplr({
-        rpc: arkeoEndpointRpc,
-        rest: arkeoEndpointRest,
-      })
+      // await client.useKeplr({
+      //   rpc: arkeoEndpointRpc,
+      //   rest: arkeoEndpointRest,
+      // })
 
       let result
       if (ethAccount && ethAmount > 0) {

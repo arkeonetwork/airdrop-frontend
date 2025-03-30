@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Button, Box, Text, Image, Flex, useRadioGroup } from '@chakra-ui/react'
+import { Button, Box, Text, Image, Flex } from '@chakra-ui/react'
 import ArkeoLogo from '@assets/arkeo-symbol-grey.svg'
 import { useConnect } from '../ConnectContext'
 import { ConnectedAccount } from './ConnectedAccount'
@@ -24,8 +24,17 @@ export const Cosmos: React.FC<Props> = () => {
     dispatch,
   } = useConnect()
 
-  const { username, address, disconnect, openView, isWalletConnected } =
-    useChain('arkeo')
+  const {
+    username,
+    address,
+    disconnect,
+    openView,
+    isWalletConnected,
+    wallet,
+    status,
+  } = useChain('arkeo')
+  console.log('WALLET', wallet)
+  console.log('STATUS', status)
 
   const { claimRecord } = useGetClaim({
     address: address ?? '',
@@ -43,9 +52,49 @@ export const Cosmos: React.FC<Props> = () => {
     }
   }, [isWalletConnected, claimRecord])
 
-  const handleClick = () => {
+  const handleClick = async () => {
     if (arkeoAccount) {
       dispatch({ type: 'SET_STEP', payload: step + 1 })
+    } else if (status === 'Error') {
+      console.log('ERROR')
+      const suggestOptions: any = {
+        chainId: 'arkeo-main-v1',
+        chainName: 'Arkeo',
+        chainType: 'cosmos',
+        networkType: 'mainnet',
+        prettyName: 'Arkeo',
+        bech32Prefix: 'arkeo',
+        slip44: 118,
+        rpc: 'https://rpc.arkeo.network',
+        rest: 'https://rest.arkeo.network',
+        bip44: {
+          coinType: 118,
+        },
+        bech32Config: {
+          bech32PrefixAccAddr: 'arkeo',
+          bech32PrefixAccPub: 'arkeopub',
+          bech32PrefixValAddr: 'arkeovaloper',
+          bech32PrefixValPub: 'arkeovaloperpub',
+          bech32PrefixConsAddr: 'arkeovalcons',
+          bech32PrefixConsPub: 'arkeovalconspub',
+        },
+        currencies: [
+          {
+            coinDenom: 'arkeo',
+            coinMinimalDenom: 'uarkeo',
+            coinDecimals: 8,
+          },  
+        ],
+        feeCurrencies: [
+          {
+            coinDenom: 'arkeo',
+            coinMinimalDenom: 'uarkeo',
+            coinDecimals: 8,
+          },
+        ],
+      }
+      await window.keplr.experimentalSuggestChain(suggestOptions)
+      openView()
     } else {
       openView()
     }
@@ -82,7 +131,7 @@ export const Cosmos: React.FC<Props> = () => {
           w="100%"
           justifyContent="center"
         >
-          {arkeoAccount ? ( 
+          {arkeoAccount ? (
             <ConnectedAccount
               width="100%"
               my={0}
@@ -116,10 +165,7 @@ export const Cosmos: React.FC<Props> = () => {
             {errorMessage}
           </Text>
 
-          <MotionButton
-            onClick={handleClick}
-            whileTap={{ scale: 0.95 }}
-          >
+          <MotionButton onClick={handleClick} whileTap={{ scale: 0.95 }}>
             {arkeoAccount ? 'Next' : 'Connect Wallet'}
           </MotionButton>
         </MotionBox>

@@ -80,10 +80,6 @@ root.render(
               rpc: [arkeoEndpointRpc],
               rest: [arkeoEndpointRest],
             },
-            'arkeo-main-v1': {
-              rpc: [arkeoEndpointRpc],
-              rest: [arkeoEndpointRest],
-            },
             thorchain: {
               rpc: [thorchainEndpointRpc],
               rest: [thorchainEndpointRest],
