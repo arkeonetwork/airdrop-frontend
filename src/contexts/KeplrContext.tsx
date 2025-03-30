@@ -5,6 +5,7 @@ import React, {
   useEffect,
   ReactNode,
 } from 'react'
+import { Keplr } from '@keplr-wallet/provider-extension'
 
 // Define the context type
 interface KeplrContextType {
@@ -36,8 +37,8 @@ export const KeplrProvider: React.FC<{ children: ReactNode }> = ({
         keplrToUse = window.ctrlKeplrProviders.Keplr
       }
 
-      setKeplrInstance(keplrToUse)
-      setIsKeplrAvailable(!!keplrToUse)
+      setKeplrInstance(new Keplr())
+      setIsKeplrAvailable(!!Keplr)
     }
 
     initKeplr()
