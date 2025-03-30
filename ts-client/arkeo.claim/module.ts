@@ -4,22 +4,16 @@ import {
   SigningStargateClient,
   DeliverTxResponse,
   StdFee,
-  defaultRegistryTypes,
-  StargateClient,
 } from '@cosmjs/stargate'
 import {
   EncodeObject,
-  encodePubkey,
   GeneratedType,
-  makeAuthInfoBytes,
   OfflineDirectSigner,
   OfflineSigner,
   Registry,
-  TxBodyEncodeObject,
 } from '@cosmjs/proto-signing'
 import { msgTypes } from './registry'
 import { IgniteClient } from '../client'
-import { MissingWalletError } from '../helpers'
 import { Api } from './rest'
 import { QueryParamsResponse } from './types/arkeo/claim/query'
 import { MsgAddClaim } from './types/arkeo/claim/tx'
@@ -38,12 +32,7 @@ import { Params } from './types/arkeo/claim/params'
 import { QueryClaimRecordRequest } from './types/arkeo/claim/query'
 import { MsgTransferClaim } from './types/arkeo/claim/tx'
 import { MsgAddClaimResponse } from './types/arkeo/claim/tx'
-import { AminoTypes } from '@cosmjs/stargate'
-import { aminoConverters } from '../client'
-import { BroadcastMode, OfflineAminoSigner } from '@keplr-wallet/types'
-import { SignMode } from 'cosmjs-types/cosmos/tx/signing/v1beta1/signing'
-import { TxRaw } from 'cosmjs-types/cosmos/tx/v1beta1/tx'
-import { fromBase64, toBase64, toHex } from '@cosmjs/encoding'
+import { OfflineAminoSigner } from '@keplr-wallet/types'
 
 export {
   QueryParamsResponse,
@@ -337,129 +326,26 @@ export const txClient = (
       fee,
       memo,
     }: sendMsgClaimArkeoParams): Promise<DeliverTxResponse> {
-      if (!window.keplr) {
-        throw new Error('Keplr extension not found.')
+      if (!signer) {
+        throw new Error(
+          'TxClient:sendMsgClaimArkeo: Unable to sign Tx. Signer is not present.',
+        )
       }
-
-      const chainId = 'arkeo-main-v1'
-
       try {
-        // Enable Keplr for this chain
-        await window.keplr.enable(chainId)
-
-        // Get the off-chain only Amino signer
-        const signer = window.keplr.getOfflineSignerOnlyAmino(chainId)
         const { address } = (await signer.getAccounts())[0]
-        console.log('Using address:', address)
-
-        // Create a query client to get the latest account info
-        const queryClient = await StargateClient.connect(addr)
-        const account = await queryClient.getAccount(address)
-
-        if (!account) {
-          throw new Error(`Account not found: ${address}`)
-        }
-
-        console.log('Account info from chain:', {
-          accountNumber: account.accountNumber,
-          sequence: account.sequence,
-          address: account.address,
-        })
-
-        // Create message value with creator set to the address
-        const msgValue = {
-          ...value,
-          creator: address,
-        }
-
-        // Create Amino-compatible message
-        const aminoMsg = {
-          type: 'claim/ClaimArkeo',
-          value: msgValue,
-        }
-
-        // Create sign doc
-        const signDoc = {
-          chain_id: chainId,
-          account_number: account.accountNumber.toString(),
-          sequence: account.sequence.toString(),
-          fee: {
-            amount: [{ denom: 'uarkeo', amount: '10000' }],
-            gas: '300000',
-          },
-          msgs: [aminoMsg],
-          memo: memo,
-        }
-
-        console.log('Signing document:', signDoc)
-
-        // Sign with Keplr's signAmino
-        const signedTx = await window.keplr.signAmino(chainId, address, signDoc)
-
-        console.log('Signed transaction:', signedTx)
-        console.log("addr", addr)
-
-        // Create a signing client
         const signingClient = await SigningStargateClient.connectWithSigner(
           addr,
           signer,
+          { registry },
         )
-
-        // Create registry with all message types
-        const registryWithAll = new Registry([
-          ...defaultRegistryTypes,
-          ...msgTypes,
-        ])
-
-        // Prepare the message for TxBody
-        const txBodyEncodeObject = {
-          typeUrl: '/cosmos.tx.v1beta1.TxBody',
-          value: {
-            messages: [
-              {
-                typeUrl: '/arkeo.claim.MsgClaimArkeo',
-                value: MsgClaimArkeo.fromPartial({
-                  creator: address, // Convert to bytes
-                }),
-              },
-            ],
-            memo: signedTx.signed.memo,
-          },
-        }
-
-        // Encode TxBody
-        const txBodyBytes = registryWithAll.encode(txBodyEncodeObject)
-
-        // Prepare authInfo
-        const pubkey = encodePubkey(signedTx.signature.pub_key)
-        const authInfoBytes = makeAuthInfoBytes(
-          [{ pubkey, sequence: parseInt(signedTx.signed.sequence) }],
-          signedTx.signed.fee.amount,
-          parseInt(signedTx.signed.fee.gas),
-          undefined,
-          undefined,
-          SignMode.SIGN_MODE_LEGACY_AMINO_JSON,
+        let msg = this.msgClaimArkeo({ value: MsgClaimArkeo.fromPartial(value) })
+        return await signingClient.signAndBroadcast(
+          address,
+          [msg],
+          fee ? fee : defaultFee,
+          memo,
         )
-
-        // Create TxRaw
-        const txRaw = TxRaw.fromPartial({
-          bodyBytes: txBodyBytes,
-          authInfoBytes: authInfoBytes,
-          signatures: [fromBase64(signedTx.signature.signature)],
-        })
-
-        // Encode TxRaw to bytes
-        const txBytes = TxRaw.encode(txRaw).finish()
-
-        // Broadcast the transaction
-        const broadcastResult = await signingClient.broadcastTx(txBytes)
-
-        // const broadcastResult = await window.keplr.sendTx('arkeo-main-v1', txBytes, "block" as any)
-        console.log('Broadcast result:', broadcastResult)
-
-        return broadcastResult
       } catch (e: any) {
-        console.error('Transaction error:', e)
         throw new Error(
           'TxClient:sendMsgClaimArkeo: Could not broadcast Tx: ' + e.message,
         )

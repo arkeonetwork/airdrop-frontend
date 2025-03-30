@@ -2,8 +2,19 @@ import { useState } from 'react'
 import { Client } from '../../ts-client'
 import { useConnect } from '@src/pages/Connect/ConnectContext'
 import axios from 'axios'
-import { coins } from '@cosmjs/proto-signing'
-import { MsgClaimArkeoResponse } from '../../ts-client/arkeo.claim/module'
+import {
+  Registry,
+} from '@cosmjs/proto-signing'
+import {
+  MsgClaimArkeo,
+  MsgClaimArkeoResponse,
+  MsgClaimEth,
+} from '../../ts-client/arkeo.claim/module'
+import { useChain } from '@cosmos-kit/react'
+import { AminoTypes, defaultRegistryTypes } from '@cosmjs/stargate'
+import { SigningStargateClient } from '@cosmjs/stargate'
+import { msgTypes } from '../../ts-client/arkeo.claim/registry'
+import { aminoConverters } from '@utils/functions'
 
 const isTestnet = import.meta.env.VITE_IS_TESTNET === 'true'
 const arkeoEndpointRest = import.meta.env.VITE_ARKEO_ENDPOINT_REST
@@ -15,6 +26,15 @@ export const useClaim = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<Error | unknown>()
   const {
+    getOfflineSignerAmino,
+    getSigningStargateClient,
+    address,
+    chain,
+    status,
+    broadcast,
+  } = useChain('arkeo')
+
+  const {
     state: {
       arkeoInfo: { account: arkeoAccount },
       ethInfo: { account: ethAccount, claimableAmount: ethAmount, signature },
@@ -22,7 +42,72 @@ export const useClaim = () => {
     },
     dispatch,
   } = useConnect()
-  const fee = 200
+
+  const claimArkeo = async () => {
+    if (!address) return
+    const signer = await getOfflineSignerAmino()
+    const registry = new Registry([...defaultRegistryTypes, ...msgTypes])
+    const client = await SigningStargateClient.connectWithSigner(
+      arkeoEndpointRpc,
+      signer,
+      {
+        aminoTypes: new AminoTypes(aminoConverters),
+        registry,
+      },
+    )
+    const msg = {
+      typeUrl: '/arkeo.claim.MsgClaimArkeo',
+      value: MsgClaimArkeo.fromPartial({ creator: address }),
+    }
+
+    const result = await client.signAndBroadcast(
+      address,
+      [msg],
+      {
+        amount: [{ denom: 'utoken', amount: '5000' }],
+        gas: '200000',
+      },
+      '',
+    )
+
+    console.log('result', result)
+    return result
+  }
+
+  const claimEth = async () => {
+    if (!address) return
+    const signer = await getOfflineSignerAmino()
+    const registry = new Registry([...defaultRegistryTypes, ...msgTypes])
+    const client = await SigningStargateClient.connectWithSigner(
+      arkeoEndpointRpc,
+      signer,
+      {
+        aminoTypes: new AminoTypes(aminoConverters),
+        registry,
+      },
+    )
+    const msg = {
+      typeUrl: '/arkeo.claim.MsgClaimEth',
+      value: MsgClaimEth.fromPartial({
+        creator: address,
+        ethAddress: ethAccount,
+        signature: signature,
+      }),
+    }
+
+    const result = await client.signAndBroadcast(
+      address,
+      [msg],
+      {
+        amount: [{ denom: 'utoken', amount: '5000' }],
+        gas: '200000',
+      },
+      '',
+    )
+
+    console.log('result', result)
+    return result
+  }
 
   const claimRecord = async () => {
     try {
@@ -102,8 +187,6 @@ export const useClaim = () => {
         }
       }
 
-      console.info('Finish Fund')
-
       await client.useKeplr({
         rpc: arkeoEndpointRpc,
         rest: arkeoEndpointRest,
@@ -114,31 +197,14 @@ export const useClaim = () => {
         if (!signature) {
           throw new Error('No signature')
         }
-        result = await client.ArkeoClaim.tx.sendMsgClaimEth({
-          value: {
-            creator: arkeoAccount,
-            ethAddress: ethAccount,
-            signature: signature,
-          },
-          fee: {
-            amount: coins(fee, 'uarkeo'),
-            gas: '200000',
-          },
-          memo: '',
-        })
+        result = await claimEth()
       } else {
-        result = await client.ArkeoClaim.tx.sendMsgClaimArkeo({
-          value: {
-            creator: arkeoAccount,
-          },
-          fee: {
-            amount: coins(fee, 'uarkeo'),
-            gas: '200000',
-          },
-          memo: '',
-        })
+        result = await claimArkeo()
       }
 
+      if (!result) {
+        throw new Error('Claim was not successful')
+      }
       console.info('Response: ', result)
 
       // Convert the byte array to a string, but parse it as a protobuf message
@@ -169,10 +235,7 @@ export const useClaim = () => {
         amount: Number(amount), // Convert back to number for display if the value is small enough
       })
 
-      console.info(
-        'Response: ',
-        MsgClaimArkeoResponse.toJSON(result),
-      )
+      console.info('Response: ', MsgClaimArkeoResponse.toJSON(result))
 
       if (result.code !== 0 && result.rawLog) {
         console.error(result.rawLog)

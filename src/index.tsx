@@ -10,18 +10,9 @@ import { mainnet } from 'viem/chains'
 import { ChainProvider } from '@cosmos-kit/react'
 import { chains, assets } from 'chain-registry'
 import { wallets } from '@cosmos-kit/keplr-extension'
-import { wallets as ledgerWallets } from "@cosmos-kit/ledger";
 import { Chain, AssetList } from '@chain-registry/types'
 import '@interchain-ui/react/globalStyles'
 import '@interchain-ui/react/styles'
-
-console.log("import.meta.env", import.meta.env)
-console.log("process.env", process.env)
-console.log("VITE_WALLET_CONNECT_ID", import.meta.env.VITE_WALLET_CONNECT_ID)
-console.log("VITE_ARKEO_ENDPOINT_REST", import.meta.env.VITE_ARKEO_ENDPOINT_REST)
-console.log("VITE_ARKEO_ENDPOINT_RPC", import.meta.env.VITE_ARKEO_ENDPOINT_RPC) 
-console.log("VITE_THORCHAIN_SERVER", import.meta.env.VITE_THORCHAIN_SERVER)
-console.log("VITE_IS_TESTNET", import.meta.env.VITE_IS_TESTNET)
 
 const projectId = import.meta.env.VITE_WALLET_CONNECT_ID
 const arkeoEndpointRest = import.meta.env.VITE_ARKEO_ENDPOINT_REST
@@ -66,7 +57,7 @@ const localArkeoAssets: AssetList = {
     {
       name: 'Arkeo',
       symbol: 'arkeo',
-      denom_units: [{ denom: 'arkeo', exponent: 8 }],
+      denom_units: [{ denom: 'uarkeo', exponent: 8 }],
       base: 'arkeo',
       display: 'arkeo',
       type_asset: 'sdk.coin',
@@ -81,10 +72,15 @@ root.render(
         chains={[...chains, localArkeo]}
         assetLists={[...assets, localArkeoAssets]}
         wallets={wallets}
+        throwErrors={false}
         walletConnectOptions={{ signClient: { projectId: projectId } }}
         endpointOptions={{
           endpoints: {
-            localarkeo: {
+            arkeo: {
+              rpc: [arkeoEndpointRpc],
+              rest: [arkeoEndpointRest],
+            },
+            'arkeo-main-v1': {
               rpc: [arkeoEndpointRpc],
               rest: [arkeoEndpointRest],
             },
