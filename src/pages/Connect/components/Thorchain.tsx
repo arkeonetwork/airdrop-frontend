@@ -32,7 +32,7 @@ export const Thorchain: React.FC<Props> = () => {
   const [
     arkeoAccountDerivedFromThorchain,
     setArkeoAccountDerivedFromThorchain,
-  ] = useState<string>('')
+] = useState<string>('')
 
   const {
     state: {

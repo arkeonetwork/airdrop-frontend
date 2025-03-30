@@ -6,6 +6,7 @@ import { ConnectedAccount } from './ConnectedAccount'
 import { useChain } from '@cosmos-kit/react'
 import { useGetClaim } from '@hooks/useGetClaim'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useKeplr } from '@src/contexts/KeplrContext'
 
 const MotionFlex = motion(Flex)
 const MotionBox = motion(Box)
@@ -23,6 +24,7 @@ export const Cosmos: React.FC<Props> = () => {
     },
     dispatch,
   } = useConnect()
+  const { keplr } = useKeplr();
 
   const {
     username,
@@ -93,7 +95,7 @@ export const Cosmos: React.FC<Props> = () => {
           },
         ],
       }
-      await window.keplr.experimentalSuggestChain(suggestOptions)
+      await keplr.experimentalSuggestChain(suggestOptions)
       openView()
     } else {
       openView()

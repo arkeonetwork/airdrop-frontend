@@ -13,6 +13,7 @@ import { wallets } from '@cosmos-kit/keplr-extension'
 import { Chain, AssetList } from '@chain-registry/types'
 import '@interchain-ui/react/globalStyles'
 import '@interchain-ui/react/styles'
+import { KeplrProvider } from './contexts/KeplrContext'
 
 const projectId = import.meta.env.VITE_WALLET_CONNECT_ID
 const arkeoEndpointRest = import.meta.env.VITE_ARKEO_ENDPOINT_REST
@@ -68,27 +69,29 @@ const localArkeoAssets: AssetList = {
 root.render(
   <ChakraProvider theme={theme}>
     <WagmiConfig config={wagmiConfig}>
-      <ChainProvider
-        chains={[...chains, localArkeo]}
-        assetLists={[...assets, localArkeoAssets]}
-        wallets={wallets}
-        throwErrors={false}
-        walletConnectOptions={{ signClient: { projectId: projectId } }}
-        endpointOptions={{
-          endpoints: {
-            arkeo: {
-              rpc: [arkeoEndpointRpc],
-              rest: [arkeoEndpointRest],
+      <KeplrProvider>
+        <ChainProvider
+          chains={[...chains, localArkeo]}
+          assetLists={[...assets, localArkeoAssets]}
+          wallets={wallets}
+          throwErrors={false}
+          walletConnectOptions={{ signClient: { projectId: projectId } }}
+          endpointOptions={{
+            endpoints: {
+              arkeo: {
+                rpc: [arkeoEndpointRpc],
+                rest: [arkeoEndpointRest],
+              },
+              thorchain: {
+                rpc: [thorchainEndpointRpc],
+                rest: [thorchainEndpointRest],
+              },
             },
-            thorchain: {
-              rpc: [thorchainEndpointRpc],
-              rest: [thorchainEndpointRest],
-            },
-          },
-        }}
-      >
-        <App />
-      </ChainProvider>
+          }}
+        >
+          <App />
+        </ChainProvider>
+      </KeplrProvider>
     </WagmiConfig>
   </ChakraProvider>,
 )
