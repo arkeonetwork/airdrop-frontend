@@ -22,6 +22,7 @@ import {
   OfflineDirectSigner,
 } from '@keplr-wallet/types'
 
+
 const defaultFee = {
   amount: [],
   gas: '200000',
@@ -237,7 +238,7 @@ export class IgniteClient extends EventEmitter {
       }
       await window.keplr.enable(chainId)
 
-      this.signer = window.keplr.getOfflineSignerOnlyAmino(chainId)
+      this.signer = window.keplr.getOfflineSigner(chainId)
 
       this.emit('signer-changed', this.signer)
     } catch (e) {

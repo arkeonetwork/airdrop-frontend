@@ -388,7 +388,7 @@ export const txClient = (
             gas: '300000',
           },
           msgs: [aminoMsg],
-          memo: memo || '',
+          memo: memo,
         }
 
         console.log('Signing document:', signDoc)
@@ -397,6 +397,7 @@ export const txClient = (
         const signedTx = await window.keplr.signAmino(chainId, address, signDoc)
 
         console.log('Signed transaction:', signedTx)
+        console.log("addr", addr)
 
         // Create a signing client
         const signingClient = await SigningStargateClient.connectWithSigner(
@@ -452,6 +453,8 @@ export const txClient = (
 
         // Broadcast the transaction
         const broadcastResult = await signingClient.broadcastTx(txBytes)
+
+        // const broadcastResult = await window.keplr.sendTx('arkeo-main-v1', txBytes, "block" as any)
         console.log('Broadcast result:', broadcastResult)
 
         return broadcastResult
