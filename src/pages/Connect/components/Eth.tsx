@@ -12,7 +12,6 @@ import {
 } from 'wagmi'
 import { useGetClaim } from '@hooks/useGetClaim'
 import { motion, AnimatePresence } from 'framer-motion'
-import { verifyTypedData } from 'ethers'
 
 const MotionFlex = motion(Flex)
 const MotionBox = motion(Box)

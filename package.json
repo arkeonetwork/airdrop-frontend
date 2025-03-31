@@ -31,6 +31,7 @@
     "@interchainjs/cosmos": "^1.10.0",
     "@interchainjs/cosmos-types": "^1.10.0",
     "@keplr-wallet/provider-extension": "^0.12.211",
+    "@swapkit/core": "^3.2.26",
     "@swapkit/sdk": "^2.2.17",
     "@swapkit/tokens": "^2.2.2",
     "@swapkit/wallet-ctrl": "^2.1.12",
