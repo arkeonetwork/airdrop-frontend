@@ -2,9 +2,7 @@ import { useState } from 'react'
 import { Client } from '../../ts-client'
 import { useConnect } from '@src/pages/Connect/ConnectContext'
 import axios from 'axios'
-import {
-  Registry,
-} from '@cosmjs/proto-signing'
+import { Registry } from '@cosmjs/proto-signing'
 import {
   MsgClaimArkeo,
   MsgClaimArkeoResponse,
@@ -109,6 +107,16 @@ export const useClaim = () => {
     return result
   }
 
+  const fundArkeo = async () => {
+    const data = await axios.post(`${thorServer}/fund`, {
+      arkeoAddress: arkeoAccount,
+      ethAddress: ethAccount,
+      signature: signature,
+      chain: isTestnet ? 'tarkeo' : 'arkeo',
+    })
+    return data
+  }
+
   const claimRecord = async () => {
     try {
       if (!arkeoAccount) return
@@ -139,22 +147,10 @@ export const useClaim = () => {
         const accountInfo =
           await client.CosmosAuthV1Beta1.query.queryAccount(arkeoAccount)
         if (!accountInfo) {
-          // Account doesn't exist, call /fund endpoint
-          data = await axios.post(`${thorServer}/fund`, {
-            arkeoAddress: arkeoAccount,
-            ethAddress: ethAccount,
-            signature: signature,
-            chain: isTestnet ? 'tarkeo' : 'arkeo',
-          })
+          data = await fundArkeo()
         }
       } catch (error) {
-        // If query fails, assume account doesn't exist and try to fund it
-        data = await axios.post(`${thorServer}/fund`, {
-          arkeoAddress: arkeoAccount,
-          ethAddress: ethAccount,
-          signature: signature,
-          chain: isTestnet ? 'tarkeo' : 'arkeo',
-        })
+        data = await fundArkeo()
       }
 
       if (data) {
@@ -182,15 +178,9 @@ export const useClaim = () => {
           }
 
           attempts++
-          // Wait 2.5 seconds between attempts
           await new Promise((resolve) => setTimeout(resolve, 2500))
         }
       }
-
-      // await client.useKeplr({
-      //   rpc: arkeoEndpointRpc,
-      //   rest: arkeoEndpointRest,
-      // })
 
       let result
       if (ethAccount && ethAmount > 0) {
@@ -206,36 +196,6 @@ export const useClaim = () => {
         throw new Error('Claim was not successful')
       }
       console.info('Response: ', result)
-
-      // Convert the byte array to a string, but parse it as a protobuf message
-      const response = result.msgResponses[0]
-      const bytes = Object.values(response.value)
-
-      // The first byte (10) is the field number 1 (address) with wire type 2 (length-delimited)
-      // The second byte (45) is the length of the address
-      const addressLength = bytes[1]
-      const address = new TextDecoder().decode(
-        new Uint8Array(bytes.slice(2, 2 + addressLength)),
-      )
-
-      // The remaining bytes contain the amount
-      // byte 47 (16) is field number 2 (amount) with wire type 0 (varint)
-      // bytes 48-49 (232, 7) represent the amount in varint encoding
-      const amountBytes = bytes.slice(48) // Skip the field number/type byte
-      let amount = BigInt(0)
-      let multiplier = BigInt(1)
-
-      for (let i = 0; i < amountBytes.length; i++) {
-        amount += BigInt(amountBytes[i] & 0x7f) * multiplier
-        multiplier *= BigInt(128)
-      }
-
-      console.info('Decoded Response:', {
-        address,
-        amount: Number(amount), // Convert back to number for display if the value is small enough
-      })
-
-      console.info('Response: ', MsgClaimArkeoResponse.toJSON(result))
 
       if (result.code !== 0 && result.rawLog) {
         console.error(result.rawLog)
