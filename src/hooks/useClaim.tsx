@@ -185,7 +185,6 @@ export const useClaim = () => {
       if (!result) {
         throw new Error('Claim was not successful')
       }
-      console.info('Response: ', result)
 
       if (result.code !== 0 && result.rawLog) {
         console.error(result.rawLog)

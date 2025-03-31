@@ -84,7 +84,8 @@ export const Thorchain: React.FC<Props> = () => {
           from: thorAccount,
           memo: `delegate:arkeo:${arkeoAccount}`,
         })
-        console.log('TX', tx)
+        await new Promise(resolve => setTimeout(resolve, 1500)) // wait 1.5 second to let it mine
+
         dispatch({
           type: 'SET_THORCHAIN_DELEGATE_TX',
           payload: tx,

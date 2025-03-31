@@ -34,7 +34,6 @@ export const Claim: React.FC<Props> = ({}) => {
       return
     }
     const errorString = error.toString()
-    console.log('ERROR STRING', errorString)
     if (errorString.toLowerCase().includes('no claimable amount')) {
       setErrorMessage('You are not eligible for the Arkeo airdrop')
     } else if (errorString.toLowerCase().includes('airdrop has ended')) {
