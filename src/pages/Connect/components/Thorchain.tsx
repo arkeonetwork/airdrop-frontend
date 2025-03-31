@@ -84,15 +84,14 @@ export const Thorchain: React.FC<Props> = () => {
           from: thorAccount,
           memo: `delegate:arkeo:${arkeoAccount}`,
         })
+        console.log('TX', tx)
         dispatch({
           type: 'SET_THORCHAIN_DELEGATE_TX',
           payload: tx,
         })
         dispatch({ type: 'SET_STEP', payload: step + 1 })
       } else {
-        console.log('CONNECTING')
-        const res = await client.connectCtrl([Chain.THORChain])
-        console.log('RES', res)
+        await client.connectCtrl([Chain.THORChain])
         const address = client.getAddress(Chain.THORChain)
         dispatch({ type: 'SET_THORCHAIN_ACCOUNT', payload: address })
       }

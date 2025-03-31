@@ -3,11 +3,7 @@ import { Client } from '../../ts-client'
 import { useConnect } from '@src/pages/Connect/ConnectContext'
 import axios from 'axios'
 import { Registry } from '@cosmjs/proto-signing'
-import {
-  MsgClaimArkeo,
-  MsgClaimArkeoResponse,
-  MsgClaimEth,
-} from '../../ts-client/arkeo.claim/module'
+import { MsgClaimArkeo, MsgClaimEth } from '../../ts-client/arkeo.claim/module'
 import { useChain } from '@cosmos-kit/react'
 import { AminoTypes, defaultRegistryTypes } from '@cosmjs/stargate'
 import { SigningStargateClient } from '@cosmjs/stargate'
@@ -23,14 +19,7 @@ export const useClaim = () => {
   const [isSucceeded, setIsSucceeded] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<Error | unknown>()
-  const {
-    getOfflineSignerAmino,
-    getSigningStargateClient,
-    address,
-    chain,
-    status,
-    broadcast,
-  } = useChain('arkeo')
+  const { getOfflineSignerAmino, address } = useChain('arkeo')
 
   const {
     state: {
@@ -128,12 +117,17 @@ export const useClaim = () => {
       })
 
       if (thorAmount > 0 && thorDelegateTx) {
-        const { data } = await axios.post(`${thorServer}/claim`, {
-          txHash: thorDelegateTx,
-        })
-        if (data?.message?.includes('updated')) {
-          dispatch({ type: 'SET_THORCHAIN_DELEGATE_TX', payload: undefined })
-        } else {
+        try {
+          const { data } = await axios.post(`${thorServer}/claim`, {
+            txHash: thorDelegateTx,
+          })
+          console.log('DATA', data)
+          if (data?.message?.includes('updated')) {
+            dispatch({ type: 'SET_THORCHAIN_DELEGATE_TX', payload: undefined })
+          } else {
+            throw new Error()
+          }
+        } catch (e) {
           throw new Error('Thorchain delegate tx failed')
         }
       }
