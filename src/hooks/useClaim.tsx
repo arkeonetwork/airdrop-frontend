@@ -121,7 +121,6 @@ export const useClaim = () => {
           const { data } = await axios.post(`${thorServer}/claim`, {
             txHash: thorDelegateTx,
           })
-          console.log('DATA', data)
           if (data?.message?.includes('updated')) {
             dispatch({ type: 'SET_THORCHAIN_DELEGATE_TX', payload: undefined })
           } else {

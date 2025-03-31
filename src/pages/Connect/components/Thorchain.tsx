@@ -300,6 +300,3 @@ export const Thorchain: React.FC<Props> = () => {
     </AnimatePresence>
   )
 }
-function SwapKit(arg0: { wallets: any[] }) {
-  throw new Error('Function not implemented.')
-}
