@@ -34,7 +34,6 @@ export const Claim: React.FC<Props> = ({}) => {
       return
     }
     const errorString = error.toString()
-
     if (errorString.toLowerCase().includes('no claimable amount')) {
       setErrorMessage('You are not eligible for the Arkeo airdrop')
     } else if (errorString.toLowerCase().includes('airdrop has ended')) {
@@ -47,8 +46,14 @@ export const Claim: React.FC<Props> = ({}) => {
       setErrorMessage('No Ethereum Signature Found')
     } else if (errorString.toLowerCase().includes('request rejected')) {
       setErrorMessage('Transaction Cancelled')
-    } else if (errorString.toLowerCase().includes('no unfunded claim records')) {
+    } else if (
+      errorString.toLowerCase().includes('no unfunded claim records')
+    ) {
       setErrorMessage('No Claims Found')
+    } else if (
+      errorString.toLowerCase().includes('thorchain delegate tx failed')
+    ) {
+      setErrorMessage('Thorchain TX Not Found, Please Try Again')
     } else {
       setErrorMessage('Something Went Wrong')
     }

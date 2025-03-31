@@ -2,8 +2,13 @@ import { useState } from 'react'
 import { Client } from '../../ts-client'
 import { useConnect } from '@src/pages/Connect/ConnectContext'
 import axios from 'axios'
-import { coins } from '@cosmjs/proto-signing'
-import { MsgClaimArkeoResponse } from '../../ts-client/arkeo.claim/module'
+import { Registry } from '@cosmjs/proto-signing'
+import { MsgClaimArkeo, MsgClaimEth } from '../../ts-client/arkeo.claim/module'
+import { useChain } from '@cosmos-kit/react'
+import { AminoTypes, defaultRegistryTypes } from '@cosmjs/stargate'
+import { SigningStargateClient } from '@cosmjs/stargate'
+import { msgTypes } from '../../ts-client/arkeo.claim/registry'
+import { aminoConverters } from '@utils/functions'
 
 const isTestnet = import.meta.env.VITE_IS_TESTNET === 'true'
 const arkeoEndpointRest = import.meta.env.VITE_ARKEO_ENDPOINT_REST
@@ -14,6 +19,8 @@ export const useClaim = () => {
   const [isSucceeded, setIsSucceeded] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<Error | unknown>()
+  const { getOfflineSignerAmino, address } = useChain('arkeo')
+
   const {
     state: {
       arkeoInfo: { account: arkeoAccount },
@@ -22,7 +29,78 @@ export const useClaim = () => {
     },
     dispatch,
   } = useConnect()
-  const fee = 200
+
+  const claimArkeo = async () => {
+    if (!address) return
+    const signer = await getOfflineSignerAmino()
+    const registry = new Registry([...defaultRegistryTypes, ...msgTypes])
+    const client = await SigningStargateClient.connectWithSigner(
+      arkeoEndpointRpc,
+      signer,
+      {
+        aminoTypes: new AminoTypes(aminoConverters),
+        registry,
+      },
+    )
+    const msg = {
+      typeUrl: '/arkeo.claim.MsgClaimArkeo',
+      value: MsgClaimArkeo.fromPartial({ creator: address }),
+    }
+
+    const result = await client.signAndBroadcast(
+      address,
+      [msg],
+      {
+        amount: [{ denom: 'utoken', amount: '5000' }],
+        gas: '200000',
+      },
+      '',
+    )
+    return result
+  }
+
+  const claimEth = async () => {
+    if (!address) return
+    const signer = await getOfflineSignerAmino()
+    const registry = new Registry([...defaultRegistryTypes, ...msgTypes])
+    const client = await SigningStargateClient.connectWithSigner(
+      arkeoEndpointRpc,
+      signer,
+      {
+        aminoTypes: new AminoTypes(aminoConverters),
+        registry,
+      },
+    )
+    const msg = {
+      typeUrl: '/arkeo.claim.MsgClaimEth',
+      value: MsgClaimEth.fromPartial({
+        creator: address,
+        ethAddress: ethAccount,
+        signature: signature,
+      }),
+    }
+
+    const result = await client.signAndBroadcast(
+      address,
+      [msg],
+      {
+        amount: [{ denom: 'utoken', amount: '5000' }],
+        gas: '200000',
+      },
+      '',
+    )
+    return result
+  }
+
+  const fundArkeo = async () => {
+    const data = await axios.post(`${thorServer}/fund`, {
+      arkeoAddress: arkeoAccount,
+      ethAddress: ethAccount,
+      signature: signature,
+      chain: isTestnet ? 'tarkeo' : 'arkeo',
+    })
+    return data
+  }
 
   const claimRecord = async () => {
     try {
@@ -39,12 +117,17 @@ export const useClaim = () => {
       })
 
       if (thorAmount > 0 && thorDelegateTx) {
-        const { data } = await axios.post(`${thorServer}/claim`, {
-          txHash: thorDelegateTx,
-        })
-        if (data?.message?.includes('updated')) {
-          dispatch({ type: 'SET_THORCHAIN_DELEGATE_TX', payload: undefined })
-        } else {
+        try {
+          const { data } = await axios.post(`${thorServer}/claim`, {
+            txHash: thorDelegateTx,
+          })
+          console.log('DATA', data)
+          if (data?.message?.includes('updated')) {
+            dispatch({ type: 'SET_THORCHAIN_DELEGATE_TX', payload: undefined })
+          } else {
+            throw new Error()
+          }
+        } catch (e) {
           throw new Error('Thorchain delegate tx failed')
         }
       }
@@ -54,22 +137,10 @@ export const useClaim = () => {
         const accountInfo =
           await client.CosmosAuthV1Beta1.query.queryAccount(arkeoAccount)
         if (!accountInfo) {
-          // Account doesn't exist, call /fund endpoint
-          data = await axios.post(`${thorServer}/fund`, {
-            arkeoAddress: arkeoAccount,
-            ethAddress: ethAccount,
-            signature: signature,
-            chain: isTestnet ? 'tarkeo' : 'arkeo',
-          })
+          data = await fundArkeo()
         }
       } catch (error) {
-        // If query fails, assume account doesn't exist and try to fund it
-        data = await axios.post(`${thorServer}/fund`, {
-          arkeoAddress: arkeoAccount,
-          ethAddress: ethAccount,
-          signature: signature,
-          chain: isTestnet ? 'tarkeo' : 'arkeo',
-        })
+        data = await fundArkeo()
       }
 
       if (data) {
@@ -82,10 +153,10 @@ export const useClaim = () => {
               data.data.transaction,
             )
             if (tx && tx.status === 200) {
-              console.log('✅ TX succeeded', tx)
+              console.info('✅ Fund succeeded', tx)
               break
             } else {
-              console.error('❌ TX failed', tx)
+              console.error('❌ Fund failed', tx)
               if (attempts === maxAttempts - 1) {
                 throw new Error('Transaction failed after maximum attempts')
               }
@@ -97,82 +168,23 @@ export const useClaim = () => {
           }
 
           attempts++
-          // Wait 2.5 seconds between attempts
           await new Promise((resolve) => setTimeout(resolve, 2500))
         }
       }
-
-      console.info('Finish Fund')
-
-      await client.useKeplr({
-        rpc: arkeoEndpointRpc,
-        rest: arkeoEndpointRest,
-      })
 
       let result
       if (ethAccount && ethAmount > 0) {
         if (!signature) {
           throw new Error('No signature')
         }
-        result = await client.ArkeoClaim.tx.sendMsgClaimEth({
-          value: {
-            creator: arkeoAccount,
-            ethAddress: ethAccount,
-            signature: signature,
-          },
-          fee: {
-            amount: coins(fee, 'uarkeo'),
-            gas: '200000',
-          },
-          memo: '',
-        })
+        result = await claimEth()
       } else {
-        result = await client.ArkeoClaim.tx.sendMsgClaimArkeo({
-          value: {
-            creator: arkeoAccount,
-          },
-          fee: {
-            amount: coins(fee, 'uarkeo'),
-            gas: '200000',
-          },
-          memo: '',
-        })
+        result = await claimArkeo()
       }
 
-      console.info('Response: ', result.msgResponses)
-
-      // Convert the byte array to a string, but parse it as a protobuf message
-      const response = result.msgResponses[0]
-      const bytes = Object.values(response.value)
-
-      // The first byte (10) is the field number 1 (address) with wire type 2 (length-delimited)
-      // The second byte (45) is the length of the address
-      const addressLength = bytes[1]
-      const address = new TextDecoder().decode(
-        new Uint8Array(bytes.slice(2, 2 + addressLength)),
-      )
-
-      // The remaining bytes contain the amount
-      // byte 47 (16) is field number 2 (amount) with wire type 0 (varint)
-      // bytes 48-49 (232, 7) represent the amount in varint encoding
-      const amountBytes = bytes.slice(48) // Skip the field number/type byte
-      let amount = BigInt(0)
-      let multiplier = BigInt(1)
-
-      for (let i = 0; i < amountBytes.length; i++) {
-        amount += BigInt(amountBytes[i] & 0x7f) * multiplier
-        multiplier *= BigInt(128)
+      if (!result) {
+        throw new Error('Claim was not successful')
       }
-
-      console.info('Decoded Response:', {
-        address,
-        amount: Number(amount), // Convert back to number for display if the value is small enough
-      })
-
-      console.info(
-        'Response: ',
-        MsgClaimArkeoResponse.toJSON(result.msgResponses[0]),
-      )
 
       if (result.code !== 0 && result.rawLog) {
         console.error(result.rawLog)
