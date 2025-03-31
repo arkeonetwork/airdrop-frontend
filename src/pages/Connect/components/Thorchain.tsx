@@ -6,11 +6,8 @@ import { useGetClaim } from '@hooks/useGetClaim'
 import { bech32 } from 'bech32'
 import { ConnectedAccount } from './ConnectedAccount'
 import axios from 'axios'
-import { useChain } from '@cosmos-kit/react'
-import { coins } from '@cosmjs/proto-signing'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ctrlWallet } from '@swapkit/wallet-ctrl'
-import { AssetValue, Chain, createSwapKit, SwapKitNumber } from '@swapkit/sdk'
+import { AssetValue, Chain, createSwapKit } from '@swapkit/sdk'
 
 const MotionFlex = motion(Flex)
 const MotionBox = motion(Box)
@@ -29,7 +26,6 @@ export const Thorchain: React.FC<Props> = () => {
 
   const prefix = isTestnet ? 'tarkeo' : 'arkeo'
 
-  const { address, getSigningStargateClient, openView } = useChain('thorchain')
   const client = createSwapKit()
 
   const [
@@ -80,26 +76,7 @@ export const Thorchain: React.FC<Props> = () => {
       } else if (thorDelegateTx) {
         dispatch({ type: 'SET_STEP', payload: step + 1 })
       } else if (thorAccount) {
-        // const signingClient = await getSigningStargateClient()
-        // if (!signingClient) {
-        //   console.error('No signing client found')
-        //   throw new Error('No signing client found')
-        // }
-        // const amount = coins('1', 'rune') // 0.00000001 RUNE
-        // const fee = {
-        //   amount: coins('0', 'rune'),
-        //   gas: '200000',
-        // }
-
-        // const tx = await signingClient.sendTokens(
-        //   thorAccount,
-        //   thorAccount,
-        //   amount,
-        //   fee,
-        //   `delegate:arkeo:${arkeoAccount}`,
-        // )
-
-        const assetValue = AssetValue.fromStringSync('THOR.RUNE',.00000001)
+        const assetValue = AssetValue.fromStringSync('THOR.RUNE', 0.00000001)
         await client.connectCtrl([Chain.THORChain])
         const tx = await client.transfer({
           assetValue,
@@ -107,37 +84,30 @@ export const Thorchain: React.FC<Props> = () => {
           from: thorAccount,
           memo: `delegate:arkeo:${arkeoAccount}`,
         })
-        console.log('TX', tx)
-
         dispatch({
           type: 'SET_THORCHAIN_DELEGATE_TX',
           payload: tx,
         })
         dispatch({ type: 'SET_STEP', payload: step + 1 })
-      } else if (false && address) {
-        console.log('ADDRESS', address)
-        dispatch({ type: 'SET_THORCHAIN_ACCOUNT', payload: address })
       } else {
-        console.log('OPENING')
+        console.log('CONNECTING')
         const res = await client.connectCtrl([Chain.THORChain])
+        console.log('RES', res)
         const address = client.getAddress(Chain.THORChain)
         dispatch({ type: 'SET_THORCHAIN_ACCOUNT', payload: address })
-        console.log('RES', res)
-        // await client.connectCtrl([Chain.THORChain])
-        // openView()
       }
     } catch (error) {
       console.error(error)
-      if (
-        error instanceof Error &&
-        error.message.includes('insufficient funds')
-      ) {
-        setErrorMessage('Insufficient funds')
-      } else {
-        setErrorMessage(
-          error instanceof Error ? error.message : 'Transaction failed',
-        )
-      }
+      const errorMsg =
+        error instanceof Error
+          ? error.message.includes('insufficient funds')
+            ? 'Insufficient funds'
+            : error.message.includes('not_found')
+              ? 'Ctrl wallet not found'
+              : error.message
+          : 'Transaction failed'
+
+      setErrorMessage(errorMsg)
     } finally {
       setIsLoading(false)
     }

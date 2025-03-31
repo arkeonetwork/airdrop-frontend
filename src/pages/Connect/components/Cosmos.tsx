@@ -35,8 +35,6 @@ export const Cosmos: React.FC<Props> = () => {
     wallet,
     status,
   } = useChain('arkeo')
-  console.log('WALLET', wallet)
-  console.log('STATUS', status)
 
   const { claimRecord } = useGetClaim({
     address: address ?? '',
@@ -58,7 +56,6 @@ export const Cosmos: React.FC<Props> = () => {
     if (arkeoAccount) {
       dispatch({ type: 'SET_STEP', payload: step + 1 })
     } else if (status === 'Error') {
-      console.log('ERROR')
       const suggestOptions: any = {
         chainId: 'arkeo-main-v1',
         chainName: 'Arkeo',

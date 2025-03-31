@@ -67,8 +67,6 @@ export const useClaim = () => {
       },
       '',
     )
-
-    console.log('result', result)
     return result
   }
 
@@ -102,8 +100,6 @@ export const useClaim = () => {
       },
       '',
     )
-
-    console.log('result', result)
     return result
   }
 
@@ -163,10 +159,10 @@ export const useClaim = () => {
               data.data.transaction,
             )
             if (tx && tx.status === 200) {
-              console.log('✅ TX succeeded', tx)
+              console.info('✅ Fund succeeded', tx)
               break
             } else {
-              console.error('❌ TX failed', tx)
+              console.error('❌ Fund failed', tx)
               if (attempts === maxAttempts - 1) {
                 throw new Error('Transaction failed after maximum attempts')
               }
