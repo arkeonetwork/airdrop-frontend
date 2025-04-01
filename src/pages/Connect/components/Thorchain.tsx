@@ -1,5 +1,14 @@
 import React, { useEffect, useState } from 'react'
-import { Button, Box, Text, Image, Flex, Input } from '@chakra-ui/react'
+import {
+  Button,
+  Box,
+  Text,
+  Image,
+  Flex,
+  Input,
+  Tooltip,
+  Icon,
+} from '@chakra-ui/react'
 import TCLogo from '@assets/thorchain-logo.svg'
 import { useConnect } from '../ConnectContext'
 import { useGetClaim } from '@hooks/useGetClaim'
@@ -84,7 +93,7 @@ export const Thorchain: React.FC<Props> = () => {
           from: thorAccount,
           memo: `delegate:arkeo:${arkeoAccount}`,
         })
-        await new Promise(resolve => setTimeout(resolve, 1500)) // wait 1.5 second to let it mine
+        await new Promise((resolve) => setTimeout(resolve, 1500)) // wait 1.5 second to let it mine
 
         dispatch({
           type: 'SET_THORCHAIN_DELEGATE_TX',
@@ -251,10 +260,32 @@ export const Thorchain: React.FC<Props> = () => {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
         >
-          <Text fontWeight={900}>Connect Thorchain Account</Text>
+          <Flex alignItems="center" justifyContent="center">
+            <Text fontWeight={900}>Connect Thorchain Account</Text>
+            <Tooltip
+              label="Thorchain does not support signing arbitrary messages.  To verify your account on chain, you will need to broadcast a transaction using your Thorchain wallet."
+              placement="top"
+              bg="gray.200"
+              hasArrow
+            >
+              <Flex
+                ml={2}
+                borderRadius="full"
+                bg="gray.500"
+                w="18px"
+                h="18px"
+                alignItems="center"
+                justifyContent="center"
+                cursor="pointer"
+              >
+                <Text color="white" fontWeight="bold" fontSize="8px">
+                  ?
+                </Text>
+              </Flex>
+            </Tooltip>
+          </Flex>
           <Text fontWeight={500} color="grey.50">
-            Connect your Thorchain wallet to check for eligibility. <br />
-            To claim, you will have to broadcast a transaction using your Thorchain account to prove ownership.
+            Connect your Thorchain wallet to check for eligibility.
           </Text>
         </MotionBox>
 
@@ -286,6 +317,7 @@ export const Thorchain: React.FC<Props> = () => {
           >
             {buttonText}
           </MotionButton>
+
           {!thorDelegateTx && !isLoading && (
             <MotionButton
               onClick={skipClick}
