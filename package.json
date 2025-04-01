@@ -28,11 +28,13 @@
     "@emotion/styled": "^11.11.0",
     "@interchain-ui/react": "^1.14.1",
     "@keplr-wallet/provider-extension": "^0.12.211",
+    "@reown/appkit": "^1.7.1",
+    "@reown/appkit-adapter-wagmi": "^1.7.1",
     "@swapkit/core": "^3.2.26",
     "@swapkit/sdk": "^2.2.17",
     "@swapkit/tokens": "^2.2.2",
     "@swapkit/wallet-ctrl": "^2.1.12",
-    "@web3modal/wagmi": "^3.3.2",
+    "@tanstack/react-query": "^5.71.1",
     "axios": "^1.6.5",
     "bech32": "^2.0.0",
     "bignumber.js": "^9.1.2",
@@ -46,8 +48,8 @@
     "react-dom": "^18.2.0",
     "react-responsive-carousel": "^3.2.23",
     "react-router-dom": "^6.19.0",
-    "viem": "^1.19.9",
-    "wagmi": "^1.4.7"
+    "viem": "^2.24.3",
+    "wagmi": "^2.14.16"
   },
   "devDependencies": {
     "@types/react": "^18.2.37",

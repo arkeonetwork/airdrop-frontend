@@ -4,9 +4,12 @@ import App from './App.tsx'
 import { ChakraProvider } from '@chakra-ui/provider'
 import { theme } from './theme.ts'
 import 'react-responsive-carousel/lib/styles/carousel.min.css'
-import { createWeb3Modal, defaultWagmiConfig } from '@web3modal/wagmi/react'
-import { WagmiConfig } from 'wagmi'
-import { mainnet } from 'viem/chains'
+import { createAppKit } from '@reown/appkit/react'
+
+import { WagmiProvider } from 'wagmi'
+import { arbitrum, mainnet } from '@reown/appkit/networks'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { WagmiAdapter } from '@reown/appkit-adapter-wagmi'
 import { ChainProvider } from '@cosmos-kit/react'
 import { chains, assets } from 'chain-registry'
 import { wallets } from '@cosmos-kit/keplr-extension'
@@ -20,25 +23,32 @@ const arkeoEndpointRest = import.meta.env.VITE_ARKEO_ENDPOINT_REST
 const arkeoEndpointRpc = import.meta.env.VITE_ARKEO_ENDPOINT_RPC
 const thorchainEndpointRpc = 'https://rpc.ninerealms.com'
 const thorchainEndpointRest = 'https://thornode.ninerealms.com'
+
+
+const queryClient = new QueryClient()
+
+
+
 const metadata = {
   name: 'Arkeo',
   description: 'Arkeo Airdrop',
   url: 'https://arkeo.network',
+  icons: ['https://github.com/chainapsis/keplr-chain-registry/blob/main/images/arkeo-main-v1/chain.png']
 }
 
 const evmChains = [mainnet]
-const wagmiConfig = defaultWagmiConfig({
-  chains: evmChains,
-  projectId,
-  metadata,
-})
-wagmiConfig.args.autoConnect = false
+// const wagmiConfig = defaultWagmiConfig({
+//   chains: evmChains,
+//   projectId,
+//   metadata,
+// })
+// wagmiConfig.args.autoConnect = false
 
-createWeb3Modal({
-  wagmiConfig,
-  projectId,
-  chains: evmChains,
-})
+// createWeb3Modal({
+//   wagmiConfig,
+//   projectId,
+//   chains: evmChains,
+// })
 
 let root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
 

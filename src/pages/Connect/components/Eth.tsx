@@ -3,12 +3,12 @@ import { Button, Box, Text, Image, Flex } from '@chakra-ui/react'
 import EthLogo from '@assets/eth-logo-diamond.svg'
 import { useConnect } from '../ConnectContext'
 import { ConnectedAccount } from './ConnectedAccount'
-import { useWeb3Modal } from '@web3modal/wagmi/react'
+// import { useWeb3Modal } from '@web3modal/wagmi/react'
 import {
   useSignTypedData,
   useDisconnect,
   useAccount,
-  ConnectorData,
+  // ConnectorData,
 } from 'wagmi'
 import { useGetClaim } from '@hooks/useGetClaim'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -32,7 +32,7 @@ export const Eth: React.FC<Props> = ({}) => {
   const [errorMessage, setErrorMessage] = useState<string>('')
   const [isLoading, setIsLoading] = useState(false)
 
-  const { open } = useWeb3Modal()
+  // const { open } = useWeb3Modal()
   const { address, connector: activeConnector } = useAccount()
   const { disconnect } = useDisconnect()
   const { claimRecord } = useGetClaim({
@@ -45,23 +45,23 @@ export const Eth: React.FC<Props> = ({}) => {
     }
   }, [status])
 
-  useEffect(() => {
-    const handleConnectorUpdate = ({ account }: ConnectorData) => {
-      if (account) {
-        dispatch({ type: 'SET_ETH_ACCOUNT', payload: account })
-        dispatch({ type: 'SET_ETH_SIGNATURE' })
-        reset()
-      }
-    }
+  // useEffect(() => {
+  //   const handleConnectorUpdate = ({ account }: ConnectorData) => {
+  //     if (account) {
+  //       dispatch({ type: 'SET_ETH_ACCOUNT', payload: account })
+  //       dispatch({ type: 'SET_ETH_SIGNATURE' })
+  //       reset()
+  //     }
+  //   }
 
-    if (activeConnector) {
-      activeConnector.on('change', handleConnectorUpdate)
-    }
+  //   if (activeConnector) {
+  //     activeConnector.on('change', handleConnectorUpdate)
+  //   }
 
-    return () => {
-      activeConnector?.off('change', handleConnectorUpdate)
-    }
-  }, [activeConnector])
+  //   return () => {
+  //     activeConnector?.off('change', handleConnectorUpdate)
+  //   }
+  // }, [activeConnector])
 
   useEffect(() => {
     if (data) {
