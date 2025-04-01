@@ -100,7 +100,6 @@ export const Congrats: React.FC<Props> = ({}) => {
             <Text fontWeight={900}>Congrats!</Text>
             <Text fontWeight={500}>
               You have successfully claimed {toDecimal(totalClaimAmount)} ARKEO.
-              To unlock more you can do the following activities.
             </Text>
           </motion.div>
         </MotionFlex>
@@ -110,7 +109,7 @@ export const Congrats: React.FC<Props> = ({}) => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.7 }}
         >
-          <Text fontWeight={700} mb="16px">
+          {/* <Text fontWeight={700} mb="16px">
             Airdrop Activities
           </Text>
           <MotionFlex
@@ -125,7 +124,6 @@ export const Congrats: React.FC<Props> = ({}) => {
           >
             <Text fontWeight={400}>Stake your Arkeo</Text>
             <Flex>
-              {/* <Text>{toDecimal(totalDelegateAmount)} ARKEO</Text> */}
 
               <ArrowForwardIcon
                 width="24px"
@@ -147,7 +145,6 @@ export const Congrats: React.FC<Props> = ({}) => {
           >
             <Text>Vote on Proposal</Text>
             <Flex>
-              {/* <Text>{toDecimal(totalVoteAmount)} ARKEO</Text> */}
               <ArrowForwardIcon
                 width="24px"
                 height="24px"
@@ -155,7 +152,7 @@ export const Congrats: React.FC<Props> = ({}) => {
                 color="grey.50"
               />
             </Flex>
-          </MotionFlex>
+          </MotionFlex> */}
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}

@@ -253,7 +253,8 @@ export const Thorchain: React.FC<Props> = () => {
         >
           <Text fontWeight={900}>Connect Thorchain Account</Text>
           <Text fontWeight={500} color="grey.50">
-            Connect your Thorchain wallet to check for eligibility.
+            Connect your Thorchain wallet to check for eligibility. <br />
+            To claim, you will have to broadcast a transaction using your Thorchain account to prove ownership.
           </Text>
         </MotionBox>
 

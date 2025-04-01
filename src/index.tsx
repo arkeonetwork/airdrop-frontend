@@ -24,6 +24,7 @@ const metadata = {
   name: 'Arkeo',
   description: 'Arkeo Airdrop',
   url: 'https://arkeo.network',
+  icons: ['https://github.com/chainapsis/keplr-chain-registry/blob/main/images/arkeo-main-v1/chain.png']
 }
 
 const evmChains = [mainnet]
