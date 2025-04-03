@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button, Box, Text, Flex, useToken } from '@chakra-ui/react'
+import { Button, Box, Text, Flex, useToken, Link } from '@chakra-ui/react'
 import { Carousel } from 'react-responsive-carousel'
 import { useConnect } from '../ConnectContext'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -103,9 +103,12 @@ export const Learn: React.FC<Props> = ({}) => {
                 purpose built blockchain built on top of the cosmos SDK that is
                 the foundation of a marketplace for decentralized and indexed
                 blockchain data. ARKEO is being airdropped according to the
-                Arkeo airdrop spec (link here) and a wide range of crypto users
-                are eligible for the airdrop including FOX holders, ATOM, OSMO,
-                and RUNE holders.
+                Arkeo airdrop spec{' '}
+                <Link color="blue.200" target="_blank" href="https://arkeo.network">
+                  (link here)
+                </Link>{' '}
+                and a wide range of crypto users are eligible for the airdrop
+                including FOX holders, ATOM, OSMO, and RUNE holders.
               </MotionText>
             </MotionBox>
             <MotionBox
