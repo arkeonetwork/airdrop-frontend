@@ -53,7 +53,7 @@ export const Claim: React.FC<Props> = ({}) => {
     } else if (
       errorString.toLowerCase().includes('thorchain delegate tx failed')
     ) {
-      setErrorMessage('Thorchain TX Not Found, Please Try Again')
+      setErrorMessage('Please Wait For Thorchain TX To Confirm, Try Again')
     } else {
       setErrorMessage('Something Went Wrong')
     }
