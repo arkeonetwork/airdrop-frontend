@@ -32,7 +32,7 @@ export const Check = () => {
   return (
     <Panel
       header="Claim Arkeo"
-      desc="Paste your Arkeo, Cosmos, or Ethereum address to check eligibility"
+      desc="Paste your Cosmos, Thorchain, or Ethereum address to check eligibility"
     >
       <Box p="32px">
         <Box>
