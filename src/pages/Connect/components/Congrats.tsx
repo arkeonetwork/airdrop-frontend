@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Box, Text, Image, Flex, Button } from '@chakra-ui/react'
+import { Box, Text, Image, Flex, Button, Link } from '@chakra-ui/react'
 import { useConnect } from '../ConnectContext'
 import Success from '@assets/success.svg'
 import { ArrowForwardIcon } from '@chakra-ui/icons'
@@ -109,51 +109,58 @@ export const Congrats: React.FC<Props> = ({}) => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.7 }}
         >
-          {/* <Text fontWeight={700} mb="16px">
+          <Text fontWeight={700} mb="16px">
             Airdrop Activities
           </Text>
-          <MotionFlex
-            justifyContent="space-between"
-            backgroundColor="grey.200"
-            p="8px 16px"
-            borderRadius="12px"
-            mb="16px"
-            _hover={{ backgroundColor: 'grey.150' }}
-            transition={{ duration: 0.2 }}
-            cursor="pointer"
+          <Link
+            href="https://exp.stakevillage.net/arkeo-mainnet"
+            target="_blank"
           >
-            <Text fontWeight={400}>Stake your Arkeo</Text>
-            <Flex>
-
-              <ArrowForwardIcon
-                width="24px"
-                height="24px"
-                padding="4px"
-                color="grey.50"
-              />
-            </Flex>
-          </MotionFlex>
-
-          <MotionFlex
-            justifyContent="space-between"
-            backgroundColor="grey.200"
-            p="8px 16px"
-            borderRadius="12px"
-            _hover={{ backgroundColor: 'grey.150' }}
-            transition={{ duration: 0.2 }}
-            cursor="pointer"
+            <MotionFlex
+              justifyContent="space-between"
+              backgroundColor="grey.200"
+              p="8px 16px"
+              borderRadius="12px"
+              mb="16px"
+              _hover={{ backgroundColor: 'grey.150' }}
+              transition={{ duration: 0.2 }}
+              cursor="pointer"
+            >
+              <Text>Stake your Arkeo</Text>
+              <Flex>
+                <ArrowForwardIcon
+                  width="24px"
+                  height="24px"
+                  padding="4px"
+                  color="grey.50"
+                />
+              </Flex>
+            </MotionFlex>
+          </Link>
+          <Link
+            href="https://exp.stakevillage.net/arkeo-mainnet/gov"
+            target="_blank"
           >
-            <Text>Vote on Proposal</Text>
-            <Flex>
-              <ArrowForwardIcon
-                width="24px"
-                height="24px"
-                padding="4px"
-                color="grey.50"
-              />
-            </Flex>
-          </MotionFlex> */}
-
+            <MotionFlex
+              justifyContent="space-between"
+              backgroundColor="grey.200"
+              p="8px 16px"
+              borderRadius="12px"
+              _hover={{ backgroundColor: 'grey.150' }}
+              transition={{ duration: 0.2 }}
+              cursor="pointer"
+            >
+              <Text>Vote on Proposal</Text>
+              <Flex>
+                <ArrowForwardIcon
+                  width="24px"
+                  height="24px"
+                  padding="4px"
+                  color="grey.50"
+                />
+              </Flex>
+            </MotionFlex>
+          </Link>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
