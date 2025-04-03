@@ -1,7 +1,7 @@
 {
   "name": "arkeo-airdrop-frontend",
   "private": true,
-  "version": "1.0.14",
+  "version": "1.0.15",
   "type": "module",
   "scripts": {
     "dev": "vite",

@@ -100,12 +100,20 @@ export const Congrats: React.FC<Props> = ({}) => {
             <Text fontWeight={900}>Congrats!</Text>
             <Text fontWeight={500}>
               You have successfully claimed {toDecimal(arkeoAmountClaim)} ARKEO.
-              Please stake and vote on the Arkeo network to claim the rest of
-              your airdrop.
             </Text>
           </motion.div>
         </MotionFlex>
-
+        <MotionFlex
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.7 }}
+        >
+          <Text textAlign="center" fontWeight="bold" mx="30px">
+            Wait!! You are not done! <br />
+            Please stake and vote on the Arkeo network to claim the rest of your
+            airdrop.
+          </Text>
+        </MotionFlex>
         <MotionBox
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -128,9 +136,9 @@ export const Congrats: React.FC<Props> = ({}) => {
               transition={{ duration: 0.2 }}
               cursor="pointer"
             >
-              <Text>{toDecimal(arkeoAmountClaim)} ARKEO</Text>
               <Text>Stake your Arkeo</Text>
               <Flex>
+                <Text>{toDecimal(arkeoAmountClaim)} ARKEO</Text>
                 <ArrowForwardIcon
                   width="24px"
                   height="24px"

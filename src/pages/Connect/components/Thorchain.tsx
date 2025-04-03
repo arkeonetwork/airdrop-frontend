@@ -278,7 +278,7 @@ export const Thorchain: React.FC<Props> = () => {
                 justifyContent="center"
                 cursor="pointer"
               >
-                <Text color="white" fontWeight="bold" fontSize="8px">
+                <Text color="white" fontWeight="bold" fontSize="12px">
                   ?
                 </Text>
               </Flex>

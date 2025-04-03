@@ -92,7 +92,7 @@ export const Cosmos: React.FC<Props> = () => {
           },
         ],
       }
-      await keplr.experimentalSuggestChain(suggestOptions)
+      await keplr?.experimentalSuggestChain(suggestOptions)
       openView()
     } else {
       openView()
