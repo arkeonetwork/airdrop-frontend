@@ -144,18 +144,18 @@ export const useClaim = () => {
 
       if (data) {
         let attempts = 0
-        const maxAttempts = 3
+        const maxAttempts = 60
 
         while (attempts < maxAttempts) {
           try {
-            const tx = await client.CosmosTxV1Beta1.query.serviceGetTx(
-              data.data.transaction,
-            )
-            if (tx && tx.status === 200) {
-              console.info('✅ Fund succeeded', tx)
+            console.log(data)
+            const accountInfo =
+              await client.CosmosAuthV1Beta1.query.queryAccount(arkeoAccount)
+            if (accountInfo) {
+              console.info('✅ Fund succeeded')
               break
             } else {
-              console.error('❌ Fund failed', tx)
+              console.error('❌ Fund failed')
               if (attempts === maxAttempts - 1) {
                 throw new Error('Transaction failed after maximum attempts')
               }
