@@ -36,7 +36,7 @@ export const Learn: React.FC<Props> = ({}) => {
             showStatus={false}
             showThumbs={false}
             autoPlay={false}
-            infiniteLoop={true}
+            // infiniteLoop={true}
             interval={5000}
             emulateTouch={true}
             renderIndicator={(

@@ -23,6 +23,7 @@ const MotionFlex = motion(Flex)
 const MotionBox = motion(Box)
 const MotionImage = motion(Image)
 const MotionButton = motion(Button)
+const MotionIcon = motion(Icon)
 
 type Props = {}
 
@@ -187,6 +188,7 @@ export const Thorchain: React.FC<Props> = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
+          width="80%"
         >
           <Text mb="26px">
             Enter your Thorchain TX hash that contains your delegation
@@ -194,19 +196,24 @@ export const Thorchain: React.FC<Props> = () => {
             <br />
             <b>Your memo should be:</b> <br />
             <Flex alignItems="center">
-              <b>delegate:arkeo:{arkeoAccount}</b>
-              <Icon
+              <Text wordBreak="break-word" mr="10px">
+                <b>delegate:arkeo:{arkeoAccount}</b>
+              </Text>
+              <MotionIcon
                 cursor="pointer"
                 color="blue.500"
-                ml={2}
                 onClick={() => {
                   navigator.clipboard.writeText(
                     `delegate:arkeo:${arkeoAccount}`,
                   )
                   setIsCopied(true)
-                  setTimeout(() => setIsCopied(false), 10000) // Reset after 2 seconds
+                  setTimeout(() => setIsCopied(false), 6000)
                 }}
                 as={isCopied ? CheckIcon : CopyIcon}
+                key={isCopied ? 'check' : 'copy'} 
+                initial={{ scale: 1 }}
+                animate={{ scale: [1, 1.2, 1] }}
+                transition={{ duration: 0.3 }}
               />
             </Flex>
             <br />
