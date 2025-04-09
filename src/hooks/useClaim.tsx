@@ -144,7 +144,7 @@ export const useClaim = () => {
 
       if (data) {
         let attempts = 0
-        const maxAttempts = 60
+        const maxAttempts = 15
 
         while (attempts < maxAttempts) {
           try {

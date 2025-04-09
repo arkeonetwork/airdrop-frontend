@@ -81,7 +81,7 @@ export const Thorchain: React.FC<Props> = () => {
       setErrorMessage('')
       setIsLoading(true)
       if (enterHash) {
-        setTxHash()
+        await setTxHash()
       } else if (thorDelegateTx) {
         dispatch({ type: 'SET_STEP', payload: step + 1 })
       } else if (thorAccount) {
@@ -124,6 +124,7 @@ export const Thorchain: React.FC<Props> = () => {
 
   const setTxHash = async () => {
     try {
+      setIsLoading(true)
       const apiUrl = `https://vanaheimex.com/actions?txid=${hashValue}`
       const response = await axios.get(apiUrl)
       const data = response.data
@@ -136,11 +137,6 @@ export const Thorchain: React.FC<Props> = () => {
       } = actions[0]
       const derivedThorAccount = inbound[0].address
 
-      if (!derivedThorAccount || thorAccount !== derivedThorAccount) {
-        console.log('Invalid Tx Hash')
-        throw new Error('Invalid Tx Hash')
-      }
-
       const split = memo.split(':')
       const delegate = split[0]
       const arkeo = split[1]
@@ -152,71 +148,76 @@ export const Thorchain: React.FC<Props> = () => {
         delegate !== 'delegate' &&
         decodedToAddress.prefix !== prefix
       ) {
+        console.error('Invalid Tx Memo')
         throw new Error('Invalid Tx Memo')
       }
 
+      if (arkeoAccount !== toAddress) {
+        console.error('Wrong Arkeo account in memo')
+        throw new Error('Wrong Arkeo account in memo')
+      }
+
+      dispatch({ type: 'SET_THORCHAIN_ACCOUNT', payload: derivedThorAccount })
       dispatch({ type: 'SET_THORCHAIN_DELEGATE_TX', payload: hashValue })
-      dispatch({ type: 'SET_STEP', payload: step + 1 })
+      setEnterHash(false)
     } catch (e) {
       console.error(e)
-      setErrorMessage('Invalid Transaction')
+      setErrorMessage(e instanceof Error ? e.message : 'Invalid Transaction')
+    } finally {
+      // setIsLoading(false)
     }
   }
 
   const skipClick = async () => {
     setErrorMessage('')
-    if (!thorAccount || thorAmountClaim === 0) {
+    if (!enterHash && (!thorAccount || thorAmountClaim === 0)) {
       dispatch({ type: 'SET_STEP', payload: step + 1 })
       dispatch({ type: 'RESET_THOR' })
-    } else if (!enterHash) {
-      setEnterHash(true)
     } else {
       setEnterHash(false)
     }
   }
 
   const renderWallet = () => {
-    if (thorAccount) {
-      if (!enterHash) {
-        return (
-          <Box w="100%">
-            <ConnectedAccount
-              width="100%"
-              my={0}
-              amount={claimRecord?.claimableAmount ?? '0'}
-              account={thorAccount}
-              name={'Thorchain'}
-              loading={isLoading}
-              disconnect={
-                !thorDelegateTx
-                  ? () => {
-                      dispatch({ type: 'RESET_THOR' })
-                    }
-                  : undefined
-              }
-            />
-          </Box>
-        )
-      } else {
-        return (
-          <MotionBox
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.2 }}
-          >
-            <Text mb="26px">
-              Enter your Thorchain TX hash that contains your delegation
-              transaction. The memo should be in the format of <br />
-              <b>delegate:arkeo:{'{txhash}'}</b>
-            </Text>
-            <Input
-              value={hashValue}
-              onChange={(event) => setHashValue(event.target.value)}
-              placeholder="Enter Your Transaction Hash"
-            />
-          </MotionBox>
-        )
-      }
+    if (enterHash) {
+      return (
+        <MotionBox
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.2 }}
+        >
+          <Text mb="26px">
+            Enter your Thorchain TX hash that contains your delegation
+            transaction. The memo should be in the format of <br />
+            <b>delegate:arkeo:{'{txhash}'}</b>
+          </Text>
+          <Input
+            value={hashValue}
+            onChange={(event) => setHashValue(event.target.value)}
+            placeholder="Enter Your Transaction Hash"
+          />
+        </MotionBox>
+      )
+    } else if (thorAccount) {
+      return (
+        <Box w="100%">
+          <ConnectedAccount
+            width="100%"
+            my={0}
+            amount={claimRecord?.claimableAmount ?? '0'}
+            account={thorAccount}
+            name={'Thorchain'}
+            loading={isLoading}
+            disconnect={
+              !thorDelegateTx
+                ? () => {
+                    dispatch({ type: 'RESET_THOR' })
+                  }
+                : undefined
+            }
+          />
+        </Box>
+      )
     }
     return (
       <MotionImage
@@ -237,11 +238,7 @@ export const Thorchain: React.FC<Props> = () => {
         ? 'Broadcast Transaction'
         : 'Connect Wallet'
   const skipText =
-    !thorAccount || thorAmountClaim === 0
-      ? 'Skip'
-      : !enterHash
-        ? 'Enter Tx Hash'
-        : 'Back'
+    !enterHash ? 'Skip' : 'Back'
   return (
     <AnimatePresence>
       <MotionFlex
@@ -309,8 +306,21 @@ export const Thorchain: React.FC<Props> = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
         >
+          {!enterHash && (
+            <Text
+              onClick={() => setEnterHash(true)}
+              m="18px"
+              height="16px"
+              color="white"
+              textDecoration="underline"
+              fontWeight="bold"
+              cursor="pointer"
+            >
+              Enter Tx Hash
+            </Text>
+          )}
           <MotionButton
-            isDisabled={!!thorAccount && thorAmountClaim === 0}
+            isDisabled={!enterHash && !!thorAccount && thorAmountClaim === 0}
             isLoading={isLoading}
             onClick={broadcastTx}
             whileTap={{ scale: 0.95 }}
@@ -318,9 +328,10 @@ export const Thorchain: React.FC<Props> = () => {
             {buttonText}
           </MotionButton>
 
-          {!thorDelegateTx && !isLoading && (
+          {!isLoading && (
             <MotionButton
               onClick={skipClick}
+              isDisabled={!enterHash && !!thorAccount && thorAmountClaim > 0}
               variant="outline"
               mt={2}
               whileTap={{ scale: 0.95 }}
