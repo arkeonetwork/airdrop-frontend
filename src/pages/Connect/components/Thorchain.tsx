@@ -17,6 +17,7 @@ import { ConnectedAccount } from './ConnectedAccount'
 import axios from 'axios'
 import { motion, AnimatePresence } from 'framer-motion'
 import { AssetValue, Chain, createSwapKit } from '@swapkit/sdk'
+import { CopyIcon, CheckIcon } from '@chakra-ui/icons'
 
 const MotionFlex = motion(Flex)
 const MotionBox = motion(Box)
@@ -32,6 +33,7 @@ export const Thorchain: React.FC<Props> = () => {
   const [enterHash, setEnterHash] = useState(false)
   const [hashValue, setHashValue] = React.useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [isCopied, setIsCopied] = useState(false)
 
   const prefix = isTestnet ? 'tarkeo' : 'arkeo'
 
@@ -188,8 +190,26 @@ export const Thorchain: React.FC<Props> = () => {
         >
           <Text mb="26px">
             Enter your Thorchain TX hash that contains your delegation
-            transaction. The memo should be in the format of <br />
-            <b>delegate:arkeo:{'{txhash}'}</b>
+            transaction. <br />
+            <br />
+            <b>Your memo should be:</b> <br />
+            <Flex alignItems="center">
+              <b>delegate:arkeo:{arkeoAccount}</b>
+              <Icon
+                cursor="pointer"
+                color="blue.500"
+                ml={2}
+                onClick={() => {
+                  navigator.clipboard.writeText(
+                    `delegate:arkeo:${arkeoAccount}`,
+                  )
+                  setIsCopied(true)
+                  setTimeout(() => setIsCopied(false), 10000) // Reset after 2 seconds
+                }}
+                as={isCopied ? CheckIcon : CopyIcon}
+              />
+            </Flex>
+            <br />
           </Text>
           <Input
             value={hashValue}
@@ -237,8 +257,7 @@ export const Thorchain: React.FC<Props> = () => {
       : thorAccount
         ? 'Broadcast Transaction'
         : 'Connect Wallet'
-  const skipText =
-    !enterHash ? 'Skip' : 'Back'
+  const skipText = !enterHash ? 'Skip' : 'Back'
   return (
     <AnimatePresence>
       <MotionFlex
